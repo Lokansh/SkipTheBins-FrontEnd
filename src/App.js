@@ -1,23 +1,21 @@
-import logo from './logo.svg';
 import './App.css';
+import Header from './components/header/Header';
+import Footer from './components/footer/Footer';
+import Faq from './components/faq/Faq';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-        Skip The Bins
-        </p>
-        <a
-          className="App-link"
-          href="https://git.cs.dal.ca/aabhaas/group_14_csci5709"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Group 14
-        </a>
-      </header>
+    <div>
+      <Header />
+      <div className="m-4 body-container">
+      <Router>
+      <Routes>
+        <Route path='/' exact element={<Faq editMode={true} />} ></Route>
+      </Routes>
+    </Router>  
+      </div>
+      <Footer />
     </div>
   );
 }
