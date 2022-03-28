@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import './App.css';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
@@ -17,6 +18,17 @@ import ConfirmSchedule from "./components/Pickups/Vendor/ConfirmSchedule";
 import ViewSchedule from "./components/Pickups/Vendor/ViewSchedule";
 import DeleteSchedule from "./components/Pickups/Vendor/DeleteSchedule";
 import EditSchedule from "./components/Pickups/Vendor/EditSchedule";
+=======
+import "./App.css";
+import Header from "./components/Header/Header";
+import Footer from "./components/Footer/Footer";
+import Faq from "./components/faq/Faq";
+import ContactUs from "./components/contactUs/ContactUs";
+import SubmitQueryForm from "./components/contactUs/SubmitQueryForm";
+import AdminDisplayQueries from "./components/contactUs/AdminDisplayQueries";
+import AdminModifyVendors from "./components/contactUs/AdminModifyVendors";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+>>>>>>> 3df3b7ed (static frontend)
 
 function App() {
   return (
@@ -25,6 +37,7 @@ function App() {
       <div className="m-4 body-container">
         <Router>
           <Routes>
+<<<<<<< HEAD
             <Route path='/faq' exact element={<Faq editMode={false} role='user' />} ></Route>
             <Route path='/faq-vendor'  element={<Faq editMode={true} role='vendor' />} ></Route>
             <Route path='/faq-admin' exact element={<Faq editMode={true} role='admin' />} ></Route>
@@ -68,6 +81,25 @@ function App() {
               ></Route>
               <Route index element={<PickupHomeVendor />}></Route>
             </Route>
+=======
+            <Route path="/faq" element={<Faq editMode={true} />}></Route>
+            <Route path="/contactus">
+              {/* <Route path="/submitquery" element={<SubmitQueryForm />}></Route> */}
+              <Route index element={<ContactUs />}></Route>
+            </Route>
+            <Route
+              path="/contactus/submitquery"
+              element={<SubmitQueryForm />}
+            ></Route>
+            <Route
+              path="/contactus/viewqueries"
+              element={<AdminDisplayQueries />}
+            ></Route>
+            <Route
+              path="/contactus/modifyvendors"
+              element={<AdminModifyVendors />}
+            ></Route>
+>>>>>>> 3df3b7ed (static frontend)
           </Routes>
         </Router>
       </div>
