@@ -3,7 +3,7 @@ import skipTheBins from '../../assets/skipTheBins.png';
 import "./Header.css"
 function Header() {
     return (
-        <Navbar className="shadow-lg p-3 mb-3 bg-white" collapseOnSelect expand="md" bg="light" variant='light' sticky="top">
+        <Navbar className="shadow-lg p-2 mb-3 bg-white" collapseOnSelect expand="md" bg="light" variant='light' sticky="top">
             <div className='container-fluid'>
                 <Navbar.Brand><img src={skipTheBins} alt="Skip The Bins" className="logo-size" /></Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -14,7 +14,9 @@ function Header() {
                 </Navbar.Collapse> */}
                 <Navbar.Collapse id="colapse-nav" className="justify-content-end">
                     <Nav >
-                        <Nav.Link href="#">FAQ-admin</Nav.Link>
+                        <Nav.Link href="#faq">FAQ</Nav.Link>
+                        <Nav.Link href="#faq-admin">FAQ-admin</Nav.Link>
+                        <Nav.Link href="#faq-vendor">FAQ-vendor</Nav.Link>
                         <Nav.Link href="#profile">Profile</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

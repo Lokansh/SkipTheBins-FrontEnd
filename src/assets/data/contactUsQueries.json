@@ -1,0 +1,18 @@
+{
+    "queryData":[
+        {
+            "id":1,
+            "name":"Abc",
+            "email":"abc@xyz.com",
+            "mobile":"1234567890",
+            "query":"Sample data"
+        },
+        {
+            "id":2,
+            "name":"Abc2",
+            "email":"abc2@xyz2.com",
+            "mobile":"0987654321",
+            "query":"Sample data2"
+        }
+    ]
+}

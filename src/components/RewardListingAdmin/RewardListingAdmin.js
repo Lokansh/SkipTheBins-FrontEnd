@@ -4,6 +4,7 @@ import axios from "axios";
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import StatusDisplay from "../StatusDisplay/StatusDisplay";
+import {WEB_API_URL} from "../../constants";
 
 const RewardListingAdmin = () => {
 
@@ -11,7 +12,7 @@ const RewardListingAdmin = () => {
     const getRewardData = async () => {
         const config = {
             method: 'get',
-            url: 'http://localhost:8080/api/admin/get-all-rewards'
+            url: WEB_API_URL + '/admin/get-all-rewards'
         };
         axios(config)
             .then(function (response) {

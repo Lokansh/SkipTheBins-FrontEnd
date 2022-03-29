@@ -4,6 +4,7 @@ import { Modal, Button } from 'react-bootstrap';
 function UpdateModal(props) {
   const [question, setQuestion] = useState(props.data.question);
   const [answer, setAnswer] = useState(props.data.answer);
+  
   const [questionToggled, setQuestionToggled] = useState(false);
   const [answerToggled, setAnswerToggled] = useState(false);
   const [questionValid, setQuestionValid] = useState(true);
@@ -30,7 +31,7 @@ function UpdateModal(props) {
   }
   const update = () => {
     if (questionValid && answerValid) {
-      props.update({ question, answer, id:props.data.id });
+      props.update({ question, answer,oldAnswer:props.data.answer,oldQuestion:props.data.question, id: props.data._id });
       props.close();
     }
   }
@@ -62,8 +63,11 @@ function UpdateModal(props) {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="danger" onClick={(e) => { props.delete(props.data); props.close() }}>Delete</Button>
-        <Button variant="primary" onClick={update}>Update</Button>
+        {props.role == 'admin' && <Button variant="danger" onClick={(e) => { props.delete(props.data); props.close() }}>Delete</Button>}
+        {props.role == 'vendor' && <Button variant="danger" onClick={(e) => { props.delete(props.data); props.close() }}>Request Deletion</Button>}
+        {props.role == 'admin' && <Button variant="primary" onClick={update}>Update</Button>}
+        {props.role == 'vendor' && <Button variant="primary" onClick={update}>Request Updation</Button>}
+
       </Modal.Footer>
     </Modal>
 
