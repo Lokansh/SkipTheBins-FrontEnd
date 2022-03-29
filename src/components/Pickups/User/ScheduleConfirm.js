@@ -36,8 +36,8 @@ export default function ScheduleConfirm() {
         wasteType: wasteTypes,
         boxQty: bags,
         wasteQty: weight,
-        slot: timeVendorArr[0],
-        vendor: timeVendorArr[1],
+        slot: timeVendorArr[0].trim(),
+        vendor: timeVendorArr[1].trim(),
         batchNo,
         address: address,
       };

@@ -8,14 +8,14 @@ import axios from "axios";
 
 export default function ViewPickup() {
   const navigate = useNavigate();
-  const [date, setDate] = useState(moment().format("LL"));
+  // const [date, setDate] = useState(moment().format("LL"));
   const [time, setTime] = useState("");
   const [showDetails, setShowDetails] = useState(false);
   const [pickups, setPickups] = useState([]);
   const [selectedPickup, setSelectedPickup] = useState({});
 
   const dateChange = (event) => {
-    setDate(event.format("LL"));
+    // setDate(event.format("LL"));
     getPickups(event.format("LL"));
   };
 
@@ -27,6 +27,7 @@ export default function ViewPickup() {
       (pickup) => pickup.slot === slot && pickup.vendor === vendor
     );
     setSelectedPickup(selectedPickup[0]);
+    console.log(selectedPickup[0]);
   };
 
   const submitClick = () => {
@@ -146,14 +147,14 @@ export default function ViewPickup() {
                         }}
                         variant="light"
                         size="sm"
-                        value={`${pickup.slot} - ${pickup.vendor}`}
+                        value={`${pickup.slot} = ${pickup.vendor}`}
                         active={
-                          time === `${pickup.slot} : ${pickup.vendor}`
+                          time === `${pickup.slot} = ${pickup.vendor}`
                             ? true
                             : false
                         }
                       >
-                        {pickup.slot} - {pickup.vendor}
+                        {pickup.slot} = {pickup.vendor}
                       </Button>
                     );
                   })}
@@ -170,7 +171,7 @@ export default function ViewPickup() {
               textAlign: "center",
               fontWeight: "bolder",
               color: "rgba(17, 45, 92,0.85)",
-              marginBottom: "5%",
+              marginBottom: "2%",
             }}
           >
             Details
@@ -187,7 +188,7 @@ export default function ViewPickup() {
             <Row
               style={{
                 margin: "0 auto",
-                marginBottom: "5%",
+                marginBottom: "2%",
                 textAlign: "center",
               }}
             >
@@ -202,7 +203,7 @@ export default function ViewPickup() {
             <Row
               style={{
                 margin: "0 auto",
-                marginBottom: "5%",
+                marginBottom: "2%",
                 textAlign: "center",
               }}
             >
@@ -217,7 +218,7 @@ export default function ViewPickup() {
             <Row
               style={{
                 margin: "0 auto",
-                marginBottom: "5%",
+                marginBottom: "2%",
                 textAlign: "center",
               }}
             >
@@ -233,7 +234,7 @@ export default function ViewPickup() {
             <Row
               style={{
                 margin: "0 auto",
-                marginBottom: "5%",
+                marginBottom: "2%",
                 textAlign: "center",
               }}
             >
@@ -249,13 +250,47 @@ export default function ViewPickup() {
               style={{
                 margin: "0 auto",
                 textAlign: "center",
+                marginBottom: "2%",
+              }}
+            >
+              <Col>
+                <h4
+                  style={{
+                    textAlign: "center",
+                    color: "rgba(40, 111, 18, 1)",
+                  }}
+                >
+                  Weight : {selectedPickup.wasteQty} kg
+                </h4>
+              </Col>
+            </Row>
+            <Row
+              style={{
+                margin: "0 auto",
+                textAlign: "center",
+                marginBottom: "2%",
               }}
             >
               <Col>
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  Weight : {selectedPickup.wasteQty} kg
+                  Address : {selectedPickup.address}
+                </h4>
+              </Col>
+            </Row>
+            <Row
+              style={{
+                margin: "0 auto",
+                textAlign: "center",
+                marginBottom: "2%",
+              }}
+            >
+              <Col>
+                <h4
+                  style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
+                >
+                  Area : {selectedPickup.area}
                 </h4>
               </Col>
             </Row>
