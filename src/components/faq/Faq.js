@@ -26,7 +26,6 @@ function Faq(props) {
     const initialMount = useRef(true);
     const getData = () => {
         axios.get(WEB_API_URL + '/faq').then(res => {
-            console.log(111, res);
             setFaq(res.data.data);
         }).catch(err => {
             console.log(err)
@@ -59,7 +58,7 @@ function Faq(props) {
             })
         }
         else {
-            let newFaq = { oldAnswer:faq.oldAnswer,newAnswer:faq.newAnswer,newQuestion: faq.question, newAnswer: faq.answer,faqId:faq.id, type: 'update' }
+            let newFaq = { oldAnswer:faq.oldAnswer,newAnswer:faq.newAnswer,newQuestion: faq.question, oldQuestion: faq.oldQuestion,faqId:faq.id, type: 'update' }
             axios.post(WEB_API_URL + '/faq/create-request', newFaq).then(_ => {
 
             }).catch(err => {
