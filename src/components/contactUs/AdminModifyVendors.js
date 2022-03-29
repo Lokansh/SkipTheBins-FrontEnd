@@ -5,7 +5,6 @@ import "./ContactUs.css";
 import { Table, Form, Button } from "react-bootstrap";
 import AdminModifyVendorReadOnly from "./AdminModifyVendorReadOnly";
 import AdminModifyVendorEditable from "./AdminModifyVendorEditable";
-import ContactUs from "./ContactUs";
 
 function AdminModifyVendors() {
   const [vendors, setVendors] = useState([]);
@@ -152,12 +151,11 @@ function AdminModifyVendors() {
   };
 
   const deleteVendorApiCall = (vendorId) => {
-    // const deleteId = {
-    //   _id: vendorId,
-    // };
-    const url = "http://localhost:8080/api/vendor/delete/" + vendorId;
+    const deleteId = {
+      _id: vendorId,
+    };
     axios
-      .delete(url)
+      .post("http://localhost:8080/api/vendor/delete", deleteId)
       .then((res) => {
         if (res.data.success) {
           ///ADD notification of Prashit
@@ -189,7 +187,7 @@ function AdminModifyVendors() {
           </thead>
           <tbody>
             {vendors.map((vendor, index) => (
-              <Fragment>
+              <Fragment key={index}>
                 {editVendorId === vendor._id ? (
                   <AdminModifyVendorEditable
                     index={index}
