@@ -42,7 +42,6 @@ function Header() {
                     
                         <Nav.Link href="#pickups">Pickups</Nav.Link>
                         <Nav.Link href="#rewards">Rewards</Nav.Link>
-                        <Nav.Link href="#profile">Profile</Nav.Link>
                         {!showMenu && <Nav.Link href="/login">Login</Nav.Link>} 
                         {!showMenu && <Nav.Link href="/signup">Signup</Nav.Link>}
                         {showMenu && <NavDropdown title="Profile" id="basic-nav-dropdown">
