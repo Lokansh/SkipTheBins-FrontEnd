@@ -29,13 +29,7 @@ const StatusSelect = (props) => {
     event.preventDefault();
     const data = {
       _id: row._id,
-      scheduleId: row.scheduleId,
-      vendorId: row.vendorId,
-      batchNo: row.batchNo,
       status: status,
-      date: row.date,
-      area: row.area,
-      slot: row.slot,
     };
     fetch(API_URL, {
       method: "PUT",
