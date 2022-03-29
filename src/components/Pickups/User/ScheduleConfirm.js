@@ -4,11 +4,12 @@ import { useLocation } from "react-router-dom";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function ScheduleConfirm() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { date, time, area, weight, bags, wasteTypes } = state;
+  const { date, time, area, weight, bags, wasteTypes, batchNo } = state;
   const [address, setAddress] = useState("");
   const [radioDisable, setRadioDisable] = useState(false);
 
@@ -25,15 +26,41 @@ export default function ScheduleConfirm() {
     }
   };
 
-  const submitClick = () => {
-    message.config({top: "10%"});
-    if(address !== "") {
-      message.success('Pickup is successfully scheduled');
-      navigate("/");
+  const submitClick = async () => {
+    if (address !== "") {
+      const timeVendorArr = time.split("=");
+      const body = {
+        userId: "5678",
+        date,
+        area,
+        wasteType: wasteTypes,
+        boxQty: bags,
+        wasteQty: weight,
+        slot: timeVendorArr[0],
+        vendor: timeVendorArr[1],
+        batchNo,
+        address: address,
+      };
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/user/schedule",
+          body
+        );
+
+        if (response.status === 200 && response.data.success === true) {
+          message.config({ top: "10%" });
+          message.success(response.data.message);
+          navigate("/");
+        } else {
+          message.error(response.data.message);
+        }
+      } catch (e) {
+        console.log(e);
+      }
     } else {
-      message.error('Please provide an address');
+      message.error("Please provide an address");
     }
-  }
+  };
 
   return (
     <Row>
@@ -98,7 +125,7 @@ export default function ScheduleConfirm() {
               <h4
                 style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
               >
-                Waste Types : {wasteTypes.map(item => item).join(', ')}
+                Waste Types : {wasteTypes.map((item) => item).join(", ")}
               </h4>
             </Col>
           </Row>
@@ -154,7 +181,13 @@ export default function ScheduleConfirm() {
           >
             Pickup Address
           </h3>
-          <h4 style={{ fontWeight: "bolder", color: "rgba(17, 45, 92,0.85)", marginLeft: "3%" }}>
+          <h4
+            style={{
+              fontWeight: "bolder",
+              color: "rgba(17, 45, 92,0.85)",
+              marginLeft: "3%",
+            }}
+          >
             Area: {area}
           </h4>
           <Form.Check
@@ -181,7 +214,7 @@ export default function ScheduleConfirm() {
               fontWeight: "bolder",
               color: "rgba(17, 45, 92,0.85)",
               marginTop: "5%",
-              marginLeft: "3%"
+              marginLeft: "3%",
             }}
           >
             Different Address?
@@ -190,7 +223,7 @@ export default function ScheduleConfirm() {
             style={{
               maxWidth: "80%",
               boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-              marginLeft: "5%"
+              marginLeft: "5%",
             }}
             type="text"
             onChange={onNewAddress}
@@ -200,7 +233,7 @@ export default function ScheduleConfirm() {
               maxWidth: "30%",
               boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
               marginTop: "5%",
-              marginLeft: "5%"
+              marginLeft: "5%",
             }}
             variant="success"
             onClick={submitClick}

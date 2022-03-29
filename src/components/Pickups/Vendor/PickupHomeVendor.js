@@ -51,7 +51,7 @@ export default function PickupHomeVendor() {
             title="Cancel Schedule"
             desc="You want to cancel a schedule, not a problem !"
             img={cancel}
-            btnClick={() => navigate("/vendor/pickups/cancel")}
+            btnClick={() => navigate("/vendor/pickups/delete")}
           />
         </div>
       </Row>

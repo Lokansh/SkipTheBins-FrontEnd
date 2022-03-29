@@ -9,7 +9,7 @@ export default function DispCard(props) {
       <Card.Body>
         <Card.Title className="cardTitle">{props.title}</Card.Title>
         <Card.Text className="cardDesc">{props.desc}</Card.Text>
-        <div class="col text-center">
+        <div className="col text-center">
           <Button className="cardButton" variant="success" onClick={props.btnClick}>
             Go
           </Button>

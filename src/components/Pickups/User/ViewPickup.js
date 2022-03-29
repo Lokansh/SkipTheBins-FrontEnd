@@ -3,26 +3,30 @@ import { Button, ButtonGroup, Row, Col } from "react-bootstrap";
 import moment from "moment";
 import { Calendar } from "antd";
 import { useNavigate } from "react-router-dom";
+import { message } from "antd";
+import axios from "axios";
 
 export default function ViewPickup() {
   const navigate = useNavigate();
-  const [date, setDate] = useState(moment().add(1, "day"));
+  const [date, setDate] = useState(moment().format("LL"));
   const [time, setTime] = useState("");
-  const [wasteTypes, setWasteTypes] = useState([
-    "Cardboard",
-    "Glass",
-    "Plastic",
-  ]);
-  const [bags, setBages] = useState(2);
-  const [weight, setWeight] = useState(3);
   const [showDetails, setShowDetails] = useState(false);
+  const [pickups, setPickups] = useState([]);
+  const [selectedPickup, setSelectedPickup] = useState({});
 
   const dateChange = (event) => {
-    setDate(event._d);
+    setDate(event.format("LL"));
+    getPickups(event.format("LL"));
   };
 
   const onTimeSelect = (event) => {
     setTime(event.target.value);
+    const slot = event.target.value.split("=")[0].trim();
+    const vendor = event.target.value.split("=")[1].trim();
+    const selectedPickup = pickups.filter(
+      (pickup) => pickup.slot === slot && pickup.vendor === vendor
+    );
+    setSelectedPickup(selectedPickup[0]);
   };
 
   const submitClick = () => {
@@ -30,14 +34,44 @@ export default function ViewPickup() {
   };
 
   useEffect(() => {
-    if (time !== "") {
+    if (time !== "" && selectedPickup !== {}) {
       setShowDetails(true);
     }
-  }, [time]);
+  }, [time, selectedPickup]);
+
+  useEffect(() => {
+    getPickups(moment().format("LL"));
+  }, []);
+
+  const getPickups = async (getDate) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/user/pickups",
+        {
+          params: {
+            userId: "5678",
+            date: getDate,
+          },
+        }
+      );
+
+      if (response.status === 200 && response.data.success === true) {
+        setPickups(response.data.pickups);
+      } else {
+        setShowDetails(false);
+        setPickups([]);
+        message.config({ top: "10%" });
+        message.error(response.data.message);
+      }
+    } catch (e) {
+      console.log(e);
+      message.config({ top: "10%" });
+      message.error("Something went wrong!");
+    }
+  };
 
   return (
     <Row>
-      {/* {console.log(date.toISOString())} */}
       <Row>
         <Col>
           <h3
@@ -68,12 +102,12 @@ export default function ViewPickup() {
               >
                 Select Date
               </h5>
-              <div style={{display: "flex", justifyContent: "center"}}>
+              <div style={{ display: "flex", justifyContent: "center" }}>
                 <Calendar
                   fullscreen={false}
-                  defaultValue={moment().add(1, "day").endOf("day")}
+                  defaultValue={moment().endOf("day")}
                   disabledDate={(current) =>
-                    current && current <= moment().endOf("day")
+                    current && current < moment().endOf("day")
                   }
                   onSelect={dateChange}
                   style={{
@@ -101,32 +135,28 @@ export default function ViewPickup() {
                   vertical
                   onClick={onTimeSelect}
                 >
-                  <Button
-                    style={{
-                      margin: "2%",
-                      border: "1px solid rgba(40, 111, 18,0.85)",
-                      boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-                    }}
-                    variant="light"
-                    size="sm"
-                    value="9 AM - Walmart"
-                    active={time === "9 AM - Walmart" ? true : false}
-                  >
-                    9 AM - Walmart
-                  </Button>
-                  <Button
-                    style={{
-                      margin: "2%",
-                      border: "1px solid rgba(40, 111, 18,0.85)",
-                      boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-                    }}
-                    variant="light"
-                    size="sm"
-                    value="11 AM - Walmart"
-                    active={time === "11 AM - Walmart" ? true : false}
-                  >
-                    11 AM - Walmart
-                  </Button>
+                  {pickups.map((pickup, index) => {
+                    return (
+                      <Button
+                        key={index}
+                        style={{
+                          margin: "2%",
+                          border: "1px solid rgba(40, 111, 18,0.85)",
+                          boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
+                        }}
+                        variant="light"
+                        size="sm"
+                        value={`${pickup.slot} - ${pickup.vendor}`}
+                        active={
+                          time === `${pickup.slot} : ${pickup.vendor}`
+                            ? true
+                            : false
+                        }
+                      >
+                        {pickup.slot} - {pickup.vendor}
+                      </Button>
+                    );
+                  })}
                 </ButtonGroup>
               </Row>
             </Row>
@@ -165,7 +195,7 @@ export default function ViewPickup() {
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  Date : {moment(date).format("LL")}
+                  Date : {selectedPickup.date}
                 </h4>
               </Col>
             </Row>
@@ -180,7 +210,7 @@ export default function ViewPickup() {
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  Time : {time}
+                  Time : {selectedPickup.slot + " - " + selectedPickup.vendor}
                 </h4>
               </Col>
             </Row>
@@ -195,7 +225,8 @@ export default function ViewPickup() {
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  Waste Types : {wasteTypes.map((item) => item).join(", ")}
+                  Waste Types :{" "}
+                  {selectedPickup.wasteType.map((item) => item).join(", ")}
                 </h4>
               </Col>
             </Row>
@@ -210,14 +241,9 @@ export default function ViewPickup() {
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  No. of bags : {bags}
+                  No. of bags : {selectedPickup.boxQty}
                 </h4>
               </Col>
-              {/* <Col sm={7}>
-              <h4 style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}>
-                {bags}
-              </h4>
-            </Col> */}
             </Row>
             <Row
               style={{
@@ -229,14 +255,9 @@ export default function ViewPickup() {
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  Weight : {weight}
+                  Weight : {selectedPickup.wasteQty} kg
                 </h4>
               </Col>
-              {/* <Col sm={7}>
-              <h4 style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}>
-                {weight}
-              </h4>
-            </Col> */}
             </Row>
           </div>
         </Col>

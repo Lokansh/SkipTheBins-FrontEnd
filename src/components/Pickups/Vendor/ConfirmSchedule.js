@@ -68,9 +68,9 @@ export default function ScheduleConfirm() {
               return (
                 <tr key={index}>
                   <td>
-                    {moment(slot.time[0]).format("hh:mm A") +
+                    {slot.time[0] +
                       " to " +
-                      moment(slot.time[1]).format("hh:mm A")}
+                      slot.time[1]}
                   </td>
                   <td>{slot.area}</td>
                 </tr>

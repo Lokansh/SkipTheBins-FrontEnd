@@ -4,27 +4,13 @@ import { message, TimePicker, Progress, Calendar } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
+import axios from "axios";
 
 export default function EditSchedule() {
   const navigate = useNavigate();
 
-  const [date, setDate] = useState(moment().add(1, "day").endOf("day"));
-  const [slots, setSlots] = useState([
-    {
-      area: "Spring Garden",
-      time: [
-        "Sat Mar 26 2022 14:30:00 GMT-0300 (Atlantic Daylight Time)",
-        "Sat Mar 26 2022 15:30:00 GMT-0300 (Atlantic Daylight Time)",
-      ],
-    },
-    {
-      area: "Bayers Road",
-      time: [
-        "Sat Mar 26 2022 18:30:00 GMT-0300 (Atlantic Daylight Time",
-        "Sat Mar 26 2022 19:30:00 GMT-0300 (Atlantic Daylight Time)",
-      ],
-    },
-  ]);
+  const [date, setDate] = useState(moment().add(1, "day").format("LL"));
+  const [slots, setSlots] = useState([]);
 
   const [time, setTime] = useState([]);
   const [area, setArea] = useState("Select Area");
@@ -33,9 +19,12 @@ export default function EditSchedule() {
   const [addDisable, setAddDisable] = useState(true);
 
   const [pickerTime, setPickerTime] = useState();
-const [buttonText, setButtonText] = useState("Add");
+  const [buttonText, setButtonText] = useState("Add");
+  const [editableSchedule, setEditableSchedule] = useState({});
+
   const dateChange = (event) => {
-    setDate(event._d);
+    setDate(event.format("LL"));
+    getSchedules(event.format("LL"));
   };
 
   const onAreaSelect = (event) => {
@@ -55,14 +44,53 @@ const [buttonText, setButtonText] = useState("Add");
         message.config({ top: "10%" });
         message.error("Invalid Time Range!");
       } else {
-        setTime([event[0]._d, event[1]._d]);
+        setTime([event[0].format("hh:mm A"), event[1].format("hh:mm A")]);
       }
     }
   };
 
-  const slotSubmit = () => {
-    const newSlot = [{ time, area }];
-    setSlots((currSlots) => currSlots.concat(newSlot));
+  const slotSubmit = async () => {
+    if (buttonText === "Add") {
+    } else if (buttonText === "Update") {
+      try {
+        const body = {
+          vendorId: editableSchedule.vendor,
+          vendor: editableSchedule.vendorId,
+          area: area,
+          date: editableSchedule.date,
+          batchNo: editableSchedule.batchNo,
+          slot: [time[0], time[1]],
+        };
+        const response = await axios.put(
+          "http://localhost:8080/api/vendor/update/" + editableSchedule.id,
+          body
+        );
+
+        if (response.status === 200 && response.data.success === true) {
+          const existingSlots = slots;
+          existingSlots.push({
+            area: area,
+            time: [time[0], time[1]],
+            id: editableSchedule.id,
+            vendorId: editableSchedule.vendorId,
+            vendor: editableSchedule.vendor,
+            batchNo: editableSchedule.batchNo,
+            date: editableSchedule.date,
+          });
+          setSlots(existingSlots);
+        } else {
+          setSlots(slots);
+          message.config({ top: "10%" });
+          message.error(response.data.message);
+        }
+      } catch (e) {
+        console.log(e);
+        message.config({ top: "10%" });
+        message.error("Something went wrong!");
+      }
+    }
+    // const newSlot = [{ time, area }];
+    // setSlots((currSlots) => currSlots.concat(newSlot));
     setTime([]);
     setPickerTime();
     setArea("Select Area");
@@ -98,22 +126,78 @@ const [buttonText, setButtonText] = useState("Add");
     navigate("/");
   };
 
-  const slotDeleteClick = (delIndex) => {
-    const newSlots = slots.filter((slot, index) => index !== delIndex);
+  const slotDeleteClick = async (id) => {
+    try {
+      const response = await axios.delete(
+        "http://localhost:8080/api/vendor/delete/" + id
+      );
+    } catch (e) {
+      console.log(e);
+    }
+    const newSlots = slots.filter((slot) => slot.id !== id);
     setSlots(newSlots);
   };
 
-  const slotEditClick = (editIndex) => {
-    setArea(slots[editIndex].area);
-    setTime([slots[editIndex].time[0], slots[editIndex].time[1]]);
+  const slotEditClick = (id) => {
+    const selectedSlot = slots.filter((slot) => slot.id === id);
+    setEditableSchedule(selectedSlot[0]);
+    setArea(selectedSlot[0].area);
+    setTime([selectedSlot[0].time[0], selectedSlot[0].time[1]]);
     setPickerTime([
-      moment(slots[editIndex].time[0]),
-      moment(slots[editIndex].time[1]),
+      moment(selectedSlot[0].time[0], "hh:mm A"),
+      moment(selectedSlot[0].time[1], "hh:mm A"),
     ]);
-    const newSlots = slots.filter((slot, index) => index !== editIndex);
+    const newSlots = slots.filter((slot) => slot.id !== id);
     setSlots(newSlots);
 
     setButtonText("Update");
+  };
+
+  useEffect(() => {
+    getSchedules(moment().add(1, "day").format("LL"));
+  }, []);
+
+  const getSchedules = async (getDate) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/vendor/schedules",
+        {
+          params: {
+            date: getDate,
+            vendorId: "1267",
+          },
+        }
+      );
+      if (response.status === 200 && response.data.success === true) {
+        const schedules = response.data.schedules;
+        let scheduleSlots = [];
+
+        for (var i = 0; i < schedules.length; i++) {
+          scheduleSlots.push({
+            area: schedules[i].area,
+            time: [
+              schedules[i].slot.split("-")[0].trim(),
+              schedules[i].slot.split("-")[1].trim(),
+            ],
+            id: schedules[i].scheduleId,
+            vendorId: schedules[i].vendorId,
+            vendor: schedules[i].vendor,
+            batchNo: schedules[i].batchNo,
+            date: schedules[i].date,
+          });
+        }
+        setSlots(scheduleSlots);
+      } else {
+        // setShowDetails(false);
+        setSlots([]);
+        message.config({ top: "10%" });
+        message.error(response.data.message);
+      }
+    } catch (e) {
+      console.log(e);
+      message.config({ top: "10%" });
+      message.error("Something went wrong!");
+    }
   };
 
   return (
@@ -158,7 +242,6 @@ const [buttonText, setButtonText] = useState("Add");
                     style={{
                       boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
                       width: "90%",
-                      // marginLeft: "2%",
                     }}
                   />
                 </div>
@@ -190,9 +273,9 @@ const [buttonText, setButtonText] = useState("Add");
                             border: "1px solid rgba(17, 45, 92, 0.85)",
                           }}
                         >
-                          {moment(slot.time[0]).format("hh:mm A") +
+                          {slot.time[0] +
                             " to " +
-                            moment(slot.time[1]).format("hh:mm A") +
+                            slot.time[1] +
                             " - " +
                             slot.area}
                           <Button
@@ -202,7 +285,7 @@ const [buttonText, setButtonText] = useState("Add");
                               paddingBottom: "2%",
                             }}
                             variant="light"
-                            onClick={() => slotDeleteClick(index)}
+                            onClick={() => slotDeleteClick(slot.id)}
                           >
                             <DeleteTwoTone
                               twoToneColor="red"
@@ -216,7 +299,7 @@ const [buttonText, setButtonText] = useState("Add");
                               paddingBottom: "2%",
                             }}
                             variant="light"
-                            onClick={() => slotEditClick(index)}
+                            onClick={() => slotEditClick(slot.id)}
                           >
                             <EditTwoTone
                               twoToneColor="green"

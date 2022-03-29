@@ -1,32 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Button, Table, Row, Col } from "react-bootstrap";
 import moment from "moment";
-import { Calendar } from "antd";
+import { Calendar, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function ViewSchedule() {
   const navigate = useNavigate();
-  const [date, setDate] = useState();
-  const [slots, setSlots] = useState([
-    {
-      area: "Spring Garden",
-      time: [
-        "Sat Mar 26 2022 14:30:00 GMT-0300 (Atlantic Daylight Time)",
-        "Sat Mar 26 2022 15:30:00 GMT-0300 (Atlantic Daylight Time)",
-      ],
-    },
-    {
-      area: "Bayers Road",
-      time: [
-        "Sat Mar 26 2022 18:30:00 GMT-0300 (Atlantic Daylight Time",
-        "Sat Mar 26 2022 19:30:00 GMT-0300 (Atlantic Daylight Time)",
-      ],
-    },
-  ]);
+  const [date, setDate] = useState(moment().format("LL"));
+  const [slots, setSlots] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
 
   const dateChange = (event) => {
-    setDate(event._d);
+    setDate(event.format("LL"));
+    getSchedules(event.format("LL"));
   };
 
   const submitClick = () => {
@@ -38,6 +25,50 @@ export default function ViewSchedule() {
       setShowDetails(true);
     }
   }, [date]);
+
+  useEffect(() => {
+   getSchedules(moment().format("LL"));
+  },[]);
+
+  const getSchedules = async (getDate) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/vendor/schedules",
+        {
+          params: {
+            date: getDate,
+            vendorId: '1267'
+          },
+        }
+      );
+
+      if (response.status === 200 && response.data.success === true) {
+        const schedules = response.data.schedules;
+        let scheduleSlots=[];
+
+        for(var i=0; i<schedules.length; i++) {
+          console.log(schedules[i]);
+          scheduleSlots.push({
+            area: schedules[i].area,
+            time: [
+              schedules[i].slot.split("-")[0].trim(),
+              schedules[i].slot.split("-")[1].trim()
+            ]
+          })
+        }
+        setSlots(scheduleSlots);
+      } else {
+        setShowDetails(false);
+        setSlots([]);
+        message.config({ top: "10%" });
+        message.error(response.data.message);
+      }
+    } catch (e) {
+      console.log(e);
+      message.config({ top: "10%" });
+      message.error("Something went wrong!");
+    }
+  };
 
   return (
     <Row>
@@ -122,9 +153,9 @@ export default function ViewSchedule() {
                   return (
                     <tr key={index}>
                       <td>
-                        {moment(slot.time[0]).format("hh:mm A") +
+                        {slot.time[0] +
                           " to " +
-                          moment(slot.time[1]).format("hh:mm A")}
+                          slot.time[1]}
                       </td>
                       <td>{slot.area}</td>
                     </tr>

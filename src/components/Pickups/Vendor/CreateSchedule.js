@@ -3,14 +3,15 @@ import { ProgressBar, Button, Dropdown, Row, Col } from "react-bootstrap";
 import { message, DatePicker, TimePicker, Progress } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const { RangePicker } = DatePicker;
 
 export default function SchedulePickup() {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [date, setDate] = useState([
-    moment().add(1, "day").endOf("day")._d,
-    moment().add(1, "day").endOf("day")._d,
+    moment().add(1, "day").format("LL"),
+    moment().add(1, "day").format("LL"),
   ]);
   const [time, setTime] = useState([]);
   const [area, setArea] = useState("Select Area");
@@ -18,15 +19,15 @@ export default function SchedulePickup() {
   const [nextDisable, setNextDisable] = useState(true);
   const [addDisable, setAddDisable] = useState(true);
   const [slots, setSlots] = useState([]);
-
+  const [areaData, setAreaData] = useState([]);
   const [pickerTime, setPickerTime] = useState();
 
   const dateChange = (event) => {
     if (event === null) {
       setDate([]);
     } else {
-      const fromDate = event[0]._d;
-      const toDate = event[1]._d;
+      const fromDate = event[0].format("LL");
+      const toDate = event[1].format("LL");
       setDate([fromDate, toDate]);
     }
   };
@@ -48,7 +49,7 @@ export default function SchedulePickup() {
         message.config({ top: "10%" });
         message.error("Invalid Time Range!");
       } else {
-        setTime([event[0]._d, event[1]._d]);
+        setTime([event[0].format("hh:mm A"), event[1].format("hh:mm A")]);
       }
     }
   };
@@ -90,19 +91,58 @@ export default function SchedulePickup() {
     }
     setProgress(progress);
     setSlotProgress(slotProgress);
-  }, [date, time, area]);
+  }, [date, time, area, slots]);
 
-  const submitClick = () => {
-    if (progress === 100) {
+  useEffect(() => {
+    getArea();
+  }, []);
+
+  const getArea = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/area");
+
+      if (response.status === 200 && response.data.success === true) {
+        setAreaData(response.data.areas);
+      } else {
+        setAreaData([]);
+      }
+    } catch (e) {
+      console.log(e);
       message.config({ top: "10%" });
-      message.success("Schedule is created successfully!");
+      message.error("Something went wrong!");
+    }
+  };
 
-      navigate("/vendor/pickups/confirm", {
-        state: {
-          date,
-          slots,
-        },
-      });
+  const submitClick = async () => {
+    if (progress === 100) {
+      const body = {
+        fromDate: date[0],
+        toDate: date[1],
+        vendorId: "1267",
+        vendor: "Walmart",
+        slots: slots,
+      };
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/vendor/create",
+          body
+        );
+
+        if (response.status === 200 && response.data.success === true) {
+          message.config({ top: "10%" });
+          message.success(response.data.message);
+          navigate("/vendor/pickups/confirm", {
+            state: {
+              date,
+              slots,
+            },
+          });
+        } else {
+          message.error(response.data.message);
+        }
+      } catch (e) {
+        console.log(e);
+      }
     } else {
       message.config({ top: "10%" });
       message.error("Some details missing!");
@@ -179,7 +219,7 @@ export default function SchedulePickup() {
                   style={{
                     color: "rgba(17, 45, 92,0.85)",
                     textAlign: "left",
-                    paddingLeft: "5%"
+                    paddingLeft: "5%",
                   }}
                 >
                   Enter Slot Details
@@ -200,9 +240,9 @@ export default function SchedulePickup() {
                             border: "1px solid rgba(17, 45, 92, 0.85)",
                           }}
                         >
-                          {moment(slot.time[0]).format("hh:mm A") +
+                          {slot.time[0] +
                             " to " +
-                            moment(slot.time[1]).format("hh:mm A") +
+                            slot.time[1] +
                             " - " +
                             slot.area}
                         </h5>
@@ -248,24 +288,17 @@ export default function SchedulePickup() {
                         style={{ width: "100%" }}
                         onClick={onAreaSelect}
                       >
-                        <Dropdown.Item
-                          style={{ textAlign: "center" }}
-                          value="Spring Garden"
-                        >
-                          Spring Garden
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                          style={{ textAlign: "center" }}
-                          value="Lower Sackville"
-                        >
-                          Lower Sackville
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                          style={{ textAlign: "center" }}
-                          value="Bayers Road"
-                        >
-                          Bayers Road
-                        </Dropdown.Item>
+                        {areaData.map((area, index) => {
+                          return (
+                            <Dropdown.Item
+                              key={index}
+                              style={{ textAlign: "center" }}
+                              value={area.name}
+                            >
+                              {area.name}
+                            </Dropdown.Item>
+                          );
+                        })}
                       </Dropdown.Menu>
                     </Dropdown>
                   </Col>

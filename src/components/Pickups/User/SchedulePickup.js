@@ -15,11 +15,12 @@ import { Calendar, message } from "antd";
 import moment from "moment";
 import "./SchedulePickup.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function SchedulePickup() {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
-  const [date, setDate] = useState(moment().add(1, "day").endOf("day")._d);
+  const [date, setDate] = useState(moment().add(1, "day").format("LL"));
   const [time, setTime] = useState("");
   const [area, setArea] = useState("Select Area");
   const [wasteTypes, setWasteTypes] = useState([]);
@@ -27,18 +28,29 @@ export default function SchedulePickup() {
   const [weight, setWeight] = useState(0);
   const [showFields, setShowFields] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [areaData, setAreaData] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+  const [batchNo, setBatchNo] = useState();
 
   const dateChange = (event) => {
-    setDate(event._d);
+    setDate(event.format("LL"));
+    getSlots(event.format("LL"), area);
   };
 
   const onAreaSelect = (event) => {
     setArea(event.target.innerText);
     setShowFields(true);
+    getSlots(date, event.target.innerText);
   };
 
   const onTimeSelect = (event) => {
     setTime(event.target.value);
+    const slot = event.target.value.split("=")[0].trim();
+    const vendor = event.target.value.split("=")[1].trim();
+    const selectedSlot = schedules.filter(
+      (schedule) => schedule.slot === slot && schedule.vendor === vendor
+    );
+    setBatchNo(selectedSlot[0].batchNo);
   };
 
   const wasteTypeChange = (event) => {
@@ -83,6 +95,49 @@ export default function SchedulePickup() {
     };
   }, [showAlert]);
 
+  useEffect(() => {
+    getArea();
+  }, []);
+
+  const getSlots = async (getDate, getArea) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/vendor/schedules",
+        {
+          params: {
+            date: getDate,
+            area: getArea,
+          },
+        }
+      );
+      if (response.status === 200 && response.data.success === true) {
+        setSchedules(response.data.schedules);
+      } else {
+        setSchedules([]);
+      }
+    } catch (e) {
+      console.log(e);
+      message.config({ top: "10%" });
+      message.error("Something went wrong!");
+    }
+  };
+
+  const getArea = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/area");
+
+      if (response.status === 200 && response.data.success === true) {
+        setAreaData(response.data.areas);
+      } else {
+        setAreaData([]);
+      }
+    } catch (e) {
+      console.log(e);
+      message.config({ top: "10%" });
+      message.error("Something went wrong!");
+    }
+  };
+
   const submitClick = () => {
     if (progress === 100) {
       navigate("/user/pickups/confirm", {
@@ -93,11 +148,10 @@ export default function SchedulePickup() {
           wasteTypes,
           bags,
           weight,
+          batchNo
         },
       });
     } else {
-      // window.alert("Please provide all the details!");
-      // setShowAlert(true);
       message.config({ top: "10%" });
       message.error("Some details missing!");
     }
@@ -170,15 +224,17 @@ export default function SchedulePickup() {
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{ width: "100%" }} onClick={onAreaSelect}>
-              <Dropdown.Item style={{ textAlign: "center" }} value="Area 1">
-                Area 1
-              </Dropdown.Item>
-              <Dropdown.Item style={{ textAlign: "center" }} value="Area 2">
-                Area 2
-              </Dropdown.Item>
-              <Dropdown.Item style={{ textAlign: "center" }} value="Area 3">
-                Area 3
-              </Dropdown.Item>
+              {areaData.map((area, index) => {
+                return (
+                  <Dropdown.Item
+                    key={index}
+                    style={{ textAlign: "center" }}
+                    value={area.name}
+                  >
+                    {area.name}
+                  </Dropdown.Item>
+                );
+              })}
             </Dropdown.Menu>
           </Dropdown>
         </div>
@@ -223,38 +279,38 @@ export default function SchedulePickup() {
                     Select Time & Vendor
                   </h5>
                   <Row style={{ justifyContent: "center" }} className="d-flex">
-                    <ButtonGroup
-                      style={{ minWidth: "80%" }}
-                      vertical
-                      onClick={onTimeSelect}
-                    >
-                      <Button
-                        style={{
-                          margin: "2%",
-                          border: "1px solid rgba(40, 111, 18,0.85)",
-                          boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-                        }}
-                        variant="light"
-                        size="sm"
-                        value="9 AM - Walmart"
-                        active={time === "9 AM - Walmart" ? true : false}
+                    {schedules.length === 0 ? (
+                      <h4>No slots found!</h4>
+                    ) : (
+                      <ButtonGroup
+                        style={{ minWidth: "80%" }}
+                        vertical
+                        onClick={onTimeSelect}
                       >
-                        9 AM - Walmart
-                      </Button>
-                      <Button
-                        style={{
-                          margin: "2%",
-                          border: "1px solid rgba(40, 111, 18,0.85)",
-                          boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-                        }}
-                        variant="light"
-                        size="sm"
-                        value="11 AM - Walmart"
-                        active={time === "11 AM - Walmart" ? true : false}
-                      >
-                        11 AM - Walmart
-                      </Button>
-                    </ButtonGroup>
+                        {schedules.map((schedule, index) => {
+                          return (
+                            <Button
+                              key={index}
+                              style={{
+                                margin: "2%",
+                                border: "1px solid rgba(40, 111, 18,0.85)",
+                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
+                              }}
+                              variant="light"
+                              size="sm"
+                              value={`${schedule.slot} = ${schedule.vendor}`}
+                              active={
+                                time === `${schedule.slot} = ${schedule.vendor}`
+                                  ? true
+                                  : false
+                              }
+                            >
+                              {schedule.slot} = {schedule.vendor}
+                            </Button>
+                          );
+                        })}
+                      </ButtonGroup>
+                    )}
                   </Row>
                 </Row>
               </Col>

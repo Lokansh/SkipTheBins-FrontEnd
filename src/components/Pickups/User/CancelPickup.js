@@ -4,43 +4,94 @@ import moment from "moment";
 import { Calendar, message, Popconfirm } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function CancelPickup() {
   const navigate = useNavigate();
-  const [date, setDate] = useState(moment().add(1, "day").endOf("day")._d);
+  const [date, setDate] = useState(moment().add(1, "day").format("LL"));
   const [time, setTime] = useState("");
-  const [wasteTypes, setWasteTypes] = useState([
-    "Cardboard",
-    "Glass",
-    "Plastic",
-  ]);
-  const [bags, setBages] = useState(2);
-  const [weight, setWeight] = useState(3);
   const [showDetails, setShowDetails] = useState(false);
+  const [pickups, setPickups] = useState([]);
+  const [selectedPickup, setSelectedPickup] = useState({});
 
   const dateChange = (event) => {
-    setDate(event._d);
+    setDate(event.format("LL"));
+    getPickups(event.format("LL"));
   };
 
   const onTimeSelect = (event) => {
     setTime(event.target.value);
+    const slot = event.target.value.split("=")[0].trim();
+    const vendor = event.target.value.split("=")[1].trim();
+    const selectedPickup = pickups.filter(
+      (pickup) => pickup.slot === slot && pickup.vendor === vendor
+    );
+    setSelectedPickup(selectedPickup[0]);
   };
 
   const submitClick = () => {
     navigate("/");
   };
 
-  const cancelPickup = () => {
-    message.config({ top: "10%" });
-    message.success("Pickup successfully cancelled");
-    navigate("/");
+  const cancelPickup = async () => {
+    try {
+      const response = await axios.delete(
+        "http://localhost:8080/api/user/cancel/" + selectedPickup.pickupId
+      );
+
+      if (response.status === 200 && response.data.success === true) {
+        message.config({ top: "10%" });
+        message.success(response.data.message);
+        navigate("/");
+      } else {
+        setPickups([]);
+        message.config({ top: "10%" });
+        message.error(response.data.message);
+      }
+    } catch (e) {
+      console.log(e);
+      message.config({ top: "10%" });
+      message.error("Something went wrong!");
+    }
   };
 
   useEffect(() => {
-    if (time !== "") {
+    if (time !== "" && selectedPickup !== {}) {
       setShowDetails(true);
     }
-  }, [time]);
+  }, [time,selectedPickup]);
+
+  useEffect(() => {
+    getPickups(moment().add(1, "day").format("LL"));
+  }, []);
+
+  const getPickups = async (getDate) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/user/pickups",
+        {
+          params: {
+            userId: "5678",
+            date: getDate,
+          },
+        }
+      );
+
+      if (response.status === 200 && response.data.success === true) {
+        setPickups(response.data.pickups);
+      } else {
+        setShowDetails(false);
+        setPickups([]);
+        message.config({ top: "10%" });
+        message.error(response.data.message);
+      }
+    } catch (e) {
+      console.log(e);
+      message.config({ top: "10%" });
+      message.error("Something went wrong!");
+    }
+  };
+
   return (
     <Row>
       <Row>
@@ -106,32 +157,28 @@ export default function CancelPickup() {
                   vertical
                   onClick={onTimeSelect}
                 >
-                  <Button
-                    style={{
-                      margin: "2%",
-                      border: "1px solid rgba(40, 111, 18,0.85)",
-                      boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-                    }}
-                    variant="light"
-                    size="sm"
-                    value="9 AM - Walmart"
-                    active={time === "9 AM - Walmart" ? true : false}
-                  >
-                    9 AM - Walmart
-                  </Button>
-                  <Button
-                    style={{
-                      margin: "2%",
-                      border: "1px solid rgba(40, 111, 18,0.85)",
-                      boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-                    }}
-                    variant="light"
-                    size="sm"
-                    value="11 AM - Walmart"
-                    active={time === "11 AM - Walmart" ? true : false}
-                  >
-                    11 AM - Walmart
-                  </Button>
+                  {pickups.map((pickup, index) => {
+                    return (
+                      <Button
+                        key={index}
+                        style={{
+                          margin: "2%",
+                          border: "1px solid rgba(40, 111, 18,0.85)",
+                          boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
+                        }}
+                        variant="light"
+                        size="sm"
+                        value={`${pickup.slot} - ${pickup.vendor}`}
+                        active={
+                          time === `${pickup.slot} : ${pickup.vendor}`
+                            ? true
+                            : false
+                        }
+                      >
+                        {pickup.slot} - {pickup.vendor}
+                      </Button>
+                    );
+                  })}
                 </ButtonGroup>
               </Row>
             </Row>
@@ -170,7 +217,7 @@ export default function CancelPickup() {
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  Date : {moment(date).format("LL")}
+                  Date : {selectedPickup.date}
                 </h4>
               </Col>
             </Row>
@@ -185,7 +232,7 @@ export default function CancelPickup() {
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  Time : {time}
+                  Time : {selectedPickup.slot + " - " + selectedPickup.vendor}
                 </h4>
               </Col>
             </Row>
@@ -200,7 +247,8 @@ export default function CancelPickup() {
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  Waste Types : {wasteTypes.map((item) => item).join(", ")}
+                  Waste Types :{" "}
+                  {selectedPickup.wasteType.map((item) => item).join(", ")}
                 </h4>
               </Col>
             </Row>
@@ -215,7 +263,7 @@ export default function CancelPickup() {
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  No. of bags : {bags}
+                  No. of bags : {selectedPickup.boxQty}
                 </h4>
               </Col>
             </Row>
@@ -229,17 +277,13 @@ export default function CancelPickup() {
                 <h4
                   style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
                 >
-                  Weight : {weight}
+                  Weight : {selectedPickup.wasteQty} kg
                 </h4>
               </Col>
               <Row style={{ marginTop: "1%" }} className="text-center">
                 <Popconfirm
                   title="Are you sure？"
-                  icon={
-                    <QuestionCircleOutlined
-                      style={{ color: "red" }}
-                    />
-                  }
+                  icon={<QuestionCircleOutlined style={{ color: "red" }} />}
                   onConfirm={cancelPickup}
                 >
                   <Button
