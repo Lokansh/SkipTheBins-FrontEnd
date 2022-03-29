@@ -10,12 +10,26 @@ function ContactUs() {
     navigate("submitquery");
   };
   return (
-    <div className="contactContainer">
-      <span className="contact-heading">Contact Us</span>
+    <div>
+      <h1
+        style={{
+          textAlign: "center",
+          fontWeight: "bolder",
+          color: "rgba(17, 45, 92,0.85)",
+          marginBottom: "1%",
+        }}
+      >
+        Contact Us
+      </h1>
       <DisplayVendors></DisplayVendors>
-      <Button variant="primary" onClick={handleSubmitQuery}>
-        Submit a Query
-      </Button>
+      <div
+        style={{ marginTop: "1%", justifyContent: "center" }}
+        class="text-center d flex"
+      >
+        <Button variant="primary" onClick={handleSubmitQuery}>
+          Submit a Query
+        </Button>
+      </div>
     </div>
   );
 }
