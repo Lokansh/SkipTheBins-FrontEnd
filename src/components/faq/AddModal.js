@@ -65,7 +65,9 @@ function AddModal(props) {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button onClick={addData} variant="primary">Add</Button>
+        {props.role=='admin'&&<Button onClick={addData} variant="primary">Add</Button>}
+
+        {props.role=='vendor'&&<Button onClick={addData} variant="primary">Request Addition</Button>}
       </Modal.Footer>
     </Modal>
 
