@@ -27,6 +27,7 @@ export default function CancelPickup() {
       (pickup) => pickup.slot === slot && pickup.vendor === vendor
     );
     setSelectedPickup(selectedPickup[0]);
+    console.log(selectedPickup[0]);
   };
 
   const submitClick = () => {
@@ -59,7 +60,7 @@ export default function CancelPickup() {
     if (time !== "" && selectedPickup !== {}) {
       setShowDetails(true);
     }
-  }, [time,selectedPickup]);
+  }, [time, selectedPickup]);
 
   useEffect(() => {
     getPickups(moment().add(1, "day").format("LL"));
@@ -168,14 +169,14 @@ export default function CancelPickup() {
                         }}
                         variant="light"
                         size="sm"
-                        value={`${pickup.slot} - ${pickup.vendor}`}
+                        value={`${pickup.slot} = ${pickup.vendor}`}
                         active={
-                          time === `${pickup.slot} : ${pickup.vendor}`
+                          time === `${pickup.slot} = ${pickup.vendor}`
                             ? true
                             : false
                         }
                       >
-                        {pickup.slot} - {pickup.vendor}
+                        {pickup.slot} = {pickup.vendor}
                       </Button>
                     );
                   })}
@@ -209,7 +210,7 @@ export default function CancelPickup() {
             <Row
               style={{
                 margin: "0 auto",
-                marginBottom: "5%",
+                marginBottom: "1%",
                 textAlign: "center",
               }}
             >
@@ -224,7 +225,7 @@ export default function CancelPickup() {
             <Row
               style={{
                 margin: "0 auto",
-                marginBottom: "5%",
+                marginBottom: "1%",
                 textAlign: "center",
               }}
             >
@@ -239,7 +240,7 @@ export default function CancelPickup() {
             <Row
               style={{
                 margin: "0 auto",
-                marginBottom: "5%",
+                marginBottom: "1%",
                 textAlign: "center",
               }}
             >
@@ -255,7 +256,7 @@ export default function CancelPickup() {
             <Row
               style={{
                 margin: "0 auto",
-                marginBottom: "5%",
+                marginBottom: "1%",
                 textAlign: "center",
               }}
             >
@@ -271,6 +272,7 @@ export default function CancelPickup() {
               style={{
                 margin: "0 auto",
                 textAlign: "center",
+                marginBottom: "1%",
               }}
             >
               <Col>
@@ -280,6 +282,38 @@ export default function CancelPickup() {
                   Weight : {selectedPickup.wasteQty} kg
                 </h4>
               </Col>
+            </Row>
+            <Row
+              style={{
+                margin: "0 auto",
+                textAlign: "center",
+                marginBottom: "1%",
+              }}
+            >
+              <Col>
+                <h4
+                  style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
+                >
+                  Address : {selectedPickup.address}
+                </h4>
+              </Col>
+            </Row>
+            <Row
+              style={{
+                margin: "0 auto",
+                textAlign: "center",
+                marginBottom: "1%",
+              }}
+            >
+              <Col>
+                <h4
+                  style={{ textAlign: "center", color: "rgba(40, 111, 18, 1)" }}
+                >
+                  Area : {selectedPickup.area}
+                </h4>
+              </Col>
+            </Row>
+            <Row>
               <Row style={{ marginTop: "1%" }} className="text-center">
                 <Popconfirm
                   title="Are you sure？"

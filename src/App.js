@@ -28,7 +28,11 @@ import Settings from "./components/UserManagement/Settings";
 import Profile from "./components/UserManagement/Profile";
 import Signup from "./components/UserManagement/Signup";
 import "react-toastify/dist/ReactToastify.css";
-
+import UserListingAdmin from "./components/UserListingAdmin/UserListingAdmin";
+import VendorListingAdmin from "./components/VendorListingAdmin/VendorListingAdmin";
+import RewardListingAdmin from "./components/RewardListingAdmin/RewardListingAdmin";
+import TrackStatus from "./components/TrackStatus/TrackStatus";
+import UpdateStatus from "./components/UpdateStatus/UpdateStatus";
 import { ToastContainer } from "react-toastify";
 
 function App() {
@@ -116,6 +120,22 @@ function App() {
                 path="/contactus/modifyvendors"
                 element={<AdminModifyVendors />}
               ></Route>
+
+              <Route
+                path="/user-dashboard"
+                exact
+                element={<UserListingAdmin />}
+              />
+              <Route
+                path="/vendor-dashboard"
+                exact
+                element={<VendorListingAdmin />}
+              />
+              <Route
+                path="/reward-dashboard"
+                exact
+                element={<RewardListingAdmin />}
+              />
               <Route path="/signup" element={<Signup />}></Route>
               <Route path="/login" element={<Login />}></Route>
               <Route path="/settings" element={<Settings />}></Route>

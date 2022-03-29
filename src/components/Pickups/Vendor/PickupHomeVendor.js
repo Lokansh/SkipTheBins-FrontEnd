@@ -6,6 +6,7 @@ import edit from "../../../assets/images/edit.png";
 import cancel from "../../../assets/images/cancel.png";
 import { useNavigate } from "react-router-dom";
 import { Row } from "react-bootstrap";
+import track from "../../../assets/images/track.png";
 
 export default function PickupHomeVendor() {
   const navigate = useNavigate();
@@ -52,6 +53,14 @@ export default function PickupHomeVendor() {
             desc="You want to cancel a schedule, not a problem !"
             img={cancel}
             btnClick={() => navigate("/vendor/pickups/delete")}
+          />
+        </div>
+        <div style={{ justifyContent: "center" }} className="col d-flex">
+          <DispCard
+            title="Update Status"
+            desc="You want to update where your truck is, go here !"
+            img={track}
+            btnClick={() => navigate("/vendor/pickups/update")}
           />
         </div>
       </Row>
