@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { WEB_API_URL } from '../../constants';
 import './ViewRequestModal.css';
+import { toast } from 'react-toastify';
+
 function ViewRequestsModal(props) {
   const [requestCount, setCount] = useState(0);
   const [requests, setrequests] = useState([]);
@@ -14,20 +16,25 @@ function ViewRequestsModal(props) {
       setrequests(res.data.data);
     }).catch(err => {
       console.log(err)
+      toast.error("Some error occured");
     });
   }
   const approve = (req) => {
     axios.post(WEB_API_URL + '/faq/approve-request', req).then(_ => {
       getData();
+      toast.success("Request Approved");
     }).catch(err => {
       console.log(err);
+      toast.error("Some error occured");
     })
   }
   const deny = (id) => {
     axios.delete(WEB_API_URL + '/faq/deny-request/' + id).then(_ => {
       getData();
+      toast.success("Request Denied");
     }).catch(err => {
       console.log(err);
+      toast.error("Some error occured");
     })
   }
   useEffect(() => {
