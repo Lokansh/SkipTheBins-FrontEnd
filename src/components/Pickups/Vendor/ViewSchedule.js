@@ -41,7 +41,6 @@ export default function ViewSchedule() {
           },
         }
       );
-
       if (response.status === 200 && response.data.success === true) {
         const schedules = response.data.schedules;
         let scheduleSlots=[];
