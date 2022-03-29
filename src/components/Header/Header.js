@@ -40,8 +40,8 @@ function Header() {
                 <Navbar.Collapse id="colapse-nav" className="justify-content-end">
                     <Nav >
                     
-                        <Nav.Link href="#pickups">Pickups</Nav.Link>
-                        <Nav.Link href="#rewards">Rewards</Nav.Link>
+                        <Nav.Link href="/user/pickups">Pickups</Nav.Link>
+                        <Nav.Link href="">Rewards</Nav.Link>
                         {!showMenu && <Nav.Link href="/login">Login</Nav.Link>} 
                         {!showMenu && <Nav.Link href="/signup">Signup</Nav.Link>}
                         {showMenu && <NavDropdown title="Profile" id="basic-nav-dropdown">

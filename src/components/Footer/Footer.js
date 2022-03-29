@@ -15,11 +15,11 @@ function Footer() {
                 <Navbar.Collapse id="colapse-nav" >
                     <Nav >
                     
-                        <Nav.Link href="#about-us">About Us</Nav.Link>
-                        <Nav.Link href="#contact-us">Contact Us</Nav.Link>
-                        <Nav.Link href="#faq">FAQ</Nav.Link>
-                        <Nav.Link href="#careers">Careers</Nav.Link>
-                        <Nav.Link href="#events">Events</Nav.Link>
+                        <Nav.Link href="">About Us</Nav.Link>
+                        <Nav.Link href="/contactus">Contact Us</Nav.Link>
+                        <Nav.Link href="/faq">FAQ</Nav.Link>
+                        <Nav.Link href="">Careers</Nav.Link>
+                        <Nav.Link href="">Events</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </div>
