@@ -13,5 +13,5 @@ code {
 } */
 
 body {
-  background-color: rgb(194, 190, 190);
+  background-color: rgb(194, 190, 190) !important;
 }
