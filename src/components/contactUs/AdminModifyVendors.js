@@ -1,12 +1,25 @@
 import React, { useEffect, useState, Fragment } from "react";
 import axios from "axios";
 import "./ContactUs.css";
-//import allVendorData from "../../assets/data/contactUsVendors.json";
 import { Table, Form, Button } from "react-bootstrap";
 import AdminModifyVendorReadOnly from "./AdminModifyVendorReadOnly";
 import AdminModifyVendorEditable from "./AdminModifyVendorEditable";
+import { WEB_API_URL } from "../../constants";
 
 function AdminModifyVendors() {
+  const nameRegex = /^[a-zA-Z ]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneNumberRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+
+  const [nameErrorMsg, setNameErrorMsg] = useState("");
+  const [addressErrorMsg, setAddressErrorMsg] = useState("");
+  const [phoneNumberErrorMsg, setPhoneNumberErrorMsg] = useState("");
+  const [emailErrorMsg, setEmailErrorMsg] = useState("");
+  const [isName, setIsName] = useState(false);
+  const [isAddress, setIsAddress] = useState(false);
+  const [isPhoneNumber, setIsPhoneNumber] = useState(false);
+  const [isEmail, setIsEmail] = useState(false);
+  const [isData, setIsData] = useState(false);
   const [vendors, setVendors] = useState([]);
 
   useEffect(() => {
@@ -15,12 +28,13 @@ function AdminModifyVendors() {
 
   const getAllVendorsApiCall = () => {
     axios
-      .get("http://localhost:8080/api/vendor")
+      .get(WEB_API_URL + "/vendor")
       .then((res) => {
-        //console.log("vendorData-----" + JSON.stringify(res.data.vendorData));
         setVendors(res.data.vendorData);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        //Prashit notification
+      });
   };
 
   const [addFormData, setAddFormData] = useState({
@@ -43,6 +57,53 @@ function AdminModifyVendors() {
     e.preventDefault();
     const fieldName = e.target.id;
     const fieldValue = e.target.value;
+
+    if (fieldName === "name") {
+      if (fieldValue && !nameRegex.test(fieldValue)) {
+        setNameErrorMsg(
+          "Please provide name in correct alphabet only format (Eg. 'Dylan Williams')"
+        );
+        setIsName(false);
+      } else {
+        setIsData(true);
+        setIsName(true);
+        setNameErrorMsg("");
+      }
+    }
+    if (fieldName === "address") {
+      if (fieldValue === "") {
+        setAddressErrorMsg("Please provide address");
+        setIsAddress(false);
+      } else {
+        setIsData(true);
+        setIsAddress(true);
+        setAddressErrorMsg("");
+      }
+    }
+    if (fieldName === "phoneNumber") {
+      if (fieldValue && !phoneNumberRegex.test(fieldValue)) {
+        setPhoneNumberErrorMsg(
+          "Please provide phone number in correct format (Eg. '+1-9997776666' or '9997776666')"
+        );
+        setIsPhoneNumber(false);
+      } else {
+        setIsData(true);
+        setIsPhoneNumber(true);
+        setPhoneNumberErrorMsg("");
+      }
+    }
+    if (fieldName === "email") {
+      if (fieldValue && !emailRegex.test(fieldValue)) {
+        setEmailErrorMsg(
+          "Please provide email in correct format (Eg. 'xyz@abc.com')"
+        );
+        setIsEmail(false);
+      } else {
+        setIsData(true);
+        setIsEmail(true);
+        setEmailErrorMsg("");
+      }
+    }
 
     const newFormData = { ...addFormData };
     newFormData[fieldName] = fieldValue;
@@ -70,26 +131,46 @@ function AdminModifyVendors() {
       email: addFormData.email,
     };
 
-    //const newVendors = [...vendors, newVendor];
+    if (
+      nameErrorMsg.length > 0 ||
+      addressErrorMsg.length > 0 ||
+      phoneNumberErrorMsg.length > 0 ||
+      emailErrorMsg.length > 0
+    ) {
+      alert("Please resolve error");
+    } else if (!isData) {
+      alert("Please enter some data");
+    } else if (!isName || !isAddress || !isPhoneNumber || !isEmail) {
+      alert("Please fill data in all fields of the form");
+    } else {
+      submitVendorApiCall(newVendor);
+    }
 
-    submitVendorApiCall(newVendor);
-
-    //setVendors(newVendors);
+    //submitVendorApiCall(newVendor);
   };
 
   const submitVendorApiCall = (newVendor) => {
     axios
-      .post("http://localhost:8080/api/vendor/add", newVendor)
+      .post(WEB_API_URL + "/vendor/add", newVendor)
       .then((res) => {
         if (res.data.success) {
           ///ADD notification of prashit
-          console.log("Inside SUCCESS");
           getAllVendorsApiCall();
+          setAddFormData({
+            name: "",
+            address: "",
+            phoneNumber: "",
+            email: "",
+          });
+          const form = document.getElementById("my_form");
+          form.reset();
         } else {
           alert("Vendor not added");
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        //Prashit notification
+      });
   };
 
   const handleEditFormSubmit = (e) => {
@@ -103,32 +184,24 @@ function AdminModifyVendors() {
       email: editFormData.email,
     };
 
-    //const newVendors = [...vendors];
-
-    //const index = vendors.findIndex((vendor) => vendor.id === editVendorId);
-
-    //newVendors[index] = editedVendor;
-    //setVendors(newVendors);
-
     editVendorApiCall(editedVendor);
-
-    //setEditVendorId(null);
   };
 
   const editVendorApiCall = (editedVendor) => {
     axios
-      .post("http://localhost:8080/api/vendor/update", editedVendor)
+      .post(WEB_API_URL + "/vendor/update", editedVendor)
       .then((res) => {
         if (res.data.success) {
           ///ADD notification of Prashit
-          //console.log("res--" + JSON.stringify(res));
           getAllVendorsApiCall();
           setEditVendorId(null);
         } else {
           alert("Vendor not added");
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        //Prashit notification
+      });
   };
 
   const handleEditClick = (e, vendor) => {
@@ -155,27 +228,52 @@ function AdminModifyVendors() {
       _id: vendorId,
     };
     axios
-      .post("http://localhost:8080/api/vendor/delete", deleteId)
+      .post(WEB_API_URL + "/vendor/delete", deleteId)
       .then((res) => {
         if (res.data.success) {
           ///ADD notification of Prashit
-          console.log("res--" + JSON.stringify(res));
-          console.log("Inside SUCCESS");
           getAllVendorsApiCall();
         } else {
           alert("Vendor not deleted");
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        //Prashit notification
+      });
   };
 
   return (
     <div className="contactContainer">
-      <span className="contact-heading">Contact Us</span>
-      <span>Vendors List</span>
+      <h1
+        style={{
+          textAlign: "center",
+          fontWeight: "bolder",
+          color: "rgba(17, 45, 92,0.85)",
+          marginBottom: "1%",
+        }}
+      >
+        Contact Us
+      </h1>{" "}
+      <h4
+        style={{
+          textAlign: "center",
+          fontWeight: "bolder",
+          color: "rgba(17, 45, 92,0.85)",
+          marginBottom: "1%",
+        }}
+      >
+        Vendors List
+      </h4>
       <Form onSubmit={handleEditFormSubmit}>
         <Table responsive="sm" bordered="true" size="sm" striped="true">
-          <thead>
+          <thead
+            style={{
+              textAlign: "center",
+              fontWeight: "bolder",
+              color: "rgba(17, 45, 92,0.85)",
+              marginBottom: "1%",
+            }}
+          >
             <tr>
               <th>S.No</th>
               <th>Name</th>
@@ -185,7 +283,12 @@ function AdminModifyVendors() {
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody
+            style={{
+              textAlign: "center",
+              color: "rgba(17, 45, 92,0.85)",
+            }}
+          >
             {vendors.map((vendor, index) => (
               <Fragment key={index}>
                 {editVendorId === vendor._id ? (
@@ -209,8 +312,24 @@ function AdminModifyVendors() {
         </Table>
       </Form>
       <div>
-        <h3>Add a new Vendor</h3>
-        <Form>
+        <h4
+          style={{
+            textAlign: "center",
+            fontWeight: "bolder",
+            color: "rgba(17, 45, 92,0.85)",
+            marginBottom: "1%",
+          }}
+        >
+          Add a new vendor
+        </h4>
+        <Form
+          id="my_form"
+          style={{
+            fontWeight: "bolder",
+            color: "rgba(17, 45, 92,0.85)",
+            marginBottom: "1%",
+          }}
+        >
           <Form.Group className="mb-3" controlId="name">
             <Form.Label>Name</Form.Label>
             <Form.Control
@@ -218,6 +337,9 @@ function AdminModifyVendors() {
               placeholder="Vendor Name"
               onChange={handleFormChange}
             />
+            <Form.Text style={{ color: "red" }}>
+              {nameErrorMsg.length > 0 ? nameErrorMsg : ""}
+            </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3" controlId="address">
             <Form.Label>Address</Form.Label>
@@ -226,6 +348,9 @@ function AdminModifyVendors() {
               placeholder="Vendor Address"
               onChange={handleFormChange}
             />
+            <Form.Text style={{ color: "red" }}>
+              {addressErrorMsg.length > 0 ? addressErrorMsg : ""}
+            </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3" controlId="phoneNumber">
             <Form.Label>Phone Number</Form.Label>
@@ -234,6 +359,9 @@ function AdminModifyVendors() {
               placeholder="Vendor Phone Number"
               onChange={handleFormChange}
             />
+            <Form.Text style={{ color: "red" }}>
+              {phoneNumberErrorMsg.length > 0 ? phoneNumberErrorMsg : ""}
+            </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3" controlId="email">
             <Form.Label>Email</Form.Label>
@@ -242,10 +370,18 @@ function AdminModifyVendors() {
               placeholder="Vendor Email"
               onChange={handleFormChange}
             />
+            <Form.Text style={{ color: "red" }}>
+              {emailErrorMsg.length > 0 ? emailErrorMsg : ""}
+            </Form.Text>
           </Form.Group>
-          <Button variant="success" type="submit" onClick={handleFormSubmit}>
-            Add
-          </Button>
+          <div
+            style={{ marginTop: "1%", justifyContent: "center" }}
+            class="text-center d flex"
+          >
+            <Button variant="success" type="submit" onClick={handleFormSubmit}>
+              Add
+            </Button>
+          </div>
         </Form>
       </div>
     </div>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./ContactUs.css";
-//import contactUsQueries from "../../assets/data/contactUsQueries.json";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { WEB_API_URL } from "../../constants";
 
 function AdminDisplayQueries() {
   const navigate = useNavigate();
@@ -16,12 +16,13 @@ function AdminDisplayQueries() {
 
   const getAllQueriesApiCall = () => {
     axios
-      .get("http://localhost:8080/api/queries")
+      .get(WEB_API_URL + "/queries")
       .then((res) => {
-        console.log("queryData-------" + JSON.stringify(res.data.queryData));
         setContactUsQueries(res.data.queryData);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        //Prashit notification
+      });
   };
 
   const renderRowData = (query, index) => {
@@ -40,9 +41,38 @@ function AdminDisplayQueries() {
   };
   return (
     <div className="contactContainer">
-      <span className="contact-heading">Contact Us</span>
-      <span>User Queries List</span>
-      <Table responsive="sm" bordered="true" size="sm" striped="true">
+      <h1
+        style={{
+          textAlign: "center",
+          fontWeight: "bolder",
+          color: "rgba(17, 45, 92,0.85)",
+          marginBottom: "1%",
+        }}
+      >
+        Contact Us
+      </h1>
+      <h4
+        style={{
+          textAlign: "center",
+          fontWeight: "bolder",
+          color: "rgba(17, 45, 92,0.85)",
+          marginBottom: "1%",
+        }}
+      >
+        User Queries List
+      </h4>
+      <Table
+        style={{
+          textAlign: "center",
+          fontWeight: "bolder",
+          color: "rgba(17, 45, 92,0.85)",
+          marginBottom: "1%",
+        }}
+        responsive="sm"
+        bordered="true"
+        size="sm"
+        striped="true"
+      >
         <thead>
           <tr>
             <th>S.No</th>
@@ -54,9 +84,14 @@ function AdminDisplayQueries() {
         </thead>
         <tbody>{contactUsQueries.map(renderRowData)}</tbody>
       </Table>
-      <Button variant="primary" onClick={handleModifyVendors}>
-        Modify Vendors
-      </Button>
+      <div
+        style={{ marginTop: "1%", justifyContent: "center" }}
+        class="text-center d flex"
+      >
+        <Button variant="primary" onClick={handleModifyVendors}>
+          Modify Vendor Details
+        </Button>
+      </div>
     </div>
   );
 }
