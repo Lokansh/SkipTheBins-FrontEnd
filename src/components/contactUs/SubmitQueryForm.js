@@ -3,6 +3,7 @@ import axios from "axios";
 import { Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { WEB_API_URL } from "../../constants";
+import { toast } from "react-toastify";
 
 function SubmitQueryForm() {
   useEffect(() => {});
@@ -111,11 +112,11 @@ function SubmitQueryForm() {
           setSubmitSuccess(true);
         } else {
           //Prashit notiffication
-          alert("Query not submitted");
+          toast.error("Query not submitted");
         }
       })
       .catch((error) => {
-        //Prashit notification
+        toast.error("Internal Server Error");
       });
   };
 

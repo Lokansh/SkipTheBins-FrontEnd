@@ -5,6 +5,7 @@ import { Table, Form, Button } from "react-bootstrap";
 import AdminModifyVendorReadOnly from "./AdminModifyVendorReadOnly";
 import AdminModifyVendorEditable from "./AdminModifyVendorEditable";
 import { WEB_API_URL } from "../../constants";
+import { toast } from "react-toastify";
 
 function AdminModifyVendors() {
   const nameRegex = /^[a-zA-Z ]+$/;
@@ -33,7 +34,7 @@ function AdminModifyVendors() {
         setVendors(res.data.vendorData);
       })
       .catch((error) => {
-        //Prashit notification
+        toast.error("Internal Server Error");
       });
   };
 
@@ -145,8 +146,6 @@ function AdminModifyVendors() {
     } else {
       submitVendorApiCall(newVendor);
     }
-
-    //submitVendorApiCall(newVendor);
   };
 
   const submitVendorApiCall = (newVendor) => {
@@ -154,7 +153,7 @@ function AdminModifyVendors() {
       .post(WEB_API_URL + "/vendor/add", newVendor)
       .then((res) => {
         if (res.data.success) {
-          ///ADD notification of prashit
+          toast.success("Vendor Added");
           getAllVendorsApiCall();
           setAddFormData({
             name: "",
@@ -165,11 +164,11 @@ function AdminModifyVendors() {
           const form = document.getElementById("my_form");
           form.reset();
         } else {
-          alert("Vendor not added");
+          toast.error("Vendor not added");
         }
       })
       .catch((error) => {
-        //Prashit notification
+        toast.error("Internal Server Error");
       });
   };
 
@@ -192,15 +191,15 @@ function AdminModifyVendors() {
       .post(WEB_API_URL + "/vendor/update", editedVendor)
       .then((res) => {
         if (res.data.success) {
-          ///ADD notification of Prashit
+          toast.success("Vendor Edited");
           getAllVendorsApiCall();
           setEditVendorId(null);
         } else {
-          alert("Vendor not added");
+          toast.error("Vendor not edited");
         }
       })
       .catch((error) => {
-        //Prashit notification
+        toast.error("Internal Server Error");
       });
   };
 
@@ -231,14 +230,14 @@ function AdminModifyVendors() {
       .post(WEB_API_URL + "/vendor/delete", deleteId)
       .then((res) => {
         if (res.data.success) {
-          ///ADD notification of Prashit
+          toast.success("Vendor Deleted");
           getAllVendorsApiCall();
         } else {
-          alert("Vendor not deleted");
+          toast.error("Vendor not deleted");
         }
       })
       .catch((error) => {
-        //Prashit notification
+        toast.error("Internal Server Error");
       });
   };
 
