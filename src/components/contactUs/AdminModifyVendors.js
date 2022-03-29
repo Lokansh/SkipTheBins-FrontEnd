@@ -138,11 +138,11 @@ function AdminModifyVendors() {
       phoneNumberErrorMsg.length > 0 ||
       emailErrorMsg.length > 0
     ) {
-      alert("Please resolve error");
+      toast.error("Please resolve error");
     } else if (!isData) {
-      alert("Please enter some data");
+      toast.error("Please enter some data");
     } else if (!isName || !isAddress || !isPhoneNumber || !isEmail) {
-      alert("Please fill data in all fields of the form");
+      toast.error("Please fill data in all fields of the form");
     } else {
       submitVendorApiCall(newVendor);
     }

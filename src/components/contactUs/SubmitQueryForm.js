@@ -88,11 +88,11 @@ function SubmitQueryForm() {
       mobileErrorMsg.length > 0 ||
       queryErrorMsg.length > 0
     ) {
-      alert("Please resolve error");
-    } else if (!isName || !isEmail || !isMobile || !isQuery) {
-      alert("Please fill data in all fields of the form");
+      toast.error("Please resolve error");
     } else if (!isData) {
-      alert("Please enter some data");
+      toast.error("Please enter some data");
+    } else if (!isName || !isEmail || !isMobile || !isQuery) {
+      toast.error("Please fill data in all fields of the form");
     } else {
       submitQueryApiCall();
     }
