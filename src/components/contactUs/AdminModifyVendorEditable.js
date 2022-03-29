@@ -2,13 +2,14 @@ import { Button, InputGroup, FormControl } from "react-bootstrap";
 import React from "react";
 
 function AdminModifyVendorEditable({
+  index,
   editFormData,
   handleEditFormChange,
   handleCancelClick,
 }) {
   return (
     <tr>
-      <td></td>
+      <td>{index + 1}</td>
       <td>
         <InputGroup className="mb-3">
           <FormControl

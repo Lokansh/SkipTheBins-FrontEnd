@@ -1,14 +1,29 @@
-import React, { useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
+import axios from "axios";
 import "./ContactUs.css";
-//import { nanoid } from "nanoid";
-import allVendorData from "../../assets/data/contactUsVendors.json";
+//import allVendorData from "../../assets/data/contactUsVendors.json";
 import { Table, Form, Button } from "react-bootstrap";
 import AdminModifyVendorReadOnly from "./AdminModifyVendorReadOnly";
 import AdminModifyVendorEditable from "./AdminModifyVendorEditable";
 import ContactUs from "./ContactUs";
 
 function AdminModifyVendors() {
-  const [vendors, setVendors] = useState(allVendorData.vendorData);
+  const [vendors, setVendors] = useState([]);
+
+  useEffect(() => {
+    getAllVendorsApiCall();
+  }, []);
+
+  const getAllVendorsApiCall = () => {
+    axios
+      .get("http://localhost:8080/api/vendor")
+      .then((res) => {
+        //console.log("vendorData-----" + JSON.stringify(res.data.vendorData));
+        setVendors(res.data.vendorData);
+      })
+      .catch((error) => console.log(error));
+  };
+
   const [addFormData, setAddFormData] = useState({
     name: "",
     address: "",
@@ -50,42 +65,79 @@ function AdminModifyVendors() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const newVendor = {
-      //id: nanoid(),
       name: addFormData.name,
       address: addFormData.address,
       phoneNumber: addFormData.phoneNumber,
       email: addFormData.email,
     };
 
-    const newVendors = [...vendors, newVendor];
-    setVendors(newVendors);
+    //const newVendors = [...vendors, newVendor];
+
+    submitVendorApiCall(newVendor);
+
+    //setVendors(newVendors);
+  };
+
+  const submitVendorApiCall = (newVendor) => {
+    axios
+      .post("http://localhost:8080/api/vendor/add", newVendor)
+      .then((res) => {
+        if (res.data.success) {
+          ///ADD notification of prashit
+          console.log("Inside SUCCESS");
+          getAllVendorsApiCall();
+        } else {
+          alert("Vendor not added");
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   const handleEditFormSubmit = (e) => {
     e.preventDefault();
 
     const editedVendor = {
-      id: editVendorId,
+      _id: editVendorId,
       name: editFormData.name,
       address: editFormData.address,
       phoneNumber: editFormData.phoneNumber,
       email: editFormData.email,
     };
 
-    const newVendors = [...vendors];
+    //const newVendors = [...vendors];
 
-    const index = vendors.findIndex((vendor) => vendor.id === editVendorId);
+    //const index = vendors.findIndex((vendor) => vendor.id === editVendorId);
 
-    newVendors[index] = editedVendor;
-    setVendors(newVendors);
-    setEditVendorId(null);
+    //newVendors[index] = editedVendor;
+    //setVendors(newVendors);
+
+    editVendorApiCall(editedVendor);
+
+    //setEditVendorId(null);
+  };
+
+  const editVendorApiCall = (editedVendor) => {
+    axios
+      .post("http://localhost:8080/api/vendor/update", editedVendor)
+      .then((res) => {
+        if (res.data.success) {
+          ///ADD notification of Prashit
+          //console.log("res--" + JSON.stringify(res));
+          getAllVendorsApiCall();
+          setEditVendorId(null);
+        } else {
+          alert("Vendor not added");
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   const handleEditClick = (e, vendor) => {
     e.preventDefault();
-    setEditVendorId(vendor.id);
+    setEditVendorId(vendor._id);
 
     const formValues = {
+      _id: vendor._id,
       name: vendor.name,
       address: vendor.address,
       phoneNumber: vendor.phoneNumber,
@@ -99,14 +151,24 @@ function AdminModifyVendors() {
     setEditVendorId(null);
   };
 
-  const handleDeleteClick = (vendorId) => {
-    const newVendors = [...vendors];
-
-    const index = vendors.findIndex((vendor) => vendor.id === vendorId);
-
-    newVendors.splice(index, 1);
-
-    setVendors(newVendors);
+  const deleteVendorApiCall = (vendorId) => {
+    // const deleteId = {
+    //   _id: vendorId,
+    // };
+    const url = "http://localhost:8080/api/vendor/delete/" + vendorId;
+    axios
+      .delete(url)
+      .then((res) => {
+        if (res.data.success) {
+          ///ADD notification of Prashit
+          console.log("res--" + JSON.stringify(res));
+          console.log("Inside SUCCESS");
+          getAllVendorsApiCall();
+        } else {
+          alert("Vendor not deleted");
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
@@ -128,8 +190,9 @@ function AdminModifyVendors() {
           <tbody>
             {vendors.map((vendor, index) => (
               <Fragment>
-                {editVendorId === vendor.id ? (
+                {editVendorId === vendor._id ? (
                   <AdminModifyVendorEditable
+                    index={index}
                     editFormData={editFormData}
                     handleEditFormChange={handleEditFormChange}
                     handleCancelClick={handleCancelClick}
@@ -139,7 +202,7 @@ function AdminModifyVendors() {
                     vendor={vendor}
                     index={index}
                     handleEditClick={handleEditClick}
-                    handleDeleteClick={handleDeleteClick}
+                    deleteVendorApiCall={deleteVendorApiCall}
                   />
                 )}
               </Fragment>

@@ -5,7 +5,7 @@ function AdminModifyVendorReadOnly({
   vendor,
   index,
   handleEditClick,
-  handleDeleteClick,
+  deleteVendorApiCall,
 }) {
   return (
     <tr>
@@ -25,7 +25,7 @@ function AdminModifyVendorReadOnly({
         <Button
           variant="danger"
           type="button"
-          onClick={() => handleDeleteClick(vendor.id)}
+          onClick={() => deleteVendorApiCall(vendor._id)}
         >
           Delete
         </Button>

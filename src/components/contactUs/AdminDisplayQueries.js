@@ -1,9 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./ContactUs.css";
-import contactUsQueries from "../../assets/data/contactUsQueries.json";
-import { Table } from "react-bootstrap";
+//import contactUsQueries from "../../assets/data/contactUsQueries.json";
+import { Table, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 function AdminDisplayQueries() {
+  const navigate = useNavigate();
+
+  const [contactUsQueries, setContactUsQueries] = useState([]);
+
+  useEffect(() => {
+    getAllQueriesApiCall();
+  }, []);
+
+  const getAllQueriesApiCall = () => {
+    axios
+      .get("http://localhost:8080/api/queries")
+      .then((res) => {
+        console.log("queryData-------" + JSON.stringify(res.data.queryData));
+        setContactUsQueries(res.data.queryData);
+      })
+      .catch((error) => console.log(error));
+  };
+
   const renderRowData = (query, index) => {
     return (
       <tr key={index}>
@@ -14,6 +34,9 @@ function AdminDisplayQueries() {
         <td>{query.query}</td>
       </tr>
     );
+  };
+  const handleModifyVendors = (e) => {
+    navigate("/contactus/modifyvendors");
   };
   return (
     <div className="contactContainer">
@@ -29,8 +52,11 @@ function AdminDisplayQueries() {
             <th>Query</th>
           </tr>
         </thead>
-        <tbody>{contactUsQueries.queryData.map(renderRowData)}</tbody>
+        <tbody>{contactUsQueries.map(renderRowData)}</tbody>
       </Table>
+      <Button variant="primary" onClick={handleModifyVendors}>
+        Modify Vendors
+      </Button>
     </div>
   );
 }

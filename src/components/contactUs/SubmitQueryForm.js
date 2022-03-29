@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Form, Button } from "react-bootstrap";
-
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function SubmitQueryForm() {
@@ -39,7 +38,7 @@ function SubmitQueryForm() {
       setIsData(true);
       setIsName(true);
       setNameErrorMsg("");
-      console.log(e.target.value);
+      //console.log(e.target.value);
       setName(e.target.value);
     }
   };
@@ -53,7 +52,7 @@ function SubmitQueryForm() {
       setIsData(true);
       setIsEmail(true);
       setEmailErrorMsg("");
-      console.log(e.target.value);
+      //console.log(e.target.value);
       setEmail(e.target.value);
     }
   };
@@ -67,7 +66,7 @@ function SubmitQueryForm() {
       setIsData(true);
       setIsMobile(true);
       setMobileErrorMsg("");
-      console.log(e.target.value);
+      //console.log(e.target.value);
       setMobile(e.target.value);
     }
   };
@@ -79,7 +78,7 @@ function SubmitQueryForm() {
       setIsData(true);
       setIsQuery(true);
       setQueryErrorMsg("");
-      console.log(e.target.value);
+      //console.log(e.target.value);
       setQuery(e.target.value);
     }
   };
@@ -97,12 +96,33 @@ function SubmitQueryForm() {
     } else if (!isData) {
       alert("Please enter some data");
     } else {
-      setSubmitSuccess(true);
+      submitQueryApiCall();
     }
   };
+
+  const submitQueryApiCall = () => {
+    var newQueryObj = {
+      name: name,
+      email: email,
+      mobile: mobile,
+      query: query,
+    };
+    axios
+      .post("http://localhost:8080/api/query/add", newQueryObj)
+      .then((res) => {
+        if (res.data.success) {
+          setSubmitSuccess(true);
+        } else {
+          alert("Query not submitted");
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   const handleGoBack = (e) => {
     navigate("/");
   };
+
   return (
     <div>
       <span className="contact-heading">Contact Us</span>

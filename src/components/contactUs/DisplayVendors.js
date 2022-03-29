@@ -1,9 +1,26 @@
-import React from "react";
-import vendorData from "../../assets/data/contactUsVendors.json";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+//import vendorData from "../../assets/data/contactUsVendors.json";
 import "./ContactUs.css";
 import { Card } from "react-bootstrap";
 
 function DisplayVendors() {
+  const [vendorData, setVendorData] = useState([]);
+
+  useEffect(() => {
+    getAllVendorsApiCall();
+  }, []);
+
+  const getAllVendorsApiCall = () => {
+    axios
+      .get("http://localhost:8080/api/vendor")
+      .then((res) => {
+        console.log("vendorData-----" + JSON.stringify(res.data.vendorData));
+        setVendorData(res.data.vendorData);
+      })
+      .catch((error) => console.log(error));
+  };
+
   const vendorCard = (card, index) => {
     return (
       <Card
@@ -32,7 +49,7 @@ function DisplayVendors() {
   return (
     <div>
       <span>Vendor Contact Details</span>
-      <div className="grid">{vendorData.vendorData.map(vendorCard)}</div>
+      <div className="grid">{vendorData.map(vendorCard)}</div>
     </div>
   );
 }
