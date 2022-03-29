@@ -1,0 +1,15 @@
+table caption
+{
+    caption-side: top;
+}
+
+.table {
+    border: 1px solid;
+    text-align: center;
+    caption-side: top;
+}
+
+th {
+    font-size: 20px;
+    color: #495057;
+}
