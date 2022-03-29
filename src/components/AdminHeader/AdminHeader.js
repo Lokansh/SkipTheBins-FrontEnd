@@ -9,6 +9,7 @@ function AdminHeader() {
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="colapse-nav" className="justify-content-end">
                     <Nav >
+                        <Nav.Link href="/contactus/viewqueries">Contact Us</Nav.Link>
                         <NavDropdown title="Analytics">
                             <NavDropdown.Item href="/user-dashboard">User Analytics</NavDropdown.Item>
                             <NavDropdown.Divider />

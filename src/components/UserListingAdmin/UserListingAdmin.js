@@ -11,7 +11,7 @@ const UserListingAdmin = () => {
     const getUserData = async () => {
         const config = {
             method: 'get',
-            url: 'http://localhost:8080/admin/get-all-users'
+            url: 'http://localhost:8080/api/admin/get-all-users'
         };
         axios(config)
             .then(function (response) {
@@ -22,12 +22,14 @@ const UserListingAdmin = () => {
             });
     };
 
+    const finalUserData = userData.filter((user) => user.role === "normaluser")
+
     const columns = [
         { dataField: "firstName", text: "First Name"},
         { dataField: "lastName", text: "Last Name"},
         { dataField: "email", text: "Email"},
-        { dataField: "contact", text: "Contact No"},
-        { dataField: "status", text: "Status", formatter: (cellContent, row) => ( <StatusDisplay status={row.status} />)},
+        { dataField: "mobileNumber", text: "Contact No"},
+        { dataField: "status", text: "Status", formatter: (cellContent, row) => ( <StatusDisplay status={row.isVerified} />)},
     ]
 
     const CaptionElement = () => <h3 style={{ textAlign: 'center', color: '#495057', padding: '10px' }}>User Dashboard</h3>;
@@ -39,7 +41,7 @@ const UserListingAdmin = () => {
         <BootstrapTable
             classes="table"
             keyField="name"
-            data={userData}
+            data={finalUserData}
             caption={<CaptionElement />}
             columns={columns}
             pagination={paginationFactory()}

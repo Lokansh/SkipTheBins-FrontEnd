@@ -11,7 +11,7 @@ const VendorListingAdmin = () => {
     const getVendorData = async () => {
         const config = {
             method: 'get',
-            url: 'http://localhost:8080/admin/get-all-vendors'
+            url: 'http://localhost:8080/api/admin/get-all-users'
         };
         axios(config)
             .then(function (response) {
@@ -22,11 +22,13 @@ const VendorListingAdmin = () => {
             });
     };
 
+    const finalVendorData = vendorData.filter((user) => user.role === "vendor")
+
     const columns = [
-        { dataField: "vendorName", text: "Vendor Name"},
+        { dataField: "organizationName", text: "Organization Name"},
         { dataField: "email", text: "Email"},
-        { dataField: "contact", text: "Contact No"},
-        { dataField: "status", text: "Status", formatter: (cellContent, row) => ( <StatusDisplay status={row.status} />)},
+        { dataField: "mobileNumber", text: "Contact No"},
+        { dataField: "status", text: "Status", formatter: (cellContent, row) => ( <StatusDisplay status={row.isApprovedByAdminIfVendorRole} />)},
     ]
 
     const CaptionElement = () => <h3 style={{ textAlign: 'center', color: '#495057', padding: '10px' }}>Vendor Dashboard</h3>;
@@ -38,7 +40,7 @@ const VendorListingAdmin = () => {
         <BootstrapTable
             classes="table"
             keyField="name"
-            data={vendorData}
+            data={finalVendorData}
             caption={<CaptionElement />}
             columns={columns}
             pagination={paginationFactory()}

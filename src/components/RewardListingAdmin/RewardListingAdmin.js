@@ -11,7 +11,7 @@ const RewardListingAdmin = () => {
     const getRewardData = async () => {
         const config = {
             method: 'get',
-            url: 'http://localhost:8080/admin/get-all-rewards'
+            url: 'http://localhost:8080/api/admin/get-all-rewards'
         };
         axios(config)
             .then(function (response) {
