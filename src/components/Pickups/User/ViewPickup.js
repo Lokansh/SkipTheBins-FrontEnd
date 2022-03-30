@@ -3,19 +3,18 @@ import { Button, ButtonGroup, Row, Col } from "react-bootstrap";
 import moment from "moment";
 import { Calendar } from "antd";
 import { useNavigate } from "react-router-dom";
-import { message } from "antd";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
 
 export default function ViewPickup() {
   const navigate = useNavigate();
-  // const [date, setDate] = useState(moment().format("LL"));
   const [time, setTime] = useState("");
   const [showDetails, setShowDetails] = useState(false);
   const [pickups, setPickups] = useState([]);
   const [selectedPickup, setSelectedPickup] = useState({});
 
   const dateChange = (event) => {
-    // setDate(event.format("LL"));
     getPickups(event.format("LL"));
   };
 
@@ -47,7 +46,7 @@ export default function ViewPickup() {
   const getPickups = async (getDate) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/user/pickups",
+        WEB_API_URL+"/user/pickups",
         {
           params: {
             userId: "5678",
@@ -61,13 +60,11 @@ export default function ViewPickup() {
       } else {
         setShowDetails(false);
         setPickups([]);
-        message.config({ top: "10%" });
-        message.error(response.data.message);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 

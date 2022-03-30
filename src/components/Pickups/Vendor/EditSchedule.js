@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Dropdown, Row, Col } from "react-bootstrap";
-import { message, TimePicker, Progress, Calendar } from "antd";
+import { TimePicker, Progress, Calendar } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
 
 export default function EditSchedule() {
   const navigate = useNavigate();
@@ -41,8 +43,7 @@ export default function EditSchedule() {
 
       if (fromTime === toTime) {
         setTime([]);
-        message.config({ top: "10%" });
-        message.error("Invalid Time Range!");
+        toast.error("Invalid Time Range!");
       } else {
         setTime([event[0].format("hh:mm A"), event[1].format("hh:mm A")]);
       }
@@ -58,7 +59,7 @@ export default function EditSchedule() {
         area: area,
         slot: time,
       };
-      const response = await axios.post("http://localhost:8080/api/vendor/schedules/add", body);
+      const response = await axios.post(WEB_API_URL+"/vendor/schedules/add", body);
 
       if (response.status === 200 && response.data.success === true) {
         getSchedules(date);
@@ -70,7 +71,7 @@ export default function EditSchedule() {
           slot: [time[0], time[1]],
         };
         const response = await axios.put(
-          "http://localhost:8080/api/vendor/update/" + editableSchedule.id,
+          WEB_API_URL+"/vendor/update/" + editableSchedule.id,
           body
         );
 
@@ -84,13 +85,11 @@ export default function EditSchedule() {
           setSlots(existingSlots);
         } else {
           setSlots(slots);
-          message.config({ top: "10%" });
-          message.error(response.data.message);
+          toast.error(response.data.toast);
         }
       } catch (e) {
         console.log(e);
-        message.config({ top: "10%" });
-        message.error("Something went wrong!");
+        toast.error("Something went wrong!");
       }
     }
     // const newSlot = [{ time, area }];
@@ -125,14 +124,13 @@ export default function EditSchedule() {
   }, [time, area, slots]);
 
   const submitClick = () => {
-    message.config({ top: "10%" });
-    message.success("Schedule is updated successfully!");
+    toast.success("Schedule is updated successfully!");
     navigate("/");
   };
 
   const getArea = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/area");
+      const response = await axios.get(WEB_API_URL+"/area");
 
       if (response.status === 200 && response.data.success === true) {
         setAreaData(response.data.areas);
@@ -141,14 +139,13 @@ export default function EditSchedule() {
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 
   const slotDeleteClick = async (id) => {
     try {
-      await axios.delete("http://localhost:8080/api/vendor/delete/" + id);
+      await axios.delete(WEB_API_URL+"/vendor/delete/" + id);
     } catch (e) {
       console.log(e);
     }
@@ -179,7 +176,7 @@ export default function EditSchedule() {
   const getSchedules = async (getDate) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/vendor/schedules",
+        WEB_API_URL+"/vendor/schedules",
         {
           params: {
             date: getDate,
@@ -204,13 +201,11 @@ export default function EditSchedule() {
         setSlots(scheduleSlots);
       } else {
         setSlots([]);
-        message.config({ top: "10%" });
-        message.error(response.data.message);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 

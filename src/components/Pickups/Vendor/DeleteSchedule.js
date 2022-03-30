@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Table, Row, Col } from "react-bootstrap";
 import moment from "moment";
-import { Calendar, message, Popconfirm } from "antd";
+import { Calendar, Popconfirm } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
 
 export default function DeleteSchedule() {
   const navigate = useNavigate();
@@ -27,7 +29,7 @@ export default function DeleteSchedule() {
       console.log(slots[i].id);
       try {
         const response = await axios.delete(
-          "http://localhost:8080/api/vendor/delete/"+slots[i].id
+          WEB_API_URL+"/vendor/delete/"+slots[i].id
         );
   
         if (response.status === 200 && response.data.success === true) {
@@ -37,8 +39,7 @@ export default function DeleteSchedule() {
         console.log(e);
       }
     }
-    message.config({ top: "10%" });
-    message.success(`${successCount} slots successfully deleted`);
+    toast.success(`${successCount} slots successfully deleted`);
     navigate("/");
   };
 
@@ -55,7 +56,7 @@ export default function DeleteSchedule() {
   const getSchedules = async (getDate) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/vendor/schedules",
+        WEB_API_URL+"/vendor/schedules",
         {
           params: {
             date: getDate,
@@ -82,13 +83,11 @@ export default function DeleteSchedule() {
       } else {
         setShowDetails(false);
         setSlots([]);
-        message.config({ top: "10%" });
-        message.error(response.data.message);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 
