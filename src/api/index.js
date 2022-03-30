@@ -1,8 +1,10 @@
+// @author : Vasu Gamdha (Group 14)
+
 import axios from "axios";
 
 import * as Constants from "../constants";
 
-const API = axios.create({ baseURL: Constants.WEB_API_URL }); // WEB_API_URL is http://localhost:8080/api
+const API = axios.create({ baseURL: Constants.WEB_API_URL });
 
 API.interceptors.request.use((req) => {
   var token = localStorage.getItem("token");

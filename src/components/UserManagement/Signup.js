@@ -1,3 +1,5 @@
+// @author : Vasu Gamdha (Group 14)
+
 import React, { useState } from "react";
 import "./Signup.css";
 
@@ -8,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { signup } from "../../store/actions/auth";
 
 import FileBase from "react-file-base64";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 const initialState = {
   firstName: "",
@@ -61,7 +63,11 @@ const Signup = () => {
     ) {
       if (password.length > 7) {
         if (password === confirmPassword) {
-          dispatch(signup(formData, navigate));
+          if(mobileNumber.length === 10){
+            dispatch(signup(formData, navigate));
+          } else{
+            toast.error("Mobile number must be of 10 digits!");
+          }
         } else {
           toast.error("Passwords are not same!");
         }
@@ -88,7 +94,6 @@ const Signup = () => {
             placeholder="Enter First Name"
           />
         </Form.Group>
-
         <Form.Group className="mb-2" controlId="formLastName">
           <Form.Label>Last Name</Form.Label>
           <Form.Control
@@ -107,7 +112,6 @@ const Signup = () => {
                         <option value="Vendor">Vendor</option>
                     </Form.Select>
                 </Form.Group> */}
-
         <Form.Group className="mb-2" controlId="formEmail">
           <Form.Label>Email</Form.Label>
           <Form.Control
@@ -117,7 +121,6 @@ const Signup = () => {
             placeholder="Enter Email"
           />
         </Form.Group>
-
         <Form.Group className="mb-2" controlId="formPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
@@ -127,7 +130,6 @@ const Signup = () => {
             placeholder="Enter Password"
           />
         </Form.Group>
-
         <Form.Group className="mb-2" controlId="formConfirmPassword">
           <Form.Label>Confirm Password</Form.Label>
           <Form.Control
@@ -137,7 +139,6 @@ const Signup = () => {
             placeholder="Confirm Password"
           />
         </Form.Group>
-
         <Form.Group className="mb-2" controlId="formMobileNumber">
           <Form.Label>Mobile Number</Form.Label>
           <Form.Control
@@ -147,7 +148,6 @@ const Signup = () => {
             placeholder="Mobile Number"
           />
         </Form.Group>
-
         <Form.Group className="mb-2" controlId="formAddress">
           <Form.Label>Address</Form.Label>
           <Form.Control
@@ -157,7 +157,6 @@ const Signup = () => {
             placeholder="Address"
           />
         </Form.Group>
-
         <Form.Group className="mb-2" controlId="formProfileImage">
           <Form.Label>Profile Image</Form.Label> &nbsp;
           <FileBase
@@ -168,7 +167,6 @@ const Signup = () => {
             }
           />
         </Form.Group>
-
         <Form.Group className="mb-2" controlId="formGender">
           <div className="mb-3">
             <Form.Label>Gender</Form.Label>
@@ -196,7 +194,6 @@ const Signup = () => {
             />
           </div>
         </Form.Group>
-
         <Form.Group className="mb-2" controlId="formRole">
           <div className="mb-3">
             <Form.Label>Sign up as... </Form.Label>
@@ -216,7 +213,6 @@ const Signup = () => {
             />
           </div>
         </Form.Group>
-
         {formData.role === "vendor" ? (
           <Form.Group className="mb-2" controlId="formReason">
             <Form.Label>Reason</Form.Label>
@@ -230,7 +226,6 @@ const Signup = () => {
             />
           </Form.Group>
         ) : null}
-
         {formData.role === "vendor" ? (
           <Form.Group className="mb-2" controlId="formOrganizationName">
             <Form.Label>Organization Name</Form.Label>
@@ -242,14 +237,14 @@ const Signup = () => {
             />
           </Form.Group>
         ) : null}
-
         <Button variant="primary" type="submit">
           Sign up
-        </Button>
-        {" "}Or
+        </Button>{" "}
+        Or
         <Form.Text>
           <a style={{ cursor: "pointer" }} className="h6" href="/login">
-          {" "} Already a user?
+            {" "}
+            Already a user?
           </a>
         </Form.Text>
       </Form>

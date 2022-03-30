@@ -1,6 +1,7 @@
+// @author : Vasu Gamdha (Group 14)
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./VendorProfile.css";
 
 import defaultProfileImage from "../../assets/default.png";
 import { Row, Col, Container } from "react-bootstrap";

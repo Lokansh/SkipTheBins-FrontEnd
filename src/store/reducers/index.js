@@ -1,3 +1,5 @@
+// @author : Vasu Gamdha (Group 14)
+
 import { combineReducers } from "redux";
 
 import auth from "./auth";

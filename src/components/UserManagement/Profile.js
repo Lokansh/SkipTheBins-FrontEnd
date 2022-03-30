@@ -1,6 +1,7 @@
+// @author : Vasu Gamdha (Group 14)
+
 import React, { useState } from "react";
 import AdminProfile from "./AdminProfile";
-import "./Profile.css";
 
 import { useSelector } from "react-redux";
 import UserProfile from "./UserProfile";

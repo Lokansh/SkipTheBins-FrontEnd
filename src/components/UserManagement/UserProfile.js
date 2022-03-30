@@ -1,3 +1,5 @@
+// @author : Vasu Gamdha (Group 14)
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UserProfile.css";
@@ -18,7 +20,7 @@ const UserProfile = () => {
   return (
     <Container>
       <div className="profile__name">
-        <h1>{`${user?.result?.firstName} ${user?.result?.lastName}'s Profile`}</h1>
+        <h1>{`${user?.result?.firstName}'s Profile`}</h1>
       </div>
       <Container fluid className="profile__details">
         <Row>
@@ -30,12 +32,14 @@ const UserProfile = () => {
           </Col>
           <Col md={8} sm={12}>
             <div
-              style={{ top: "25%", position: "inherit" }}
-              className="my-auto"
+              style={{ top: "25%", position:"inherit" }}
+              className="my-auto h5"
             >
-              <div>Address: {user?.result?.address}</div>
-              <div>Mobile Number: {user?.result?.mobileNumber}</div>
-              <div>Email: {user?.result?.email}</div>
+              <div className="mb-2">Name: {user?.result?.firstName} {user?.result?.lastName}</div>
+              <div className="mb-2">Gender: {user?.result?.gender}</div>
+              <div className="mb-2">Address: {user?.result?.address}</div>
+              <div className="mb-2">Mobile Number: {user?.result?.mobileNumber}</div>
+              <div className="mb-2">Email: {user?.result?.email}</div>
             </div>
           </Col>
         </Row>
