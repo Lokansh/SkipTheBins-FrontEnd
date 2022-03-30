@@ -1,3 +1,4 @@
+// Author : Prashit Patel - B00896717
 import React from "react";
 import DispCard from "../Card/Card";
 import schedule from "../../../assets/images/schedule.jpeg";

@@ -1,3 +1,4 @@
+// Author : Prashit Patel - B00896717
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import image1 from "../assets/images/image1.jpeg";
