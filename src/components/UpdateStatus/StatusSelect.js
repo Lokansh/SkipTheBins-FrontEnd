@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import "../UpdateStatus/updateStatus.css";
 import { useState } from "react";
 import Snackbar from "@mui/material/Snackbar";
+import { WEB_API_URL } from "../../constants";
 
 const StatusSelect = (props) => {
   const { row } = props;
@@ -23,21 +24,14 @@ const StatusSelect = (props) => {
   const handleClose = () => {
     setOpen(false);
   };
-  const API_URL = "http://localhost:8080/api/vendor/schedules/update";
 
   const updateStatus = (event) => {
     event.preventDefault();
     const data = {
       _id: row._id,
-      scheduleId: row.scheduleId,
-      vendorId: row.vendorId,
-      batchNo: row.batchNo,
       status: status,
-      date: row.date,
-      area: row.area,
-      slot: row.slot,
     };
-    fetch(API_URL, {
+    fetch(WEB_API_URL + "/vendor/schedules/update", {
       method: "PUT",
       headers: {
         Accept: "application/form-data",
