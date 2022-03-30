@@ -1,0 +1,9 @@
+/* @author : Vasu Gamdha (Group 14) */
+
+.profile__name {
+  font-size: xx-large;
+}
+
+.profile__details {
+  display: flex;
+}

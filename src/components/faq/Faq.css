@@ -1,3 +1,4 @@
+/* Author : Aabhaas Jain */
 .accordion{
     margin-top: 3vh;
     box-shadow: 3px 3px 6px 3px darkgrey;
@@ -35,8 +36,4 @@ color:rgb(197, 52, 52);
 
 .btn-position-mt-3 {
     background-color: rgb(40, 111, 18);
-}
-
-.faqContainer {
-    min-height: 600px;
 }
