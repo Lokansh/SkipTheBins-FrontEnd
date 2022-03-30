@@ -3,6 +3,7 @@ import axios from "axios";
 import "./ContactUs.css";
 import { Card } from "react-bootstrap";
 import { WEB_API_URL } from "../../constants";
+import { toast } from "react-toastify";
 
 function DisplayVendors() {
   const [vendorData, setVendorData] = useState([]);
@@ -18,7 +19,7 @@ function DisplayVendors() {
         setVendorData(res.data.vendorData);
       })
       .catch((error) => {
-        //Prashit notification
+        toast.error("Internal Server Error");
       });
   };
 

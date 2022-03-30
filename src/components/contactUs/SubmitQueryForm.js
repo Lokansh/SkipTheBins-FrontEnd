@@ -3,6 +3,7 @@ import axios from "axios";
 import { Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { WEB_API_URL } from "../../constants";
+import { toast } from "react-toastify";
 
 function SubmitQueryForm() {
   useEffect(() => {});
@@ -87,11 +88,11 @@ function SubmitQueryForm() {
       mobileErrorMsg.length > 0 ||
       queryErrorMsg.length > 0
     ) {
-      alert("Please resolve error");
-    } else if (!isName || !isEmail || !isMobile || !isQuery) {
-      alert("Please fill data in all fields of the form");
+      toast.error("Please resolve error");
     } else if (!isData) {
-      alert("Please enter some data");
+      toast.error("Please enter some data");
+    } else if (!isName || !isEmail || !isMobile || !isQuery) {
+      toast.error("Please fill data in all fields of the form");
     } else {
       submitQueryApiCall();
     }
@@ -111,11 +112,11 @@ function SubmitQueryForm() {
           setSubmitSuccess(true);
         } else {
           //Prashit notiffication
-          alert("Query not submitted");
+          toast.error("Query not submitted");
         }
       })
       .catch((error) => {
-        //Prashit notification
+        toast.error("Internal Server Error");
       });
   };
 

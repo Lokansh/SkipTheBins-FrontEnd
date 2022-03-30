@@ -4,6 +4,7 @@ import "./ContactUs.css";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { WEB_API_URL } from "../../constants";
+import { toast } from "react-toastify";
 
 function AdminDisplayQueries() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ function AdminDisplayQueries() {
         setContactUsQueries(res.data.queryData);
       })
       .catch((error) => {
-        //Prashit notification
+        toast.error("Internal Server Error");
       });
   };
 
