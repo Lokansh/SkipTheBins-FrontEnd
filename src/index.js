@@ -1,5 +1,3 @@
-// @author : Vasu Gamdha (Group 14)
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
