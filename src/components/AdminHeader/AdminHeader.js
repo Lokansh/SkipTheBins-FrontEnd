@@ -1,3 +1,5 @@
+/*Author: Jaimi Maheshbhai Sheta (B00886563)*/
+
 import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
 import skipTheBins from '../../assets/skipTheBins.png';
 import "./AdminHeader.css"

@@ -1,3 +1,5 @@
+/*Author: Jaimi Maheshbhai Sheta (B00886563)*/
+
 import "./RewardListingAdmin.css"
 import {useEffect, useState} from "react";
 import axios from "axios";

@@ -1,3 +1,5 @@
+/*Author: Jaimi Maheshbhai Sheta (B00886563)*/
+
 import "./StatusDisplay.css"
 
 function StatusDisplay({status}) {
