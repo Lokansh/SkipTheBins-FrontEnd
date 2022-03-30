@@ -1,5 +1,5 @@
 import React from "react";
-import DispCard from "../Card";
+import DispCard from "../Card/Card";
 import schedule from "../../../assets/images/schedule.jpeg";
 import view from "../../../assets/images/view.jpeg";
 import edit from "../../../assets/images/edit.png";

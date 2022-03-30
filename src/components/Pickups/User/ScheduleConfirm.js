@@ -2,9 +2,10 @@ import moment from "moment";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Row, Col, Form, Button } from "react-bootstrap";
-import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
 
 export default function ScheduleConfirm() {
   const navigate = useNavigate();
@@ -43,22 +44,21 @@ export default function ScheduleConfirm() {
       };
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/user/schedule",
+          WEB_API_URL+"/user/schedule",
           body
         );
 
         if (response.status === 200 && response.data.success === true) {
-          message.config({ top: "10%" });
-          message.success(response.data.message);
+          toast.success(response.data.toast);
           navigate("/");
         } else {
-          message.error(response.data.message);
+          toast.error(response.data.toast);
         }
       } catch (e) {
         console.log(e);
       }
     } else {
-      message.error("Please provide an address");
+      toast.error("Please provide an address");
     }
   };
 

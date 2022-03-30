@@ -8,11 +8,14 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import { Calendar, message } from "antd";
+import { Calendar } from "antd";
 import moment from "moment";
-import "./SchedulePickup.css";
+import "./css/EditPickup.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
+
 export default function EditPickup() {
   const navigate = useNavigate();
   // const [date, setDate] = useState(moment().add(1, "day").format("LL"));
@@ -71,7 +74,7 @@ export default function EditPickup() {
   const getPickups = async (getDate) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/user/pickups",
+        WEB_API_URL+"/user/pickups",
         {
           params: {
             userId: "5678",
@@ -85,13 +88,11 @@ export default function EditPickup() {
       } else {
         console.log(response);
         setPickups([]);
-        message.config({ top: "10%" });
-        message.error(response.data.message);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 
@@ -106,22 +107,19 @@ export default function EditPickup() {
       console.log('requesting');
       console.log(selectedPickup);
       const response = await axios.put(
-        "http://localhost:8080/api/user/update/" + selectedPickup.pickupId,
+        WEB_API_URL+"/user/update/" + selectedPickup.pickupId,
         body
       );
         console.log(response);
       if (response.status === 200 && response.data.success === true) {
-        message.config({ top: "10%" });
-        message.error(response.data.message);
+        toast.success(response.data.toast);
         navigate("/");
       } else {
-        message.config({ top: "10%" });
-        message.error(response.data.message);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 

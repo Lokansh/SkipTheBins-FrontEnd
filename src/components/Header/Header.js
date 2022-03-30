@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import skipTheBins from '../../assets/skipTheBins.png';
 import "./Header.css"
+
 function Header() {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ function Header() {
     return (
         <Navbar className="shadow-lg p-2 mb-3 bg-white" collapseOnSelect expand="md" bg="light" variant='light' sticky="top">
             <div className='container-fluid'>
-                <Navbar.Brand><img src={skipTheBins} alt="Skip The Bins" className="logo-size" /></Navbar.Brand>
+                <Navbar.Brand href="/"><img src={skipTheBins} alt="Skip The Bins" className="logo-size" /></Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 {/* <Navbar.Collapse id="colapse-nav" className="justify-content-start">
                     <Nav>

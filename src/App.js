@@ -34,16 +34,21 @@ import RewardListingAdmin from "./components/RewardListingAdmin/RewardListingAdm
 import TrackStatus from "./components/TrackStatus/TrackStatus";
 import UpdateStatus from "./components/UpdateStatus/UpdateStatus";
 import { ToastContainer } from "react-toastify";
+import Home from "./components/Home";
+
+// import AdminHeader from "./components/AdminHeader/AdminHeader";
 
 function App() {
   return (
     <div>
+      {/*<AdminHeader/>*/}
       <Router>
         <div>
           <ToastContainer />
           <Header />
           <div className="m-4 body-container">
             <Routes>
+              <Route path="/" exact element={<Home />} />
               <Route
                 path="/faq"
                 exact
@@ -58,52 +63,6 @@ function App() {
                 exact
                 element={<Faq editMode={true} role="admin" />}
               ></Route>
-              <Route path="/user/pickups">
-                <Route
-                  path="/user/pickups/schedule"
-                  element={<SchedulePickup />}
-                ></Route>
-                <Route
-                  path="/user/pickups/confirm"
-                  element={<ScheduleConfirm />}
-                ></Route>
-                <Route
-                  path="/user/pickups/view"
-                  element={<ViewPickup />}
-                ></Route>
-                <Route
-                  path="/user/pickups/edit"
-                  element={<EditPickup />}
-                ></Route>
-                <Route
-                  path="/user/pickups/cancel"
-                  element={<CancelPickup />}
-                ></Route>
-                <Route index element={<PickupHomeUser />}></Route>
-              </Route>
-              <Route path="/vendor/pickups">
-                <Route
-                  path="/vendor/pickups/schedule"
-                  element={<CreateSchedule />}
-                ></Route>
-                <Route
-                  path="/vendor/pickups/confirm"
-                  element={<ConfirmSchedule />}
-                ></Route>
-                <Route
-                  path="/vendor/pickups/view"
-                  element={<ViewSchedule />}
-                ></Route>
-                <Route
-                  path="/vendor/pickups/edit"
-                  element={<EditSchedule />}
-                ></Route>
-                <Route
-                  path="/vendor/pickups/delete"
-                  element={<DeleteSchedule />}
-                ></Route>
-                <Route index element={<PickupHomeVendor />}></Route>
-              </Route>
               <Route path="/contactus">
                 {/* <Route path="/submitquery" element={<SubmitQueryForm />}></Route> */}
                 <Route index element={<ContactUs />}></Route>
@@ -120,7 +79,46 @@ function App() {
                 path="/contactus/modifyvendors"
                 element={<AdminModifyVendors />}
               ></Route>
-
+              <Route path="/user/pickups">
+                <Route
+                  path="/user/pickups/schedule"
+                  element={<SchedulePickup />}
+                />
+                <Route
+                  path="/user/pickups/confirm"
+                  element={<ScheduleConfirm />}
+                />
+                <Route path="/user/pickups/view" element={<ViewPickup />} />
+                <Route path="/user/pickups/edit" element={<EditPickup />} />
+                <Route path="/user/pickups/cancel" element={<CancelPickup />} />
+                <Route path="/user/pickups/track" element={<TrackStatus />} />
+                <Route index element={<PickupHomeUser />} />
+              </Route>
+              <Route path="/vendor/pickups">
+                <Route
+                  path="/vendor/pickups/schedule"
+                  element={<CreateSchedule />}
+                />
+                <Route
+                  path="/vendor/pickups/confirm"
+                  element={<ConfirmSchedule />}
+                />
+                <Route path="/vendor/pickups/view" element={<ViewSchedule />} />
+                <Route path="/vendor/pickups/edit" element={<EditSchedule />} />
+                <Route
+                  path="/vendor/pickups/delete"
+                  element={<DeleteSchedule />}
+                />
+                <Route
+                  path="/vendor/pickups/update"
+                  element={<UpdateStatus />}
+                />
+                <Route index element={<PickupHomeVendor />} />
+              </Route>
+              <Route path="/signup" element={<Signup />}></Route>
+              <Route path="/login" element={<Login />}></Route>
+              <Route path="/settings" element={<Settings />}></Route>
+              <Route path="/profile" element={<Profile />}></Route>
               <Route
                 path="/user-dashboard"
                 exact
@@ -136,10 +134,6 @@ function App() {
                 exact
                 element={<RewardListingAdmin />}
               />
-              <Route path="/signup" element={<Signup />}></Route>
-              <Route path="/login" element={<Login />}></Route>
-              <Route path="/settings" element={<Settings />}></Route>
-              <Route path="/profile" element={<Profile />}></Route>
             </Routes>
           </div>
           <Footer />

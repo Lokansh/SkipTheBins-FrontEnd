@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup, Row, Col } from "react-bootstrap";
 import moment from "moment";
-import { Calendar, message, Popconfirm } from "antd";
+import { Calendar, Popconfirm } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
 
 export default function CancelPickup() {
   const navigate = useNavigate();
-  const [date, setDate] = useState(moment().add(1, "day").format("LL"));
   const [time, setTime] = useState("");
   const [showDetails, setShowDetails] = useState(false);
   const [pickups, setPickups] = useState([]);
   const [selectedPickup, setSelectedPickup] = useState({});
 
   const dateChange = (event) => {
-    setDate(event.format("LL"));
     getPickups(event.format("LL"));
   };
 
@@ -37,22 +37,19 @@ export default function CancelPickup() {
   const cancelPickup = async () => {
     try {
       const response = await axios.delete(
-        "http://localhost:8080/api/user/cancel/" + selectedPickup.pickupId
+        WEB_API_URL+"/user/cancel/" + selectedPickup.pickupId
       );
 
       if (response.status === 200 && response.data.success === true) {
-        message.config({ top: "10%" });
-        message.success(response.data.message);
+        toast.success(response.data.toast);
         navigate("/");
       } else {
         setPickups([]);
-        message.config({ top: "10%" });
-        message.error(response.data.message);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 
@@ -69,7 +66,7 @@ export default function CancelPickup() {
   const getPickups = async (getDate) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/user/pickups",
+        WEB_API_URL+"/user/pickups",
         {
           params: {
             userId: "5678",
@@ -83,13 +80,11 @@ export default function CancelPickup() {
       } else {
         setShowDetails(false);
         setPickups([]);
-        message.config({ top: "10%" });
-        message.error(response.data.message);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 

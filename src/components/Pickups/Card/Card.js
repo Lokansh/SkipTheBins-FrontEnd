@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Button } from "react-bootstrap";
-import "./Card.css";
+import "./css/Card.css";
 
 export default function DispCard(props) {
   return (
