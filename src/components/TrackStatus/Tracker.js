@@ -4,15 +4,15 @@ import Stepper from "@mui/material/Stepper";
 import StepLabel from "@mui/material/StepLabel";
 import Step from "@mui/material/Step";
 import { useEffect, useState } from "react";
+import { WEB_API_URL } from "../../constants";
 
 const Tracker = (props) => {
   const { row } = props;
   const [status, setStatus] = useState("");
-  const API_URL =
-    "http://localhost:8080/api/user/pickups/status?batchNo=" + row.batchNo;
+  const URL = "/user/pickups/status?batchNo=" + row.batchNo;
 
   const getStatus = () => {
-    fetch(API_URL)
+    fetch(WEB_API_URL + URL)
       .then((response) => response.json())
       .then((res) => {
         setStatus(res.status);
