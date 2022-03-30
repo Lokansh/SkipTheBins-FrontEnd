@@ -1,4 +1,4 @@
-.grid {
+<!--Author Lokansh Gupta-- > .grid {
   min-height: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -19,13 +19,6 @@
   text-align: center;
 
   color: rgb(71, 68, 68);
-}
-
-.contact-heading {
-  font-size: 3em;
-  font-weight: 700;
-  text-align: center;
-  color: rgb(17, 45, 92);
 }
 
 .contactContainer {

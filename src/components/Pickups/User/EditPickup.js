@@ -1,55 +1,50 @@
 import React, { useEffect, useState } from "react";
 import {
-  ProgressBar,
   Button,
   ButtonGroup,
-  Dropdown,
   ToggleButton,
   ToggleButtonGroup,
   Form,
-  Alert,
   Row,
   Col,
 } from "react-bootstrap";
-import { Calendar, message } from "antd";
+import { Calendar } from "antd";
 import moment from "moment";
-import "./SchedulePickup.css";
+import "./css/EditPickup.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
+
 export default function EditPickup() {
   const navigate = useNavigate();
-  const [progress, setProgress] = useState(0);
-  const [date, setDate] = useState(moment().add(1, "day").format("LL"));
+  // const [date, setDate] = useState(moment().add(1, "day").format("LL"));
   const [time, setTime] = useState("");
-  const [area, setArea] = useState("Select Area");
   const [wasteTypes, setWasteTypes] = useState([]);
   const [bags, setBags] = useState(0);
   const [weight, setWeight] = useState(0);
-  const [showFields, setShowFields] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [areaData, setAreaData] = useState([]);
-  const [schedules, setSchedules] = useState([]);
-  const [batchNo, setBatchNo] = useState();
+  const [pickups, setPickups] = useState([]);
+  const [selectedPickup, setSelectedPickup] = useState({});
+  const [showDetails, setShowDetails] = useState(false);
+  const [disableUpdate, setDisableUpdate] = useState(false);
 
   const dateChange = (event) => {
-    setDate(event.format("LL"));
-    getSlots(event.format("LL"), area);
-  };
-
-  const onAreaSelect = (event) => {
-    setArea(event.target.innerText);
-    setShowFields(true);
-    getSlots(date, event.target.innerText);
+    // setDate(event.format("LL"));
+    getPickups(event.format("LL"));
   };
 
   const onTimeSelect = (event) => {
     setTime(event.target.value);
     const slot = event.target.value.split("=")[0].trim();
     const vendor = event.target.value.split("=")[1].trim();
-    const selectedSlot = schedules.filter(
-      (schedule) => schedule.slot === slot && schedule.vendor === vendor
+    const selected = pickups.filter(
+      (pickup) => pickup.slot === slot && pickup.vendor === vendor
     );
-    setBatchNo(selectedSlot[0].batchNo);
+    setSelectedPickup(selected[0]);
+    setWasteTypes(selected[0].wasteType);
+    setBags(parseInt(selected[0].boxQty));
+    setWeight(parseInt(selected[0].wasteQty));
+    setShowDetails(true);
   };
 
   const wasteTypeChange = (event) => {
@@ -65,121 +60,71 @@ export default function EditPickup() {
   };
 
   useEffect(() => {
-    let progress = 0;
-    if (showFields) {
-      progress += 20;
-    }
-    if (time !== "") {
-      progress += 20;
-    }
-    if (wasteTypes.length > 0) {
-      progress += 20;
-    }
-    if (bags > 0) {
-      progress += 20;
-    }
-    if (weight > 0) {
-      progress += 20;
-    }
-    setProgress(progress);
-  }, [showFields, time, wasteTypes.length, bags, weight]);
-
-  useEffect(() => {
-    const timeId = setTimeout(() => {
-      setShowAlert(false);
-    }, 1500);
-
-    return () => {
-      clearTimeout(timeId);
-    };
-  }, [showAlert]);
-
-  useEffect(() => {
-    getArea();
+    getPickups(moment().add(1, "day").format("LL"));
   }, []);
 
-  const getSlots = async (getDate, getArea) => {
+  useEffect(() => {
+    if (bags > 0 && weight > 0 && wasteTypes.length > 0) {
+      setDisableUpdate(false);
+    } else {
+      setDisableUpdate(true);
+    }
+  }, [bags, weight, wasteTypes]);
+
+  const getPickups = async (getDate) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/vendor/schedules",
+        WEB_API_URL+"/user/pickups",
         {
           params: {
+            userId: "5678",
             date: getDate,
-            area: getArea,
           },
         }
       );
+
       if (response.status === 200 && response.data.success === true) {
-        setSchedules(response.data.schedules);
+        setPickups(response.data.pickups);
       } else {
-        setSchedules([]);
+        console.log(response);
+        setPickups([]);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 
-  const getArea = async () => {
+  const submitClick = async () => {
+    console.log('here');
     try {
-      const response = await axios.get("http://localhost:8080/api/area");
-
+      const body = {
+        wasteType: wasteTypes,
+        boxQty: bags,
+        wasteQty: weight,
+      };
+      console.log('requesting');
+      console.log(selectedPickup);
+      const response = await axios.put(
+        WEB_API_URL+"/user/update/" + selectedPickup.pickupId,
+        body
+      );
+        console.log(response);
       if (response.status === 200 && response.data.success === true) {
-        setAreaData(response.data.areas);
+        toast.success(response.data.toast);
+        navigate("/");
       } else {
-        setAreaData([]);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
-    }
-  };
-
-  const submitClick = () => {
-    if (progress === 100) {
-      navigate("/user/pickups/confirm", {
-        state: {
-          date,
-          time,
-          area,
-          wasteTypes,
-          bags,
-          weight,
-          batchNo,
-        },
-      });
-    } else {
-      message.config({ top: "10%" });
-      message.error("Some details missing!");
+      toast.error("Something went wrong!");
     }
   };
 
   return (
     <div>
-      {showAlert && (
-        <Col
-          className="d-flex"
-          style={{
-            position: "fixed",
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Alert
-            style={{ boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px" }}
-            variant="danger"
-            onClose={() => setShowAlert(false)}
-            dismissible
-          >
-            <Alert.Heading style={{ textAlign: "center" }}>
-              Please fill all the details!
-            </Alert.Heading>
-          </Alert>
-        </Col>
-      )}
       <div>
         <h3
           style={{
@@ -189,130 +134,85 @@ export default function EditPickup() {
             marginBottom: "1%",
           }}
         >
-          Schedule your Pickup
+          Change your Pickup
         </h3>
-        <div style={{ justifyContent: "center" }} className="d-flex">
-          <ProgressBar
-            animated
-            style={{
-              marginBottom: "2%",
-              minWidth: "80%",
-              boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-            }}
-            variant="success"
-            now={progress}
-            label={`${progress}%`}
-          />
-        </div>
-        <div
-          style={{ justifyContent: "center", marginBottom: "2%" }}
-          className="d-flex"
-        >
-          <Dropdown
-            style={{
-              minWidth: "20%",
-              boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-            }}
-          >
-            <Dropdown.Toggle
-              style={{ width: "100%" }}
-              variant="success"
-              id="dropdown-basic"
-            >
-              {area}
-            </Dropdown.Toggle>
 
-            <Dropdown.Menu style={{ width: "100%" }} onClick={onAreaSelect}>
-              {areaData.map((area, index) => {
-                return (
-                  <Dropdown.Item
-                    key={index}
-                    style={{ textAlign: "center" }}
-                    value={area.name}
-                  >
-                    {area.name}
-                  </Dropdown.Item>
-                );
-              })}
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-        {showFields && (
-          <div style={{ marginLeft: "2%" }}>
-            <Row>
-              <Col sm={3} style={{ marginBottom: "2px" }}>
-                <Row className="text-center">
-                  <h5
+        <div style={{ marginLeft: "2%" }}>
+          <Row>
+            <Col sm={3} style={{ marginBottom: "2px" }}>
+              <Row className="text-center">
+                <h5
+                  style={{
+                    color: "rgba(17, 45, 92,0.85)",
+                    textAlign: "center",
+                  }}
+                >
+                  Select Date
+                </h5>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <Calendar
+                    fullscreen={false}
+                    defaultValue={moment().add(1, "day").endOf("day")}
+                    disabledDate={(current) =>
+                      current && current <= moment().endOf("day")
+                    }
+                    onSelect={dateChange}
                     style={{
-                      color: "rgba(17, 45, 92,0.85)",
-                      textAlign: "center",
+                      boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
+                      width: "90%",
+                      marginLeft: "1%",
                     }}
-                  >
-                    Select Date
-                  </h5>
-                  <div style={{ display: "flex", justifyContent: "center" }}>
-                    <Calendar
-                      fullscreen={false}
-                      defaultValue={moment().add(1, "day").endOf("day")}
-                      disabledDate={(current) =>
-                        current && current <= moment().endOf("day")
-                      }
-                      onSelect={dateChange}
-                      style={{
-                        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-                        width: "90%",
-                        marginLeft: "1%",
-                      }}
-                    />
-                  </div>
+                  />
+                </div>
+              </Row>
+            </Col>
+            <Col sm={3} style={{ marginBottom: "2px" }}>
+              <Row className="text-center">
+                <h5
+                  style={{
+                    color: "rgba(17, 45, 92,0.85)",
+                    textAlign: "center",
+                  }}
+                >
+                  Select Time & Vendor
+                </h5>
+                <Row style={{ justifyContent: "center" }} className="d-flex">
+                  {pickups.length === 0 ? (
+                    <h4>No pickups found!</h4>
+                  ) : (
+                    <ButtonGroup
+                      style={{ minWidth: "80%" }}
+                      vertical
+                      onClick={onTimeSelect}
+                    >
+                      {pickups.map((pickup, index) => {
+                        return (
+                          <Button
+                            key={index}
+                            style={{
+                              margin: "2%",
+                              border: "1px solid rgba(40, 111, 18,0.85)",
+                              boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
+                            }}
+                            variant="light"
+                            size="sm"
+                            value={`${pickup.slot} = ${pickup.vendor}`}
+                            active={
+                              time === `${pickup.slot} = ${pickup.vendor}`
+                                ? true
+                                : false
+                            }
+                          >
+                            {pickup.slot} = {pickup.vendor}
+                          </Button>
+                        );
+                      })}
+                    </ButtonGroup>
+                  )}
                 </Row>
-              </Col>
-              <Col sm={3} style={{ marginBottom: "2px" }}>
-                <Row className="text-center">
-                  <h5
-                    style={{
-                      color: "rgba(17, 45, 92,0.85)",
-                      textAlign: "center",
-                    }}
-                  >
-                    Select Time & Vendor
-                  </h5>
-                  <Row style={{ justifyContent: "center" }} className="d-flex">
-                    {schedules.length === 0 ? (
-                      <h4>No slots found!</h4>
-                    ) : (
-                      <ButtonGroup
-                        style={{ minWidth: "80%" }}
-                        vertical
-                        onClick={onTimeSelect}
-                      >
-                        {schedules.map((schedule, index) => {
-                          return (
-                            <Button
-                              key={index}
-                              style={{
-                                margin: "2%",
-                                border: "1px solid rgba(40, 111, 18,0.85)",
-                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-                              }}
-                              variant="light"
-                              size="sm"
-                              value={`${schedule.slot} = ${schedule.vendor}`}
-                              active={
-                                time === `${schedule.slot} = ${schedule.vendor}`
-                                  ? true
-                                  : false
-                              }
-                            >
-                              {schedule.slot} = {schedule.vendor}
-                            </Button>
-                          );
-                        })}
-                      </ButtonGroup>
-                    )}
-                  </Row>
-                </Row>
-              </Col>
+              </Row>
+            </Col>
+            {showDetails && (
               <Col sm={3} style={{ marginBottom: "2px" }}>
                 <Row className="text-center">
                   <h5
@@ -419,6 +319,8 @@ export default function EditPickup() {
                   </Row>
                 </Row>
               </Col>
+            )}
+            {showDetails && (
               <Col sm={3} style={{ marginBottom: "2%" }}>
                 <Row className="text-center">
                   <h5
@@ -440,6 +342,7 @@ export default function EditPickup() {
                       max={10}
                       min={1}
                       onChange={onBagsChange}
+                      value={bags}
                     />
                   </Row>
                 </Row>
@@ -463,26 +366,28 @@ export default function EditPickup() {
                       max={10}
                       min={1}
                       onChange={onWeightChange}
+                      value={weight}
                     />
                   </Row>
                 </Row>
               </Col>
-            </Row>
-            <Row style={{ marginTop: "1%" }} className="text-center">
-              <Button
-                style={{
-                  maxWidth: "30%",
-                  boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-                  margin: "0 auto",
-                }}
-                variant="success"
-                onClick={submitClick}
-              >
-                Next
-              </Button>
-            </Row>
-          </div>
-        )}
+            )}
+          </Row>
+          <Row style={{ marginTop: "1%" }} className="text-center">
+            <Button
+              style={{
+                maxWidth: "30%",
+                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
+                margin: "0 auto",
+              }}
+              variant="success"
+              disabled={disableUpdate}
+              onClick={submitClick}
+            >
+              Update
+            </Button>
+          </Row>
+        </div>
       </div>
     </div>
   );

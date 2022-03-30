@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ProgressBar, Button, Dropdown, Row, Col } from "react-bootstrap";
-import { message, DatePicker, TimePicker, Progress } from "antd";
+import { DatePicker, TimePicker, Progress } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
 const { RangePicker } = DatePicker;
 
 export default function SchedulePickup() {
@@ -46,8 +48,7 @@ export default function SchedulePickup() {
 
       if (fromTime === toTime) {
         setTime([]);
-        message.config({ top: "10%" });
-        message.error("Invalid Time Range!");
+        toast.error("Invalid Time Range!");
       } else {
         setTime([event[0].format("hh:mm A"), event[1].format("hh:mm A")]);
       }
@@ -99,7 +100,7 @@ export default function SchedulePickup() {
 
   const getArea = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/area");
+      const response = await axios.get(WEB_API_URL+"/area");
 
       if (response.status === 200 && response.data.success === true) {
         setAreaData(response.data.areas);
@@ -108,8 +109,7 @@ export default function SchedulePickup() {
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 
@@ -124,13 +124,12 @@ export default function SchedulePickup() {
       };
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/vendor/create",
+          WEB_API_URL+"/vendor/create",
           body
         );
 
         if (response.status === 200 && response.data.success === true) {
-          message.config({ top: "10%" });
-          message.success(response.data.message);
+          toast.success(response.data.toast);
           navigate("/vendor/pickups/confirm", {
             state: {
               date,
@@ -138,14 +137,13 @@ export default function SchedulePickup() {
             },
           });
         } else {
-          message.error(response.data.message);
+          toast.error(response.data.toast);
         }
       } catch (e) {
         console.log(e);
       }
     } else {
-      message.config({ top: "10%" });
-      message.error("Some details missing!");
+      toast.error("Some details missing!");
     }
   };
 

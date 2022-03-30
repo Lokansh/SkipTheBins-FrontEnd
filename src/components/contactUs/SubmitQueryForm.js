@@ -1,12 +1,15 @@
+// Author : Lokansh Gupta
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { WEB_API_URL } from "../../constants";
+import { toast } from "react-toastify";
 
 function SubmitQueryForm() {
   useEffect(() => {});
 
-  const nameRegex = /^[a-zA-Z]+$/;
+  const nameRegex = /^[a-zA-Z .]+$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const mobileRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
@@ -38,7 +41,6 @@ function SubmitQueryForm() {
       setIsData(true);
       setIsName(true);
       setNameErrorMsg("");
-      //console.log(e.target.value);
       setName(e.target.value);
     }
   };
@@ -52,21 +54,19 @@ function SubmitQueryForm() {
       setIsData(true);
       setIsEmail(true);
       setEmailErrorMsg("");
-      //console.log(e.target.value);
       setEmail(e.target.value);
     }
   };
   const handleMobile = (e) => {
     if (e.target.value && !mobileRegex.test(e.target.value)) {
       setMobileErrorMsg(
-        "Please provide mobile number in correct format (Eg. '+1-8087339090')"
+        "Please provide mobile number in correct format (Eg. '+1-9997776666' or '9997776666')"
       );
       setIsMobile(false);
     } else {
       setIsData(true);
       setIsMobile(true);
       setMobileErrorMsg("");
-      //console.log(e.target.value);
       setMobile(e.target.value);
     }
   };
@@ -78,7 +78,6 @@ function SubmitQueryForm() {
       setIsData(true);
       setIsQuery(true);
       setQueryErrorMsg("");
-      //console.log(e.target.value);
       setQuery(e.target.value);
     }
   };
@@ -90,11 +89,11 @@ function SubmitQueryForm() {
       mobileErrorMsg.length > 0 ||
       queryErrorMsg.length > 0
     ) {
-      alert("Please resolve error");
-    } else if (!isName || !isEmail || !isMobile || !isQuery) {
-      alert("Please fill data in all fields of the form");
+      toast.error("Please resolve error");
     } else if (!isData) {
-      alert("Please enter some data");
+      toast.error("Please enter some data");
+    } else if (!isName || !isEmail || !isMobile || !isQuery) {
+      toast.error("Please fill data in all fields of the form");
     } else {
       submitQueryApiCall();
     }
@@ -108,15 +107,18 @@ function SubmitQueryForm() {
       query: query,
     };
     axios
-      .post("http://localhost:8080/api/query/add", newQueryObj)
+      .post(WEB_API_URL + "/query/add", newQueryObj)
       .then((res) => {
         if (res.data.success) {
           setSubmitSuccess(true);
         } else {
-          alert("Query not submitted");
+          //Prashit notiffication
+          toast.error("Query not submitted");
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        toast.error("Internal Server Error");
+      });
   };
 
   const handleGoBack = (e) => {
@@ -125,16 +127,47 @@ function SubmitQueryForm() {
 
   return (
     <div>
-      <span className="contact-heading">Contact Us</span>
+      <h1
+        style={{
+          textAlign: "center",
+          fontWeight: "bolder",
+          color: "rgba(17, 45, 92,0.85)",
+          marginBottom: "1%",
+        }}
+      >
+        Contact Us
+      </h1>
       {!submitSuccess && (
         <div>
-          <h3>Submit a query</h3>
-          <h6>
+          <h4
+            style={{
+              textAlign: "center",
+              fontWeight: "bolder",
+              color: "rgba(17, 45, 92,0.85)",
+              marginBottom: "1%",
+            }}
+          >
+            Submit a query
+          </h4>
+          <h6
+            style={{
+              textAlign: "center",
+              fontWeight: "bolder",
+              color: "rgba(17, 45, 92,0.85)",
+              marginBottom: "1%",
+            }}
+          >
             Facing an issue, please fill in the form below and we will get back
             to you.
           </h6>
 
-          <Form>
+          <Form
+            style={{
+              fontWeight: "bolder",
+              color: "rgba(17, 45, 92,0.85)",
+              marginBottom: "1%",
+            }}
+          >
             <Form.Group className="mb-3" controlId="name">
               <Form.Label>Full Name</Form.Label>
               <Form.Control
@@ -180,19 +213,34 @@ function SubmitQueryForm() {
                 {queryErrorMsg.length > 0 ? queryErrorMsg : ""}
               </Form.Text>
             </Form.Group>
-            <Button variant="success" type="submit" onClick={handleSubmit}>
-              Submit
-            </Button>
+            <div
+              style={{ marginTop: "1%", justifyContent: "center" }}
+              class="text-center d flex"
+            >
+              <Button variant="success" type="submit" onClick={handleSubmit}>
+                Submit
+              </Button>
+            </div>
           </Form>
         </div>
       )}
       {submitSuccess && (
         <div>
-          <h6>
+          <h6
+            style={{
+              textAlign: "center",
+              fontWeight: "bolder",
+              color: "rgba(17, 45, 92,0.85)",
+              marginBottom: "1%",
+            }}
+          >
             Your query has been successfully submitted. We will get back to you
             within 2-3 working days.
           </h6>
-          <div>
+          <div
+            style={{ marginTop: "1%", justifyContent: "center" }}
+            class="text-center d flex"
+          >
             <Button variant="primary" type="submit" onClick={handleGoBack}>
               Home
             </Button>

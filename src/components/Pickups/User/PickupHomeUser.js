@@ -1,7 +1,8 @@
 import React from "react";
-import DispCard from "../Card";
+import DispCard from "../Card/Card";
 import schedule from "../../../assets/images/schedule.jpeg";
 import view from "../../../assets/images/view.jpeg";
+import track from "../../../assets/images/track.png";
 import edit from "../../../assets/images/edit.png";
 import cancel from "../../../assets/images/cancel.png";
 import { useNavigate } from "react-router-dom";
@@ -52,6 +53,14 @@ export default function PickupHomeUser() {
             desc="You want to cancel on us, that's not a problem !"
             img={cancel}
             btnClick={() => navigate("/user/pickups/cancel")}
+          />
+        </div>
+        <div style={{ justifyContent: "center" }} className="col d-flex">
+          <DispCard
+            title="Track Pickup"
+            desc="You want to view where your pickup is, go here !"
+            img={track}
+            btnClick={() => navigate("/user/pickups/track")}
           />
         </div>
       </Row>

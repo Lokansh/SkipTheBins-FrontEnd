@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Dropdown, Row, Col } from "react-bootstrap";
-import { message, TimePicker, Progress, Calendar } from "antd";
+import { TimePicker, Progress, Calendar } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
 
 export default function EditSchedule() {
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ export default function EditSchedule() {
   const [slotProgress, setSlotProgress] = useState(0);
   const [nextDisable, setNextDisable] = useState(false);
   const [addDisable, setAddDisable] = useState(true);
-
+  const [areaData, setAreaData] = useState([]);
   const [pickerTime, setPickerTime] = useState();
   const [buttonText, setButtonText] = useState("Add");
   const [editableSchedule, setEditableSchedule] = useState({});
@@ -41,8 +43,7 @@ export default function EditSchedule() {
 
       if (fromTime === toTime) {
         setTime([]);
-        message.config({ top: "10%" });
-        message.error("Invalid Time Range!");
+        toast.error("Invalid Time Range!");
       } else {
         setTime([event[0].format("hh:mm A"), event[1].format("hh:mm A")]);
       }
@@ -51,18 +52,26 @@ export default function EditSchedule() {
 
   const slotSubmit = async () => {
     if (buttonText === "Add") {
+      const body = {
+        date:date,
+        vendorId: "1267",
+        vendor: "Walmart",
+        area: area,
+        slot: time,
+      };
+      const response = await axios.post(WEB_API_URL+"/vendor/schedules/add", body);
+
+      if (response.status === 200 && response.data.success === true) {
+        getSchedules(date);
+      }
     } else if (buttonText === "Update") {
       try {
         const body = {
-          vendorId: editableSchedule.vendor,
-          vendor: editableSchedule.vendorId,
           area: area,
-          date: editableSchedule.date,
-          batchNo: editableSchedule.batchNo,
           slot: [time[0], time[1]],
         };
         const response = await axios.put(
-          "http://localhost:8080/api/vendor/update/" + editableSchedule.id,
+          WEB_API_URL+"/vendor/update/" + editableSchedule.id,
           body
         );
 
@@ -71,22 +80,16 @@ export default function EditSchedule() {
           existingSlots.push({
             area: area,
             time: [time[0], time[1]],
-            id: editableSchedule.id,
-            vendorId: editableSchedule.vendorId,
-            vendor: editableSchedule.vendor,
-            batchNo: editableSchedule.batchNo,
-            date: editableSchedule.date,
+            id: editableSchedule.id
           });
           setSlots(existingSlots);
         } else {
           setSlots(slots);
-          message.config({ top: "10%" });
-          message.error(response.data.message);
+          toast.error(response.data.toast);
         }
       } catch (e) {
         console.log(e);
-        message.config({ top: "10%" });
-        message.error("Something went wrong!");
+        toast.error("Something went wrong!");
       }
     }
     // const newSlot = [{ time, area }];
@@ -121,16 +124,28 @@ export default function EditSchedule() {
   }, [time, area, slots]);
 
   const submitClick = () => {
-    message.config({ top: "10%" });
-    message.success("Schedule is updated successfully!");
+    toast.success("Schedule is updated successfully!");
     navigate("/");
+  };
+
+  const getArea = async () => {
+    try {
+      const response = await axios.get(WEB_API_URL+"/area");
+
+      if (response.status === 200 && response.data.success === true) {
+        setAreaData(response.data.areas);
+      } else {
+        setAreaData([]);
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong!");
+    }
   };
 
   const slotDeleteClick = async (id) => {
     try {
-      const response = await axios.delete(
-        "http://localhost:8080/api/vendor/delete/" + id
-      );
+      await axios.delete(WEB_API_URL+"/vendor/delete/" + id);
     } catch (e) {
       console.log(e);
     }
@@ -155,12 +170,13 @@ export default function EditSchedule() {
 
   useEffect(() => {
     getSchedules(moment().add(1, "day").format("LL"));
+    getArea();
   }, []);
 
   const getSchedules = async (getDate) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/vendor/schedules",
+        WEB_API_URL+"/vendor/schedules",
         {
           params: {
             date: getDate,
@@ -179,24 +195,17 @@ export default function EditSchedule() {
               schedules[i].slot.split("-")[0].trim(),
               schedules[i].slot.split("-")[1].trim(),
             ],
-            id: schedules[i].scheduleId,
-            vendorId: schedules[i].vendorId,
-            vendor: schedules[i].vendor,
-            batchNo: schedules[i].batchNo,
-            date: schedules[i].date,
+            id: schedules[i].scheduleId
           });
         }
         setSlots(scheduleSlots);
       } else {
-        // setShowDetails(false);
         setSlots([]);
-        message.config({ top: "10%" });
-        message.error(response.data.message);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 
@@ -349,24 +358,17 @@ export default function EditSchedule() {
                         style={{ width: "100%" }}
                         onClick={onAreaSelect}
                       >
-                        <Dropdown.Item
-                          style={{ textAlign: "center" }}
-                          value="Spring Garden"
-                        >
-                          Spring Garden
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                          style={{ textAlign: "center" }}
-                          value="Lower Sackville"
-                        >
-                          Lower Sackville
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                          style={{ textAlign: "center" }}
-                          value="Bayers Road"
-                        >
-                          Bayers Road
-                        </Dropdown.Item>
+                        {areaData.map((area, index) => {
+                          return (
+                            <Dropdown.Item
+                              key={index}
+                              style={{ textAlign: "center" }}
+                              value={area.name}
+                            >
+                              {area.name}
+                            </Dropdown.Item>
+                          );
+                        })}
                       </Dropdown.Menu>
                     </Dropdown>
                   </Col>

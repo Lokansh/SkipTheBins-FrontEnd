@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, Table, Row, Col } from "react-bootstrap";
 import moment from "moment";
-import { Calendar, message } from "antd";
+import { Calendar } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
 
 export default function ViewSchedule() {
   const navigate = useNavigate();
@@ -33,7 +35,7 @@ export default function ViewSchedule() {
   const getSchedules = async (getDate) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/vendor/schedules",
+        WEB_API_URL+"/vendor/schedules",
         {
           params: {
             date: getDate,
@@ -41,7 +43,6 @@ export default function ViewSchedule() {
           },
         }
       );
-
       if (response.status === 200 && response.data.success === true) {
         const schedules = response.data.schedules;
         let scheduleSlots=[];
@@ -60,13 +61,11 @@ export default function ViewSchedule() {
       } else {
         setShowDetails(false);
         setSlots([]);
-        message.config({ top: "10%" });
-        message.error(response.data.message);
+        toast.error(response.data.toast);
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 

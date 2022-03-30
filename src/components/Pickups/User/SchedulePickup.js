@@ -11,11 +11,13 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import { Calendar, message } from "antd";
+import { Calendar } from "antd";
 import moment from "moment";
-import "./SchedulePickup.css";
+import "./css/SchedulePickup.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { WEB_API_URL } from "../../../constants";
+import {toast} from "react-toastify";
 
 export default function SchedulePickup() {
   const navigate = useNavigate();
@@ -102,7 +104,7 @@ export default function SchedulePickup() {
   const getSlots = async (getDate, getArea) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/vendor/schedules",
+        WEB_API_URL+"/vendor/schedules",
         {
           params: {
             date: getDate,
@@ -117,14 +119,13 @@ export default function SchedulePickup() {
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 
   const getArea = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/area");
+      const response = await axios.get(WEB_API_URL+"/area");
 
       if (response.status === 200 && response.data.success === true) {
         setAreaData(response.data.areas);
@@ -133,8 +134,7 @@ export default function SchedulePickup() {
       }
     } catch (e) {
       console.log(e);
-      message.config({ top: "10%" });
-      message.error("Something went wrong!");
+      toast.error("Something went wrong!");
     }
   };
 
@@ -152,8 +152,7 @@ export default function SchedulePickup() {
         },
       });
     } else {
-      message.config({ top: "10%" });
-      message.error("Some details missing!");
+      toast.error("Some details missing!");
     }
   };
 
