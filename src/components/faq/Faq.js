@@ -1,3 +1,4 @@
+// Author : Aabhaas Jain
 import { Accordion, Button } from 'react-bootstrap';
 import "./Faq.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
