@@ -1,3 +1,5 @@
+// @author : Vasu Gamdha (Group 14)
+
 export const SIGNUP = "SIGNUP";
 export const LOGIN = "LOGIN";
 export const LOGOUT = "LOGOUT";

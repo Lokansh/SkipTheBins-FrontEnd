@@ -1,3 +1,5 @@
+// @author : Vasu Gamdha (Group 14)
+
 import React, { useEffect, useState } from "react";
 import {
   Card,
@@ -20,6 +22,7 @@ import {
 import { requestVendorDeletion } from "../../store/actions/vendor";
 
 import FileBase from "react-file-base64";
+import { toast } from "react-toastify";
 
 const Settings = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
@@ -61,7 +64,7 @@ const Settings = () => {
         mobileNumber,
       });
     }
-  });
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -78,10 +81,14 @@ const Settings = () => {
       formData.newPassword &&
       formData.confirmNewPassword
     ) {
-      dispatch(changePassword(user?.result?._id, formData));
-      setChangePasswordShow(false);
+      if (formData.newPassword.length > 7) {
+        dispatch(changePassword(user?.result?._id, formData));
+        setChangePasswordShow(false);
+      } else{
+        toast.error("Password must have atleast 8 characters");
+      }
     } else {
-      alert(
+      toast.error(
         "Either New Password and Confirm Password doesn't match or the password fields are empty."
       );
     }
@@ -96,7 +103,7 @@ const Settings = () => {
       }
       setDeleteAccountShow(false);
     } else {
-      alert("Enter password");
+      toast.error("Enter password");
     }
   };
 
@@ -219,26 +226,44 @@ const Settings = () => {
           <Modal.Title>set new Password</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div>
-            Current Password:{" "}
-            <input
-              type="password"
-              name="currentPassword"
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            New Password:{" "}
-            <input type="password" name="newPassword" onChange={handleChange} />
-          </div>
-          <div>
-            Confirm New Password:{" "}
-            <input
-              type="password"
-              name="confirmNewPassword"
-              onChange={handleChange}
-            />
-          </div>
+          <Container>
+            <Row>
+              <Col sm={4}>
+                <Form.Text>Current Password:</Form.Text>
+              </Col>
+              <Col className="mb-2">
+                <FormControl
+                  type="password"
+                  name="currentPassword"
+                  onChange={handleChange}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col sm={4}>
+                <Form.Text>New Password:</Form.Text>
+              </Col>
+              <Col className="mb-2">
+                <FormControl
+                  type="password"
+                  name="newPassword"
+                  onChange={handleChange}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col sm={4}>
+                <Form.Text>Confirm new Password:</Form.Text>
+              </Col>
+              <Col className="mb-2">
+                <FormControl
+                  type="password"
+                  name="confirmNewPassword"
+                  onChange={handleChange}
+                />
+              </Col>
+            </Row>
+          </Container>
         </Modal.Body>
         <Modal.Footer>
           <Button

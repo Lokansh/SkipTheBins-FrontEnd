@@ -1,3 +1,5 @@
+// @author : Vasu Gamdha (Group 14)
+
 import {
   LOGIN,
   SIGNUP,
@@ -24,7 +26,7 @@ export const signup = (formData, navigate) => async (dispatch) => {
   try {
     const { data } = await api.signup(formData);
     dispatch({ type: SIGNUP, data });
-    toast.success("Check your email and activate your account!");
+    toast.success("Check your email inbox and spams and activate your account!");
     navigate("/login");
   } catch (error) {
     console.log(error);

@@ -1,3 +1,5 @@
+// @author : Vasu Gamdha (Group 14)
+
 import {
   FETCH_UNAPPROVED_VENDORS,
   APPROVE_VENDOR_PROFILE,
