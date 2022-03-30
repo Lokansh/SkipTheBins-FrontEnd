@@ -196,8 +196,8 @@ export default function ScheduleConfirm() {
             disabled={radioDisable}
             type="radio"
             name="address-group"
-            value="address1"
-            label="Address 1"
+            value="2327 Brunswick Street"
+            label="2327 Brunswick Street"
             onClick={onAddressChange}
           />
           <Form.Check
@@ -205,8 +205,8 @@ export default function ScheduleConfirm() {
             disabled={radioDisable}
             type="radio"
             name="address-group"
-            value="address2"
-            label="Address 2"
+            value="1960 University Avenue"
+            label="1960 University Avenue"
             onClick={onAddressChange}
           />
 

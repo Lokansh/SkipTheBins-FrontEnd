@@ -5,13 +5,13 @@ import TableBody from "@mui/material/TableBody";
 import TableHeader from "./TableHeader";
 import Row from "./Row";
 import { useEffect, useState } from "react";
+import { WEB_API_URL } from "../../constants";
 
 const CollapsibleTable = () => {
   const [pickupData, setPickupData] = useState([]);
-  const API_URL = "http://localhost:8080/api/user/pickups/";
 
   const getPickups = () => {
-    fetch(API_URL)
+    fetch(WEB_API_URL+"/user/pickups/")
       .then((response) => response.json())
       .then((res) => {
         setPickupData(res.pickups);

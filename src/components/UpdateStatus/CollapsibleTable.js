@@ -5,13 +5,13 @@ import TableBody from "@mui/material/TableBody";
 import TableHeader from "./TableHeader";
 import Row from "./Row";
 import { useEffect, useState } from "react";
+import { WEB_API_URL } from "../../constants";
 
 const CollapsibleTable = () => {
   const [scheduleData, setScheduleData] = useState([]);
-  const API_URL = "http://localhost:8080/api/vendor/schedules/";
 
   const getSchedules = () => {
-    fetch(API_URL)
+    fetch(WEB_API_URL + "/vendor/schedules/")
       .then((response) => response.json())
       .then((res) => {
         setScheduleData(res.schedules);
@@ -24,7 +24,7 @@ const CollapsibleTable = () => {
 
   const updateStatus = () => {
     getSchedules();
-  }
+  };
 
   return (
     <Table aria-label="collapsible table" className="table">
