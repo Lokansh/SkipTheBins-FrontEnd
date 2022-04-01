@@ -12,7 +12,7 @@ const initialState = { email: "", password: "" };
 const Login = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   useEffect(() => {
-    if (!user) {
+    if (user) {
       navigate("/profile");
     }
   }, []);

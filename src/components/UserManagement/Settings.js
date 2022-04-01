@@ -223,7 +223,7 @@ const Settings = () => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>set new Password</Modal.Title>
+          <Modal.Title>Set New Password</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Container>
@@ -298,14 +298,20 @@ const Settings = () => {
           <Modal.Title>Confirm deletion</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div>
-            Enter Password to confirm:{" "}
-            <input
-              type="password"
-              name="passwordToDelete"
-              onChange={handleChange}
-            />
-          </div>
+        <Container>
+            <Row>
+              <Col sm={5}>
+                <Form.Text>Enter Password to confirm:</Form.Text>
+              </Col>
+              <Col className="mb-2">
+                <FormControl
+                  type="password"
+                  name="passwordToDelete"
+                  onChange={handleChange}
+                />
+              </Col>
+            </Row>
+            </Container>
         </Modal.Body>
         <Modal.Footer>
           <Button
