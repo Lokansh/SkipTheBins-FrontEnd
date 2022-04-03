@@ -1,19 +1,31 @@
 // Author : Prashit Patel - B00896717
 import moment from "moment";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 
 export default function ScheduleConfirm() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
   const { state } = useLocation();
   const { date, time, area, weight, bags, wasteTypes, batchNo } = state;
   const [address, setAddress] = useState("");
   const [radioDisable, setRadioDisable] = useState(false);
+
+  useEffect(() => {
+    if (!user || user?.result?.role !== "normaluser") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
 
   const onAddressChange = (event) => {
     setAddress(event.target.defaultValue);
@@ -32,7 +44,7 @@ export default function ScheduleConfirm() {
     if (address !== "") {
       const timeVendorArr = time.split("=");
       const body = {
-        userId: "5678",
+        userId: user?.result?._id,
         date,
         area,
         wasteType: wasteTypes,
@@ -44,14 +56,12 @@ export default function ScheduleConfirm() {
         address: address,
       };
       try {
-        const response = await axios.post(
-          WEB_API_URL+"/user/schedule",
-          body
-        );
+        const response = await API.post("/user/schedule", body);
 
         if (response.status === 200 && response.data.success === true) {
+          console.log("In toast success");
           toast.success(response.data.toast);
-          navigate("/");
+          navigate("/user/pickups");
         } else {
           toast.error(response.data.toast);
         }
@@ -196,17 +206,8 @@ export default function ScheduleConfirm() {
             disabled={radioDisable}
             type="radio"
             name="address-group"
-            value="2327 Brunswick Street"
-            label="2327 Brunswick Street"
-            onClick={onAddressChange}
-          />
-          <Form.Check
-            style={{ fontSize: "larger", marginLeft: "5%" }}
-            disabled={radioDisable}
-            type="radio"
-            name="address-group"
-            value="1960 University Avenue"
-            label="1960 University Avenue"
+            value={user?.result?.address}
+            label={user?.result?.address}
             onClick={onAddressChange}
           />
 

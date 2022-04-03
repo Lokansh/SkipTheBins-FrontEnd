@@ -4,13 +4,14 @@ import { ProgressBar, Button, Dropdown, Row, Col } from "react-bootstrap";
 import { DatePicker, TimePicker, Progress } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 const { RangePicker } = DatePicker;
 
 export default function SchedulePickup() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
   const [progress, setProgress] = useState(0);
   const [date, setDate] = useState([
     moment().add(1, "day").format("LL"),
@@ -24,6 +25,17 @@ export default function SchedulePickup() {
   const [slots, setSlots] = useState([]);
   const [areaData, setAreaData] = useState([]);
   const [pickerTime, setPickerTime] = useState();
+
+  useEffect(() => {
+    if (!user || user?.result?.role !== "vendor") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
 
   const dateChange = (event) => {
     if (event === null) {
@@ -101,7 +113,7 @@ export default function SchedulePickup() {
 
   const getArea = async () => {
     try {
-      const response = await axios.get(WEB_API_URL+"/area");
+      const response = await API.get("/area");
 
       if (response.status === 200 && response.data.success === true) {
         setAreaData(response.data.areas);
@@ -115,19 +127,17 @@ export default function SchedulePickup() {
   };
 
   const submitClick = async () => {
+    console.log(user?.result?.firstName + " " + user?.result?.lastName);
     if (progress === 100) {
       const body = {
         fromDate: date[0],
         toDate: date[1],
-        vendorId: "1267",
-        vendor: "Walmart",
+        vendorId: user?.result?._id,
+        vendor: user?.result?.firstName + " " + user?.result?.lastName,
         slots: slots,
       };
       try {
-        const response = await axios.post(
-          WEB_API_URL+"/vendor/create",
-          body
-        );
+        const response = await API.post("/vendor/create", body);
 
         if (response.status === 200 && response.data.success === true) {
           toast.success(response.data.toast);

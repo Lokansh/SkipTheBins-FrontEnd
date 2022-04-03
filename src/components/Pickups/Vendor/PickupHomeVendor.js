@@ -1,5 +1,5 @@
 // Author : Prashit Patel - B00896717
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DispCard from "../Card/Card";
 import schedule from "../../../assets/images/schedule.jpeg";
 import view from "../../../assets/images/view.jpeg";
@@ -8,9 +8,23 @@ import cancel from "../../../assets/images/cancel.png";
 import { useNavigate } from "react-router-dom";
 import { Row } from "react-bootstrap";
 import track from "../../../assets/images/track.png";
+import { toast } from "react-toastify";
 
 export default function PickupHomeVendor() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
+  useEffect(() => {
+    if (!user || user?.result?.role !== "vendor") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
+
   return (
     <div>
       <h2

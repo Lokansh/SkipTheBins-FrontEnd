@@ -5,12 +5,12 @@ import { TimePicker, Progress, Calendar } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 
 export default function EditSchedule() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
   const [date, setDate] = useState(moment().add(1, "day").format("LL"));
   const [slots, setSlots] = useState([]);
@@ -24,6 +24,17 @@ export default function EditSchedule() {
   const [pickerTime, setPickerTime] = useState();
   const [buttonText, setButtonText] = useState("Add");
   const [editableSchedule, setEditableSchedule] = useState({});
+
+  useEffect(() => {
+    if (!user || user?.result?.role !== "vendor") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
 
   const dateChange = (event) => {
     setDate(event.format("LL"));
@@ -54,13 +65,16 @@ export default function EditSchedule() {
   const slotSubmit = async () => {
     if (buttonText === "Add") {
       const body = {
-        date:date,
-        vendorId: "1267",
-        vendor: "Walmart",
+        date: date,
+        vendorId: user?.result?._id,
+        vendor: user?.result?.firstName + " " + user?.result?.lastName,
         area: area,
         slot: time,
       };
-      const response = await axios.post(WEB_API_URL+"/vendor/schedules/add", body);
+      const response = await API.post(
+        "/vendor/schedules/add",
+        body
+      );
 
       if (response.status === 200 && response.data.success === true) {
         getSchedules(date);
@@ -71,8 +85,8 @@ export default function EditSchedule() {
           area: area,
           slot: [time[0], time[1]],
         };
-        const response = await axios.put(
-          WEB_API_URL+"/vendor/update/" + editableSchedule.id,
+        const response = await API.put(
+          "/vendor/update/" + editableSchedule.id,
           body
         );
 
@@ -81,7 +95,7 @@ export default function EditSchedule() {
           existingSlots.push({
             area: area,
             time: [time[0], time[1]],
-            id: editableSchedule.id
+            id: editableSchedule.id,
           });
           setSlots(existingSlots);
         } else {
@@ -126,12 +140,12 @@ export default function EditSchedule() {
 
   const submitClick = () => {
     toast.success("Schedule is updated successfully!");
-    navigate("/");
+    navigate("/vendor/pickups");
   };
 
   const getArea = async () => {
     try {
-      const response = await axios.get(WEB_API_URL+"/area");
+      const response = await API.get("/area");
 
       if (response.status === 200 && response.data.success === true) {
         setAreaData(response.data.areas);
@@ -146,7 +160,7 @@ export default function EditSchedule() {
 
   const slotDeleteClick = async (id) => {
     try {
-      await axios.delete(WEB_API_URL+"/vendor/delete/" + id);
+      await API.delete("/vendor/delete/" + id);
     } catch (e) {
       console.log(e);
     }
@@ -176,15 +190,12 @@ export default function EditSchedule() {
 
   const getSchedules = async (getDate) => {
     try {
-      const response = await axios.get(
-        WEB_API_URL+"/vendor/schedules",
-        {
-          params: {
-            date: getDate,
-            vendorId: "1267",
-          },
-        }
-      );
+      const response = await API.get("/vendor/schedules", {
+        params: {
+          date: getDate,
+          vendorId: user?.result?._id,
+        },
+      });
       if (response.status === 200 && response.data.success === true) {
         const schedules = response.data.schedules;
         let scheduleSlots = [];
@@ -196,7 +207,7 @@ export default function EditSchedule() {
               schedules[i].slot.split("-")[0].trim(),
               schedules[i].slot.split("-")[1].trim(),
             ],
-            id: schedules[i].scheduleId
+            id: schedules[i].scheduleId,
           });
         }
         setSlots(scheduleSlots);

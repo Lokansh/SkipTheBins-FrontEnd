@@ -1,22 +1,35 @@
 // Author : Prashit Patel - B00896717
 import moment from "moment";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Row, Button, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function ScheduleConfirm() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
   const { state } = useLocation();
   const { date, slots } = state;
 
   const submitClick = () => {
-    navigate("/");
+    navigate("/vendor/pickups");
   };
+
+  useEffect(() => {
+    if (!user || user?.result?.role !== "vendor") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
 
   return (
     <Row>
-        {console.log(slots)}
       <h3
         style={{
           textAlign: "center",
@@ -68,11 +81,7 @@ export default function ScheduleConfirm() {
             {slots.map((slot, index) => {
               return (
                 <tr key={index}>
-                  <td>
-                    {slot.time[0] +
-                      " to " +
-                      slot.time[1]}
-                  </td>
+                  <td>{slot.time[0] + " to " + slot.time[1]}</td>
                   <td>{slot.area}</td>
                 </tr>
               );

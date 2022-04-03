@@ -14,14 +14,6 @@ function Header() {
   const [showMenu, setShowMenu] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      setShowMenu(false);
-    } else {
-      setShowMenu(true);
-    }
-  }, [location?.pathname]);
-
-  useEffect(() => {
     // console.log(location?.pathname)
     if (
       ["/", "/login", "/signup", "/faq", "/contactus"].indexOf(
@@ -39,6 +31,10 @@ function Header() {
     navigate("/login");
     setUser(null);
   };
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
 
   return (
     <Navbar
@@ -61,7 +57,8 @@ function Header() {
                 </Navbar.Collapse> */}
         <Navbar.Collapse id="colapse-nav" className="justify-content-end">
           <Nav>
-            <Nav.Link href="/user/pickups">Pickups</Nav.Link>
+            {user?.result?.role === "normaluser" && <Nav.Link href="/user/pickups">Pickups</Nav.Link>}
+            {user?.result?.role === "vendor" && <Nav.Link href="/vendor/pickups">Pickups</Nav.Link>}
             <Nav.Link href="">Rewards</Nav.Link>
             {!showMenu && <Nav.Link href="/login">Login</Nav.Link>}
             {!showMenu && <Nav.Link href="/signup">Signup</Nav.Link>}

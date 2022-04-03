@@ -5,15 +5,27 @@ import moment from "moment";
 import { Calendar, Popconfirm } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 
 export default function DeleteSchedule() {
   const navigate = useNavigate();
-  const [date, setDate] = useState(moment().add(1,'d').format('LL'));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
+  const [date, setDate] = useState(moment().add(1, "d").format("LL"));
   const [slots, setSlots] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
+
+  useEffect(() => {
+    if (!user || user?.result?.role !== "vendor") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
 
   const dateChange = (event) => {
     setDate(event.format("LL"));
@@ -21,27 +33,27 @@ export default function DeleteSchedule() {
   };
 
   const submitClick = () => {
-    navigate("/");
+    navigate("/vendor/pickups");
   };
 
-  const deleteSchedule = async() => {
+  const deleteSchedule = async () => {
     var successCount = 0;
-    for(var i=0; i<slots.length; i++) {
+    for (var i = 0; i < slots.length; i++) {
       console.log(slots[i].id);
       try {
-        const response = await axios.delete(
-          WEB_API_URL+"/vendor/delete/"+slots[i].id
+        const response = await API.delete(
+          "/vendor/delete/" + slots[i].id
         );
-  
+
         if (response.status === 200 && response.data.success === true) {
           successCount++;
-        } 
+        }
       } catch (e) {
         console.log(e);
       }
     }
     toast.success(`${successCount} slots successfully deleted`);
-    navigate("/");
+    navigate("/vendor/pickups");
   };
 
   useEffect(() => {
@@ -51,34 +63,31 @@ export default function DeleteSchedule() {
   }, [date]);
 
   useEffect(() => {
-    getSchedules(moment().add(1,'d').format('LL'));
-   },[]);
+    getSchedules(moment().add(1, "d").format("LL"));
+  }, []);
 
   const getSchedules = async (getDate) => {
     try {
-      const response = await axios.get(
-        WEB_API_URL+"/vendor/schedules",
-        {
-          params: {
-            date: getDate,
-            vendorId: '1267'
-          },
-        }
-      );
+      const response = await API.get("/vendor/schedules", {
+        params: {
+          date: getDate,
+          vendorId: user?.result?._id,
+        },
+      });
 
       if (response.status === 200 && response.data.success === true) {
         const schedules = response.data.schedules;
-        let scheduleSlots=[];
+        let scheduleSlots = [];
 
-        for(var i=0; i<schedules.length; i++) {
+        for (var i = 0; i < schedules.length; i++) {
           scheduleSlots.push({
             area: schedules[i].area,
             time: [
               schedules[i].slot.split("-")[0].trim(),
-              schedules[i].slot.split("-")[1].trim()
+              schedules[i].slot.split("-")[1].trim(),
             ],
-            id:schedules[i].scheduleId
-          })
+            id: schedules[i].scheduleId,
+          });
         }
         setSlots(scheduleSlots);
       } else {
@@ -174,11 +183,7 @@ export default function DeleteSchedule() {
                 {slots.map((slot, index) => {
                   return (
                     <tr key={index}>
-                      <td>
-                        {slot.time[0] +
-                          " to " +
-                          slot.time[1]}
-                      </td>
+                      <td>{slot.time[0] + " to " + slot.time[1]}</td>
                       <td>{slot.area}</td>
                     </tr>
                   );
@@ -197,7 +202,7 @@ export default function DeleteSchedule() {
                   maxWidth: "20%",
                   boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
                   margin: "0 auto",
-                  textAlign: "center"
+                  textAlign: "center",
                 }}
                 variant="danger"
               >
@@ -215,7 +220,7 @@ export default function DeleteSchedule() {
           style={{
             maxWidth: "20%",
             boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-            textAlign: "center"
+            textAlign: "center",
           }}
           variant="success"
           onClick={submitClick}
