@@ -16,7 +16,13 @@ export const login = (formData, navigate) => async (dispatch) => {
     const { data } = await api.login(formData);
     dispatch({ type: LOGIN, data });
     toast.success("Logged in successfully");
-    navigate("/profile");
+    if(data?.result?.role === "normaluser") {
+      navigate("/user/pickups");
+    } else if(data?.result?.role === "vendor") {
+      navigate("/vendor/pickups");
+    } else if(data?.result?.role === "admin") {
+      navigate("/profile");
+    }
   } catch (error) {
     toast.error("Please activate your account!");
   }

@@ -16,12 +16,13 @@ import { Calendar } from "antd";
 import moment from "moment";
 import "./css/SchedulePickup.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 
 export default function SchedulePickup() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
   const [progress, setProgress] = useState(0);
   const [date, setDate] = useState(moment().add(1, "day").format("LL"));
   const [time, setTime] = useState("");
@@ -34,6 +35,17 @@ export default function SchedulePickup() {
   const [areaData, setAreaData] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [batchNo, setBatchNo] = useState();
+
+  useEffect(() => {
+    if (!user || user?.result?.role !== "normaluser") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
 
   const dateChange = (event) => {
     setDate(event.format("LL"));
@@ -104,15 +116,12 @@ export default function SchedulePickup() {
 
   const getSlots = async (getDate, getArea) => {
     try {
-      const response = await axios.get(
-        WEB_API_URL+"/vendor/schedules",
-        {
-          params: {
-            date: getDate,
-            area: getArea,
-          },
-        }
-      );
+      const response = await API.get("/vendor/schedules", {
+        params: {
+          date: getDate,
+          area: getArea,
+        },
+      });
       if (response.status === 200 && response.data.success === true) {
         setSchedules(response.data.schedules);
       } else {
@@ -126,7 +135,7 @@ export default function SchedulePickup() {
 
   const getArea = async () => {
     try {
-      const response = await axios.get(WEB_API_URL+"/area");
+      const response = await API.get("/area");
 
       if (response.status === 200 && response.data.success === true) {
         setAreaData(response.data.areas);
@@ -149,7 +158,7 @@ export default function SchedulePickup() {
           wasteTypes,
           bags,
           weight,
-          batchNo
+          batchNo,
         },
       });
     } else {
@@ -461,6 +470,7 @@ export default function SchedulePickup() {
                         margin: "0 auto",
                       }}
                       type="number"
+                      placeholder="kg"
                       max={10}
                       min={1}
                       onChange={onWeightChange}

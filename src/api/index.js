@@ -35,3 +35,5 @@ export const declineVendorProfileCreation = (id) =>
   API.delete(`/adminActions/${id}/declineVendorCreation`);
 export const declineVendorProfileDeletion = (id) =>
   API.patch(`/adminActions/${id}/declineVendorDeletion`);
+
+export default API;

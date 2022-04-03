@@ -13,13 +13,14 @@ import { Calendar } from "antd";
 import moment from "moment";
 import "./css/EditPickup.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 
 export default function EditPickup() {
   const navigate = useNavigate();
   // const [date, setDate] = useState(moment().add(1, "day").format("LL"));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
   const [time, setTime] = useState("");
   const [wasteTypes, setWasteTypes] = useState([]);
   const [bags, setBags] = useState(0);
@@ -28,6 +29,17 @@ export default function EditPickup() {
   const [selectedPickup, setSelectedPickup] = useState({});
   const [showDetails, setShowDetails] = useState(false);
   const [disableUpdate, setDisableUpdate] = useState(false);
+
+  useEffect(() => {
+    if (!user || user?.result?.role !== "normaluser") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
 
   const dateChange = (event) => {
     // setDate(event.format("LL"));
@@ -74,20 +86,16 @@ export default function EditPickup() {
 
   const getPickups = async (getDate) => {
     try {
-      const response = await axios.get(
-        WEB_API_URL+"/user/pickups",
-        {
-          params: {
-            userId: "5678",
-            date: getDate,
-          },
-        }
-      );
+      const response = await API.get("/user/pickups", {
+        params: {
+          userId: user?.result?._id,
+          date: getDate,
+        },
+      });
 
       if (response.status === 200 && response.data.success === true) {
         setPickups(response.data.pickups);
       } else {
-        console.log(response);
         setPickups([]);
         toast.error(response.data.toast);
       }
@@ -98,23 +106,20 @@ export default function EditPickup() {
   };
 
   const submitClick = async () => {
-    console.log('here');
     try {
       const body = {
         wasteType: wasteTypes,
         boxQty: bags,
         wasteQty: weight,
       };
-      console.log('requesting');
-      console.log(selectedPickup);
-      const response = await axios.put(
-        WEB_API_URL+"/user/update/" + selectedPickup.pickupId,
+      const response = await API.put(
+        "/user/update/" + selectedPickup.pickupId,
         body
       );
-        console.log(response);
+
       if (response.status === 200 && response.data.success === true) {
         toast.success(response.data.toast);
-        navigate("/");
+        navigate("/user/pickups");
       } else {
         toast.error(response.data.toast);
       }
