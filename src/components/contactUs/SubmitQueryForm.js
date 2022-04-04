@@ -215,7 +215,7 @@ function SubmitQueryForm() {
             </Form.Group>
             <div
               style={{ marginTop: "1%", justifyContent: "center" }}
-              class="text-center d flex"
+              className="text-center d flex"
             >
               <Button variant="success" type="submit" onClick={handleSubmit}>
                 Submit
@@ -239,7 +239,7 @@ function SubmitQueryForm() {
           </h6>
           <div
             style={{ marginTop: "1%", justifyContent: "center" }}
-            class="text-center d flex"
+            className="text-center d flex"
           >
             <Button variant="primary" type="submit" onClick={handleGoBack}>
               Home
