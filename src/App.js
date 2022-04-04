@@ -22,6 +22,7 @@ import ContactUs from "./components/contactUs/ContactUs";
 import SubmitQueryForm from "./components/contactUs/SubmitQueryForm";
 import AdminDisplayQueries from "./components/contactUs/AdminDisplayQueries";
 import AdminModifyVendors from "./components/contactUs/AdminModifyVendors";
+import RewardStore from "./components/rewardStore/RewardStore";
 
 import Login from "./components/UserManagement/Login";
 import Settings from "./components/UserManagement/Settings";
@@ -64,7 +65,6 @@ function App() {
                 element={<Faq editMode={true} role="admin" />}
               ></Route>
               <Route path="/contactus">
-                {/* <Route path="/submitquery" element={<SubmitQueryForm />}></Route> */}
                 <Route index element={<ContactUs />}></Route>
               </Route>
               <Route
@@ -79,6 +79,7 @@ function App() {
                 path="/contactus/modifyvendors"
                 element={<AdminModifyVendors />}
               ></Route>
+              <Route path="/rewardstore" element={<RewardStore />}></Route>
               <Route path="/user/pickups">
                 <Route
                   path="/user/pickups/schedule"

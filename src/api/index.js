@@ -11,7 +11,6 @@ API.interceptors.request.use((req) => {
   if (token) {
     req.headers.authorization = `Bearer ${token}`;
   }
-
   return req;
 });
 
@@ -21,8 +20,7 @@ export const editProfile = (id, formData) =>
   API.patch(`/profile/${id}/editProfile`, formData);
 export const changePassword = (id, formData) =>
   API.patch(`/profile/${id}/changePassword`, formData);
-export const deleteProfile = (id) =>
-  API.delete(`/profile/${id}/deleteProfile`);
+export const deleteProfile = (id) => API.delete(`/profile/${id}/deleteProfile`);
 export const fetchUnapprovedVendorsList = () =>
   API.get("/adminActions/unapprovedList");
 export const approveVendorProfile = (id) =>
