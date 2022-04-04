@@ -32,9 +32,13 @@ const PendingDeletion = () => {
   };
 
   return (
-    <div className="pendingDeletions">
-      <h2>Pending Vendor Profile Deletion Request</h2>
-      <div className="form-container">
+    <div className="mt-3 mb-4 pendingDeletions">
+      <h2 style={{ textAlign: "center" }}>
+        Pending vendor profile deletion requests{" "}
+      </h2>
+      <br />
+      <br />
+      <div className="table-container">
         {vendorToDeleteList && vendorToDeleteList.length ? (
           <Table responsive striped bordered hover>
             <thead>
@@ -42,6 +46,8 @@ const PendingDeletion = () => {
                 <th>#</th>
                 <th>Name</th>
                 <th>Organization Name</th>
+                <th>Organization Email</th>
+                <th>Reason</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -53,17 +59,19 @@ const PendingDeletion = () => {
                     {item.firstName} {item.lastName}
                   </td>
                   <td>{item.organizationName}</td>
+                  <td>{item.email}</td>
+                  <td>{item.reason}</td>
                   <td>
                     <Button
                       size="sm"
-                      variant="outline-success"
+                      variant="success"
                       onClick={() => deleteVendorProfileClicked(item._id)}
                     >
                       Accept
                     </Button>
                     <Button
                       size="sm"
-                      variant="outline-danger"
+                      variant="danger"
                       onClick={() =>
                         declineVendorProfileDeletionClicked(item._id)
                       }
@@ -76,7 +84,9 @@ const PendingDeletion = () => {
             </tbody>
           </Table>
         ) : (
-          <div>No pending vendor deletion requests.</div>
+          <div style={{ textAlign: "center" }} className="h4">
+            No pending requests.
+          </div>
         )}
       </div>
     </div>

@@ -33,9 +33,13 @@ const PendingCreation = () => {
   };
 
   return (
-    <div className="pendingApprovals">
-      <h2>Pending Vendor Profile Approval Request</h2>
-      <div className="form-container">
+    <div className="mt-3 mb-4 pendingApprovals">
+      <h2 style={{ textAlign: "center" }}>
+        Pending vendor profile creation requests
+      </h2>
+      <br />
+      <br />
+      <div className="table-container">
         {unapprovedVendorList && unapprovedVendorList.length ? (
           <Table responsive striped bordered hover>
             <thead>
@@ -43,6 +47,8 @@ const PendingCreation = () => {
                 <th>#</th>
                 <th>Name</th>
                 <th>Organization Name</th>
+                <th>Organization Email</th>
+                <th>Reason</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -54,6 +60,8 @@ const PendingCreation = () => {
                     {item.firstName} {item.lastName}
                   </td>
                   <td>{item.organizationName}</td>
+                  <td>{item.email}</td>
+                  <td>{item.reason}</td>
                   <td>
                     <Button
                       size="sm"
@@ -77,7 +85,9 @@ const PendingCreation = () => {
             </tbody>
           </Table>
         ) : (
-          <div>No pending vendor approval requests.</div>
+          <div style={{ textAlign: "center" }} className="h4">
+            No pending requests.
+          </div>
         )}
       </div>
     </div>

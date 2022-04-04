@@ -23,8 +23,8 @@ export const login = (formData, navigate) => async (dispatch) => {
     } else if(data?.result?.role === "admin") {
       navigate("/profile");
     }
-  } catch (error) {
-    toast.error("Please activate your account!");
+  } catch (error) { 
+    toast.error("Please activate your account or wait for admin approval");
   }
 };
 
