@@ -44,6 +44,7 @@ function Header() {
       bg="light"
       variant="light"
       sticky="top"
+      id="navbar"
     >
       <div className="container-fluid">
         <Navbar.Brand href="/">
@@ -57,6 +58,9 @@ function Header() {
                 </Navbar.Collapse> */}
         <Navbar.Collapse id="colapse-nav" className="justify-content-end">
           <Nav>
+            {user?.result?.role === "admin" && (
+              <Nav.Link href="/profile">Pending Requests</Nav.Link>
+            )}
             {user?.result?.role === "normaluser" && (
               <Nav.Link href="/user/pickups">Pickups</Nav.Link>
             )}
