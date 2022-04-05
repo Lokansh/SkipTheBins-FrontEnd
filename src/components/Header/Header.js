@@ -44,6 +44,7 @@ function Header() {
       bg="light"
       variant="light"
       sticky="top"
+      id="navbar"
     >
       <div className="container-fluid">
         <Navbar.Brand href="/">
@@ -57,6 +58,9 @@ function Header() {
                 </Navbar.Collapse> */}
         <Navbar.Collapse id="colapse-nav" className="justify-content-end">
           <Nav>
+            {user?.result?.role === "admin" && (
+              <Nav.Link href="/requests">Pending Requests</Nav.Link>
+            )}
             {user?.result?.role === "normaluser" && (
               <Nav.Link href="/user/pickups">Pickups</Nav.Link>
             )}
@@ -65,31 +69,35 @@ function Header() {
             )}
             {user?.result?.role === "admin" && (
               <>
-                <Nav.Link href="/contactus/viewqueries">
-                  Contact Us
-                </Nav.Link>
-                <NavDropdown title="Analytics">
-                  <NavDropdown.Item href="/user-dashboard">User Analytics</NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item href="vendor-dashboard">Vendor Analytics</NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item href="reward-dashboard">Reward Analytics</NavDropdown.Item>
+                <Nav.Link href="/contactus/viewqueries">Contact Us</Nav.Link>
+                <NavDropdown align={{ lg: "end" }} title="Analytics">
+                  <NavDropdown.Item href="/user-dashboard">
+                    User Analytics
+                  </NavDropdown.Item>
+                  <NavDropdown.Item href="vendor-dashboard">
+                    Vendor Analytics
+                  </NavDropdown.Item>
+                  <NavDropdown.Item href="reward-dashboard">
+                    Reward Analytics
+                  </NavDropdown.Item>
                 </NavDropdown>
               </>
-
-
             )}
 
-            <Nav.Link href="">Rewards</Nav.Link>
-            {!showMenu && <Nav.Link href="/login">Login</Nav.Link>}
-            {!showMenu && <Nav.Link href="/signup">Signup</Nav.Link>}
-            {showMenu && (
-              <NavDropdown title="Profile" id="basic-nav-dropdown">
-                <NavDropdown.Item href="/profile">
-                  View Profile
-                </NavDropdown.Item>
+            {!user && <Nav.Link href="/login">Login</Nav.Link>}
+            {!user && <Nav.Link href="/signup">Signup</Nav.Link>}
+            {user && (
+              <NavDropdown
+                align={{ lg: "end" }}
+                title="Profile"
+                id="basic-nav-dropdown"
+              >
+                {user?.result?.role !== "admin" && (
+                  <NavDropdown.Item href="/profile">
+                    View Profile
+                  </NavDropdown.Item>
+                )}
                 <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
-                <NavDropdown.Divider />
                 <NavDropdown.Item onClick={logoutClick}>
                   Logout
                 </NavDropdown.Item>

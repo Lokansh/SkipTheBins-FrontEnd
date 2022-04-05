@@ -100,18 +100,9 @@ const Signup = () => {
             onChange={handleChange}
             type="text"
             name="lastName"
-            pa
             placeholder="Enter Last Name"
           />
         </Form.Group>
-        {/* 
-                <Form.Group className="mb-2" controlId="formRole">
-                    <Form.Label>User Type</Form.Label>
-                    <Form.Select>
-                        <option value="User" selected>User</option>
-                        <option value="Vendor">Vendor</option>
-                    </Form.Select>
-                </Form.Group> */}
         <Form.Group className="mb-2" controlId="formEmail">
           <Form.Label>Email</Form.Label>
           <Form.Control

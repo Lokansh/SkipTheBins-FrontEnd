@@ -36,6 +36,7 @@ import TrackStatus from "./components/TrackStatus/TrackStatus";
 import UpdateStatus from "./components/UpdateStatus/UpdateStatus";
 import { ToastContainer } from "react-toastify";
 import Home from "./components/Home";
+import Requests from "./components/UserManagement/Requests";
 
 
 function App() {
@@ -117,6 +118,7 @@ function App() {
               <Route path="/signup" element={<Signup />}></Route>
               <Route path="/login" element={<Login />}></Route>
               <Route path="/settings" element={<Settings />}></Route>
+              <Route path="/requests" element={<Requests />}></Route>
               <Route path="/profile" element={<Profile />}></Route>
               <Route
                 path="/user-dashboard"
