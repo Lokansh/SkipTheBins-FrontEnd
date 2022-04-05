@@ -59,11 +59,29 @@ function RewardStore() {
     } else {
       var leftRewardPoints = parseInt(rewardPoints) - parseInt(voucher.points);
       setRewardPoints(leftRewardPoints.toString());
-
+      updateRewardPointsApiCall(rewardPoints);
       console.log(rewardPoints);
-      setSubmitSuccess(true);
     }
     console.log(rewardPoints);
+  };
+
+  const updateRewardPointsApiCall = (updatedRewardPoints) => {
+    axios
+      .post(WEB_API_URL + "/reward/updatePoints", {
+        points: updatedRewardPoints,
+      })
+      .then((res) => {
+        if (res.data.success) {
+          console.log("Reward Points Edited");
+          //getRewardPointsApiCall();
+          setSubmitSuccess(true);
+        } else {
+          toast.error("Reward Points not edited");
+        }
+      })
+      .catch((error) => {
+        toast.error("Internal Server Error");
+      });
   };
 
   const handleGoBack = (e) => {
