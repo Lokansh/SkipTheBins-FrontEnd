@@ -5,8 +5,9 @@ import "./ContactUs.css";
 import { Table, Form, Button } from "react-bootstrap";
 import AdminModifyVendorReadOnly from "./AdminModifyVendorReadOnly";
 import AdminModifyVendorEditable from "./AdminModifyVendorEditable";
-import { WEB_API_URL } from "../../constants";
 import { toast } from "react-toastify";
+import API from "../../api";
+import { useNavigate } from "react-router-dom";
 
 function AdminModifyVendors() {
   const nameRegex = /^[a-zA-Z ]+$/;
@@ -24,13 +25,27 @@ function AdminModifyVendors() {
   const [isData, setIsData] = useState(false);
   const [vendors, setVendors] = useState([]);
 
+  const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
   useEffect(() => {
     getAllVendorsApiCall();
   }, []);
 
+  useEffect(() => {
+    if (!user || user?.result?.role !== "admin") {
+      toast.error("Please login to continue");
+
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  }, [localStorage.getItem("profile")]);
+
   const getAllVendorsApiCall = () => {
-    axios
-      .get(WEB_API_URL + "/vendor")
+    API.get("/vendor")
       .then((res) => {
         setVendors(res.data.vendorData);
       })
@@ -150,8 +165,7 @@ function AdminModifyVendors() {
   };
 
   const submitVendorApiCall = (newVendor) => {
-    axios
-      .post(WEB_API_URL + "/vendor/add", newVendor)
+    API.post("/vendor/add", newVendor)
       .then((res) => {
         if (res.data.success) {
           toast.success("Vendor Added");
@@ -188,8 +202,7 @@ function AdminModifyVendors() {
   };
 
   const editVendorApiCall = (editedVendor) => {
-    axios
-      .post(WEB_API_URL + "/vendor/update", editedVendor)
+    API.post("/vendor/update", editedVendor)
       .then((res) => {
         if (res.data.success) {
           toast.success("Vendor Edited");
@@ -227,8 +240,7 @@ function AdminModifyVendors() {
     const deleteId = {
       _id: vendorId,
     };
-    axios
-      .post(WEB_API_URL + "/vendor/delete", deleteId)
+    API.post("/vendor/delete", deleteId)
       .then((res) => {
         if (res.data.success) {
           toast.success("Vendor Deleted");

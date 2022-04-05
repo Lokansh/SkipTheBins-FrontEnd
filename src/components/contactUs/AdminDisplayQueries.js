@@ -4,21 +4,32 @@ import axios from "axios";
 import "./ContactUs.css";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { WEB_API_URL } from "../../constants";
 import { toast } from "react-toastify";
+import API from "../../api";
 
 function AdminDisplayQueries() {
   const navigate = useNavigate();
-
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   const [contactUsQueries, setContactUsQueries] = useState([]);
 
   useEffect(() => {
     getAllQueriesApiCall();
   }, []);
 
+  useEffect(() => {
+    if (!user || user?.result?.role !== "admin") {
+      toast.error("Please login to continue");
+
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  }, [localStorage.getItem("profile")]);
+
   const getAllQueriesApiCall = () => {
-    axios
-      .get(WEB_API_URL + "/queries")
+    API.get("/queries")
       .then((res) => {
         setContactUsQueries(res.data.queryData);
       })
@@ -88,7 +99,7 @@ function AdminDisplayQueries() {
       </Table>
       <div
         style={{ marginTop: "1%", justifyContent: "center" }}
-        class="text-center d flex"
+        className="text-center d flex"
       >
         <Button variant="primary" onClick={handleModifyVendors}>
           Modify Vendor Details
