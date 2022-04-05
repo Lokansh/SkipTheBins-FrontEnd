@@ -64,9 +64,20 @@ function Header() {
               <Nav.Link href="/vendor/pickups">Pickups</Nav.Link>
             )}
             {user?.result?.role === "admin" && (
-              <Nav.Link href="/contactus/viewqueries">
-                Contact Us - Admin
-              </Nav.Link>
+              <>
+                <Nav.Link href="/contactus/viewqueries">
+                  Contact Us
+                </Nav.Link>
+                <NavDropdown title="Analytics">
+                  <NavDropdown.Item href="/user-dashboard">User Analytics</NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item href="vendor-dashboard">Vendor Analytics</NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item href="reward-dashboard">Reward Analytics</NavDropdown.Item>
+                </NavDropdown>
+              </>
+
+
             )}
 
             <Nav.Link href="">Rewards</Nav.Link>

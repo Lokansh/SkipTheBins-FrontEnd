@@ -37,12 +37,10 @@ import UpdateStatus from "./components/UpdateStatus/UpdateStatus";
 import { ToastContainer } from "react-toastify";
 import Home from "./components/Home";
 
-// import AdminHeader from "./components/AdminHeader/AdminHeader";
 
 function App() {
   return (
     <div>
-      {/*<AdminHeader/>*/}
       <Router>
         <div>
           <ToastContainer />
