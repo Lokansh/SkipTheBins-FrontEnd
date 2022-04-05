@@ -36,14 +36,11 @@ import TrackStatus from "./components/TrackStatus/TrackStatus";
 import UpdateStatus from "./components/UpdateStatus/UpdateStatus";
 import { ToastContainer } from "react-toastify";
 import Home from "./components/Home";
-import EventListingAdmin from "./components/EventListingAdmin/EventListingAdmin";
 
-// import AdminHeader from "./components/AdminHeader/AdminHeader";
 
 function App() {
   return (
     <div>
-      {/*<AdminHeader/>*/}
       <Router>
         <div>
           <ToastContainer />
@@ -135,11 +132,6 @@ function App() {
                 path="/reward-dashboard"
                 exact
                 element={<RewardListingAdmin />}
-              />
-              <Route
-                  path="/event-dashboard"
-                  exact
-                  element={<EventListingAdmin />}
               />
             </Routes>
           </div>
