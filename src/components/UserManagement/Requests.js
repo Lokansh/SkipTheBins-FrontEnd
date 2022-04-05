@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import PendingCreation from "./PendingCreation";
 import PendingDeletion from "./PendingDeletion";
 
-const AdminProfile = () => {
+const Requests = () => {
   return (
     <div>
       <Tabs
@@ -28,4 +28,4 @@ const AdminProfile = () => {
   );
 };
 
-export default AdminProfile;
+export default Requests;

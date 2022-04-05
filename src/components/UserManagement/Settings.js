@@ -289,7 +289,7 @@ const Settings = () => {
         </Card>
       </a>
 
-      <Modal
+      {user?.result?.role !=="admin" && (<><Modal
         show={deleteAccountShow}
         onHide={() => setDeleteAccountShow(false)}
         centered
@@ -335,7 +335,7 @@ const Settings = () => {
             <Card.Text>Users can completely delete their profile.</Card.Text>
           </Card.Body>
         </Card>
-      </a>
+      </a></>)}
     </div>
   );
 };

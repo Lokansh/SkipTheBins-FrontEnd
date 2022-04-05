@@ -6,14 +6,18 @@ import { Form, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../store/actions/auth";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 const initialState = { email: "", password: "" };
 
 const Login = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   useEffect(() => {
     if (user) {
-      navigate("/profile");
+      if (user?.result?.role === "admin") {
+        navigate("/requests");
+      } else {
+        navigate("/profile");
+      }
     }
   }, []);
   const [formData, setFormData] = useState(initialState);
@@ -62,7 +66,7 @@ const Login = () => {
         </Button>
         <Form.Group>
           <Form.Text>
-            <a style={{ cursor: "pointer" }} href="/signup">
+            <a style={{ cursor: "pointer" }} className="h6" href="/signup">
               New user?
             </a>
           </Form.Text>
