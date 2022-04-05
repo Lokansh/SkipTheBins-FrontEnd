@@ -18,16 +18,19 @@ function SubmitQueryForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
+  const [querySubject, setQuerySubject] = useState("");
   const [query, setQuery] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const [nameErrorMsg, setNameErrorMsg] = useState("");
   const [emailErrorMsg, setEmailErrorMsg] = useState("");
   const [mobileErrorMsg, setMobileErrorMsg] = useState("");
+  const [querySubjectErrorMsg, setQuerySubjectErrorMsg] = useState("");
   const [queryErrorMsg, setQueryErrorMsg] = useState("");
   const [isName, setIsName] = useState(false);
   const [isEmail, setIsEmail] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isQuerySubject, setIsQuerySubject] = useState(false);
   const [isQuery, setIsQuery] = useState(false);
   const [isData, setIsData] = useState(false);
 
@@ -70,6 +73,17 @@ function SubmitQueryForm() {
       setMobile(e.target.value);
     }
   };
+  const handleQuerySubject = (e) => {
+    if (!e.target.value) {
+      setQuerySubjectErrorMsg("Please provide your query subject");
+      setIsQuerySubject(false);
+    } else {
+      setIsData(true);
+      setIsQuerySubject(true);
+      setQuerySubjectErrorMsg("");
+      setQuerySubject(e.target.value);
+    }
+  };
   const handleQuery = (e) => {
     if (!e.target.value) {
       setQueryErrorMsg("Please provide your query");
@@ -87,12 +101,19 @@ function SubmitQueryForm() {
       nameErrorMsg.length > 0 ||
       emailErrorMsg.length > 0 ||
       mobileErrorMsg.length > 0 ||
+      querySubjectErrorMsg.length > 0 ||
       queryErrorMsg.length > 0
     ) {
       toast.error("Please resolve error");
     } else if (!isData) {
       toast.error("Please enter some data");
-    } else if (!isName || !isEmail || !isMobile || !isQuery) {
+    } else if (
+      !isName ||
+      !isEmail ||
+      !isMobile ||
+      !isQuerySubject ||
+      !isQuery
+    ) {
       toast.error("Please fill data in all fields of the form");
     } else {
       submitQueryApiCall();
@@ -104,6 +125,7 @@ function SubmitQueryForm() {
       name: name,
       email: email,
       mobile: mobile,
+      querySubject: querySubject,
       query: query,
     };
     axios
@@ -199,6 +221,17 @@ function SubmitQueryForm() {
               />
               <Form.Text style={{ color: "red" }}>
                 {mobileErrorMsg.length > 0 ? mobileErrorMsg : ""}
+              </Form.Text>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="querySubject">
+              <Form.Label>Query Subject</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="For any complaint, please add complaint in subject line"
+                onChange={handleQuerySubject}
+              />
+              <Form.Text style={{ color: "red" }}>
+                {querySubjectErrorMsg.length > 0 ? querySubjectErrorMsg : ""}
               </Form.Text>
             </Form.Group>
             <Form.Group className="mb-3" controlId="query">

@@ -45,6 +45,7 @@ function AdminDisplayQueries() {
         <td>{query.name}</td>
         <td>{query.email}</td>
         <td>{query.mobile}</td>
+        <td>{query.querySubject}</td>
         <td>{query.query}</td>
       </tr>
     );
@@ -92,6 +93,7 @@ function AdminDisplayQueries() {
             <th>Name</th>
             <th>Email</th>
             <th>Mobile</th>
+            <th>Query Subject</th>
             <th>Query</th>
           </tr>
         </thead>
