@@ -24,22 +24,25 @@ const CollapsibleTable = () => {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [localStorage.getItem("profile")]);
 
-  const [scheduleData, setScheduleData] = useState([]);
+  const [pickupData, setPickupData] = useState([]);
   const [message, setMessage] = useState("");
-  const getSchedules = async () => {
+
+  const getPickups = async () => {
+    console.log(user?.result?.firstName + user?.result?.lastName);
     try {
-      const response = await API.get("/vendor/schedules", {
+      const response = await API.get("/user/pickups", {
         params: {
-          vendorId: user?.result?._id,
+          vendor: user?.result?.firstName + user?.result?.lastName,
         },
       });
-
       if (response.status === 200 && response.data.success === true) {
         setMessage("Loading...");
-        setScheduleData(response.data.schedules);
+        setPickupData(response.data.pickups);
       } else {
-        setScheduleData([]);
-        setMessage("You currently do not have any registered pickups.");
+        setPickupData([]);
+        setMessage(
+          "You currently do not have any registered pickups under your organization."
+        );
         toast.error(response.data.toast);
       }
     } catch (e) {
@@ -49,16 +52,12 @@ const CollapsibleTable = () => {
   };
 
   useEffect(() => {
-    getSchedules();
+    getPickups();
   }, []);
-
-  const updateStatus = () => {
-    getSchedules();
-  };
 
   return (
     <div>
-      {scheduleData.length === 0 || !scheduleData ? (
+      {pickupData.length === 0 || !pickupData ? (
         <div className="text-center">
           <strong>{message}</strong>
         </div>
@@ -66,8 +65,8 @@ const CollapsibleTable = () => {
         <Table aria-label="collapsible table" className="table">
           <TableHeader align="left" />
           <TableBody>
-            {scheduleData.map((row) => (
-              <Row update={updateStatus} key={row.scheduleId} row={row} />
+            {pickupData.map((row) => (
+              <Row key={row.pickupId} row={row} />
             ))}
           </TableBody>
         </Table>
