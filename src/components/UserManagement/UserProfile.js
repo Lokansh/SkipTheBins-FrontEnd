@@ -6,6 +6,7 @@ import "./UserProfile.css";
 
 import defaultProfileImage from "../../assets/default.png";
 import { Row, Col, Container } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const UserProfile = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
@@ -13,6 +14,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (!user) {
+      toast.error("Please login to continue");
       navigate("/login");
     }
   });
