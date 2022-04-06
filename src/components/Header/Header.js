@@ -59,6 +59,12 @@ function Header() {
         <Navbar.Collapse id="colapse-nav" className="justify-content-end">
           <Nav>
             {user?.result?.role === "admin" && (
+              <Nav.Link href="/faq-admin">Edit FAQ</Nav.Link>
+            )}
+            {user?.result?.role === "vendor" && (
+              <Nav.Link href="/faq-vendor">FAQs</Nav.Link>
+            )}
+            {user?.result?.role === "admin" && (
               <Nav.Link href="/requests">Pending Requests</Nav.Link>
             )}
             {user?.result?.role === "normaluser" && (
