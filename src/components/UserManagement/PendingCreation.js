@@ -10,6 +10,7 @@ import {
 } from "../../store/actions/vendor";
 import { toast } from "react-toastify";
 import "./UserProfile.css";
+import { useNavigate } from "react-router-dom";
 
 const PendingCreation = () => {
   const dispatch = useDispatch();
@@ -17,10 +18,25 @@ const PendingCreation = () => {
   const unapprovedVendorList = useSelector(
     (state) => state?.vendor?.unapprovedVendorList
   );
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
   useEffect(() => {
+    if (!user || user?.result?.role !== "admin") {
+      navigate("/login");
+    } else{
     dispatch(getUnapprovedVendorsList());
-  }, [dispatch]);
+    }
+  }, [user, navigate, dispatch]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
+
+  // useEffect(() => {
+  //   dispatch(getUnapprovedVendorsList());
+  // }, [dispatch]);
 
   const approveVendorProfileClicked = (id) => {
     dispatch(approveVendorProfile(id));

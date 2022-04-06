@@ -8,8 +8,9 @@ import StatusDisplay from "../StatusDisplay/StatusDisplay";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import API from "../../api";
+import ToolkitProvider, {Search} from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
-
+const {SearchBar} = Search;
 const VendorListingAdmin = () => {
 
     const navigate = useNavigate();
@@ -53,19 +54,30 @@ const VendorListingAdmin = () => {
         getVendorData();
     }, []);
     return (
-        <BootstrapTable
-            classes="table"
+        <ToolkitProvider
             keyField="name"
             data={finalVendorData}
-            caption={<CaptionElement />}
             columns={columns}
-            pagination={paginationFactory()}
-            noDataIndication="No Data Available"
-            striped
-            hover
-            condensed
-        />
-
+            search
+        >
+            {
+                props => (
+                    <div>
+                        <SearchBar srText {...props.searchProps} />
+                        <BootstrapTable
+                            classes="table"
+                            caption={<CaptionElement/>}
+                            pagination={paginationFactory()}
+                            noDataIndication="No Data Available"
+                            striped
+                            hover
+                            condensed
+                            {...props.baseProps}
+                        />
+                    </div>
+                )
+            }
+        </ToolkitProvider>
     );
 }
 

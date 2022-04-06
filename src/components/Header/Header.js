@@ -73,6 +73,12 @@ function Header() {
             {user?.result?.role === "vendor" && (
               <Nav.Link href="/vendor/pickups">Pickups</Nav.Link>
             )}
+            {user?.result?.role === "normaluser" && (
+              <Nav.Link href="/user/rewards">Rewards</Nav.Link>
+            )}
+            {user?.result?.role === "admin" && (
+              <Nav.Link href="/admin/rewards">Rewards</Nav.Link>
+            )}
             {user?.result?.role === "admin" && (
               <>
                 <Nav.Link href="/contactus/viewqueries">Contact Us</Nav.Link>

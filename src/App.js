@@ -23,6 +23,8 @@ import SubmitQueryForm from "./components/contactUs/SubmitQueryForm";
 import AdminDisplayQueries from "./components/contactUs/AdminDisplayQueries";
 import AdminModifyVendors from "./components/contactUs/AdminModifyVendors";
 import RewardStore from "./components/rewardStore/RewardStore";
+import AdminViewPurchVouchers from "./components/rewardStore/AdminViewPurchVouchers";
+import AdminModifyVouchers from "./components/rewardStore/AdminModifyVouchers";
 
 import Login from "./components/UserManagement/Login";
 import Settings from "./components/UserManagement/Settings";
@@ -37,7 +39,12 @@ import UpdateStatus from "./components/UpdateStatus/UpdateStatus";
 import { ToastContainer } from "react-toastify";
 import Home from "./components/Home";
 import Requests from "./components/UserManagement/Requests";
+import UserRewards from "./components/Rewards/UserRewards";
+import AdminRewards from "./components/Rewards/AdminRewards";
 
+import PickupHistory from "./components/PickupHistory/PickupHistory";
+import PastPickups from "./components/PastPickups/PastPickups";
+// import AdminHeader from "./components/AdminHeader/AdminHeader";
 
 function App() {
   return (
@@ -79,6 +86,14 @@ function App() {
                 element={<AdminModifyVendors />}
               ></Route>
               <Route path="/rewardstore" element={<RewardStore />}></Route>
+              <Route
+                path="/rewardstore/viewvouchers"
+                element={<AdminViewPurchVouchers />}
+              ></Route>
+              <Route
+                path="/rewardstore/modifyvouchers"
+                element={<AdminModifyVouchers />}
+              ></Route>
               <Route path="/user/pickups">
                 <Route
                   path="/user/pickups/schedule"
@@ -92,6 +107,10 @@ function App() {
                 <Route path="/user/pickups/edit" element={<EditPickup />} />
                 <Route path="/user/pickups/cancel" element={<CancelPickup />} />
                 <Route path="/user/pickups/track" element={<TrackStatus />} />
+                <Route
+                  path="/user/pickups/history"
+                  element={<PickupHistory />}
+                />
                 <Route index element={<PickupHomeUser />} />
               </Route>
               <Route path="/vendor/pickups">
@@ -112,6 +131,10 @@ function App() {
                 <Route
                   path="/vendor/pickups/update"
                   element={<UpdateStatus />}
+                />
+                <Route
+                  path="/vendor/pickups/past-pickups"
+                  element={<PastPickups />}
                 />
                 <Route index element={<PickupHomeVendor />} />
               </Route>
@@ -135,6 +158,8 @@ function App() {
                 exact
                 element={<RewardListingAdmin />}
               />
+              <Route path="/user/rewards" element={<UserRewards />} />
+              <Route path="/admin/rewards" element={<AdminRewards />} />
             </Routes>
           </div>
           <Footer />

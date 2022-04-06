@@ -1,16 +1,18 @@
 // Author : Lokansh Gupta
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "./RewardStore.css";
 import { Card, Button } from "react-bootstrap";
 import { WEB_API_URL } from "../../constants";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 function RewardStore() {
   const navigate = useNavigate();
 
   const [voucherData, setvoucherData] = useState([]);
-  const [rewardPoints, setRewardPoints] = useState("0");
+  const [rewardPoints, setRewardPoints] = useState();
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [redeemButtomDisabled, setRedeemButtomDisabled] = useState(false);
 
@@ -34,7 +36,7 @@ function RewardStore() {
     axios
       .get(WEB_API_URL + "/reward/getPoints", {
         params: {
-          customerId: "1234",
+          customerId: "1234", ////////UPDATEEEEEEE
         },
       })
       .then((res) => {
@@ -54,29 +56,51 @@ function RewardStore() {
   const handleRedeem = (voucher) => {
     console.log("voucher---", voucher);
 
-    if (parseInt(rewardPoints) - parseInt(voucher.points) < 0) {
+    if (rewardPoints - parseInt(voucher.points) < 0) {
       toast.error("You don't have sufficient points to redeem this voucher.");
     } else {
-      var leftRewardPoints = parseInt(rewardPoints) - parseInt(voucher.points);
-      setRewardPoints(leftRewardPoints.toString());
-      updateRewardPointsApiCall(rewardPoints);
-      console.log(rewardPoints);
+      var leftRewardPoints = rewardPoints - parseInt(voucher.points);
+      setRewardPoints(leftRewardPoints);
+      updateRewardPointsApiCall(leftRewardPoints);
+      createVoucherPurchased(voucher);
     }
-    console.log(rewardPoints);
   };
 
   const updateRewardPointsApiCall = (updatedRewardPoints) => {
+    console.log("Inside api call---" + updatedRewardPoints);
     axios
       .post(WEB_API_URL + "/reward/updatePoints", {
+        _id: "624d2a2e3af23056bed6fb88", ////////UPDATEEEEEEEE
         points: updatedRewardPoints,
       })
       .then((res) => {
         if (res.data.success) {
           console.log("Reward Points Edited");
-          //getRewardPointsApiCall();
           setSubmitSuccess(true);
         } else {
           toast.error("Reward Points not edited");
+        }
+      })
+      .catch((error) => {
+        toast.error("Internal Server Error");
+      });
+  };
+
+  const createVoucherPurchased = (voucher) => {
+    var newVoucherObj = {
+      companyName: voucher.companyName,
+      value: voucher.value,
+      points: voucher.points,
+      customerId: "1234", /////UPDAAATEEEEEEEEEE
+      datePurchased: moment().format("LL"),
+    };
+    axios
+      .post(WEB_API_URL + "/voucher/purchase", newVoucherObj)
+      .then((res) => {
+        if (res.data.success) {
+          setSubmitSuccess(true);
+        } else {
+          toast.error("Voucher not purchased");
         }
       })
       .catch((error) => {
