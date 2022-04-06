@@ -37,6 +37,8 @@ import UpdateStatus from "./components/UpdateStatus/UpdateStatus";
 import { ToastContainer } from "react-toastify";
 import Home from "./components/Home";
 import Requests from "./components/UserManagement/Requests";
+import UserRewards from "./components/Rewards/UserRewards";
+import AdminRewards from "./components/Rewards/AdminRewards";
 
 import PickupHistory from "./components/PickupHistory/PickupHistory";
 import PastPickups from "./components/PastPickups/PastPickups";
@@ -145,6 +147,14 @@ function App() {
                 path="/reward-dashboard"
                 exact
                 element={<RewardListingAdmin />}
+              />
+              <Route
+                path="/user/rewards"
+                element={<UserRewards />}
+              />
+              <Route
+                path="/admin/rewards"
+                element={<AdminRewards />}
               />
             </Routes>
           </div>
