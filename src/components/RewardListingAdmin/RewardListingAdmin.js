@@ -4,11 +4,12 @@ import "./RewardListingAdmin.css"
 import { useEffect, useState } from "react";
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import StatusDisplay from "../StatusDisplay/StatusDisplay";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import API from "../../api";
+import ToolkitProvider, {Search} from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
+const {SearchBar} = Search;
 const RewardListingAdmin = () => {
 
     const navigate = useNavigate();
@@ -18,6 +19,7 @@ const RewardListingAdmin = () => {
     const getRewardData = async () => {
         API.get('/admin/get-all-rewards')
             .then(function (response) {
+                console.log(response.data.data)
                 setRewardData(response.data.data)
             })
             .catch(function (error) {
@@ -25,10 +27,9 @@ const RewardListingAdmin = () => {
             });
     };
     const columns = [
-        { dataField: "rewardId", text: "Reward ID" },
-        { dataField: "vendorName", text: "Vendor Name" },
-        { dataField: "userCount", text: "User Count" },
-        { dataField: "status", text: "Status", formatter: (cellContent, row) => (<StatusDisplay status={row.status} />) },
+        { dataField: "companyName", text: "Reward" },
+        { dataField: "points", text: "Points Required" },
+        { dataField: "value", text: "Value($)" },
     ]
 
     const CaptionElement = () => <h3 style={{ textAlign: 'center', color: '#495057', padding: '10px' }}>Reward Dashboard</h3>;
@@ -49,19 +50,30 @@ const RewardListingAdmin = () => {
         getRewardData();
     }, []);
     return (
-        <BootstrapTable
-            classes="table"
+        <ToolkitProvider
             keyField="name"
             data={rewardData}
-            caption={<CaptionElement />}
             columns={columns}
-            pagination={paginationFactory()}
-            noDataIndication="No Data Available"
-            striped
-            hover
-            condensed
-        />
-
+            search
+        >
+            {
+                props => (
+                    <div>
+                        <SearchBar srText {...props.searchProps} />
+                        <BootstrapTable
+                            classes="table"
+                            caption={<CaptionElement/>}
+                            pagination={paginationFactory()}
+                            noDataIndication="No Data Available"
+                            striped
+                            hover
+                            condensed
+                            {...props.baseProps}
+                        />
+                    </div>
+                )
+            }
+        </ToolkitProvider>
     );
 }
 
