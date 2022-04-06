@@ -23,7 +23,7 @@ export default function PickupHomeVendor() {
 
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("profile")));
-  },[localStorage.getItem("profile")]);
+  }, [localStorage.getItem("profile")]);
 
   return (
     <div>
@@ -76,6 +76,14 @@ export default function PickupHomeVendor() {
             desc="You want to update where your truck is, go here !"
             img={track}
             btnClick={() => navigate("/vendor/pickups/update")}
+          />
+        </div>
+        <div style={{ justifyContent: "center" }} className="col d-flex">
+          <DispCard
+            title="Past Pickups"
+            desc="You want to see history of pickups registered under your organization, go here !"
+            img={track}
+            btnClick={() => navigate("/vendor/pickups/past-pickups")}
           />
         </div>
       </Row>
