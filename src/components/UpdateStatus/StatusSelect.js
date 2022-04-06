@@ -30,6 +30,7 @@ const StatusSelect = (props) => {
     const data = {
       _id: row._id,
       status: status,
+      batchNo: row.batchNo
     };
     API.put("/vendor/schedules/update", data)
       .then((res) => {

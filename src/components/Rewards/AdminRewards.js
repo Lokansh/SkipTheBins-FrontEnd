@@ -1,10 +1,113 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Button, Table, Row, Col, Form } from "react-bootstrap";
+import {
+  Button,
+  Table,
+  Row,
+  Col,
+  Form,
+  Modal,
+  Container,
+} from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import API from "../../api";
+import {
+  editProfile,
+} from "../../store/actions/auth";
 
 function AdminRewards() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+  const [queries, setQueries] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [openedQuery, setOpenedQuery] = useState({});
+  const [rewardPoints, setRewardPoints] = useState(0);
+  const [userReward, setUserReward] = useState(0);
+  
+  useEffect(() => {
+    if (!user || user?.result?.role !== "admin") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+  
+  useEffect(() => {
+    getQueries();
+    setRewardPoints(user?.result?.points);
+  }, [user]);
+
+  const getQueries = async () => {
+    try {
+      const response = await API.get("/queries", {});
+
+      if (response.status === 200 && response.data.success === true) {
+        const complaintQueries = response.data.queryData.filter((query) =>
+          query.querySubject?.toLowerCase().includes("complaint")
+        );
+        setQueries(complaintQueries);
+      } else {
+        setQueries([]);
+        toast.error(response.data.toast);
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong!");
+    }
+  };
+
+  const onUserRewardPointsChange = (event) => {
+    setUserReward(parseInt(event.target.value))
+  }
+
+  const openModal = (query) => {
+    setOpenedQuery(query);
+    setUserReward(query.points);
+    setShowModal(true);
+  };
+
+  const rewardPointsChange = (event) => {
+    setRewardPoints(parseInt(event.target.value));
+  }
+
+  const updateRewardPoints = () => {
+    dispatch(editProfile(user?.result?._id, {points: rewardPoints}));
+  }
+
+  const onComplaintSave = async() => {
+    const queryArr = queries;
+    const index = queryArr.findIndex(query => query.email === openedQuery.email);
+    queryArr[index].points = userReward;
+    setQueries(queryArr);
+    setShowModal(false);
+    
+    //put api 
+    try {
+      const body = {
+        email: openedQuery.email,
+        points: userReward
+      };
+      const response = await API.put(
+        "/reward/updateComplaintPoints",
+        body
+      );
+
+      if (response.status === 200 && response.data.success === true && response.data.message === "Reward points updated") {
+        toast.success(response.data.toast);
+      } else {
+        toast.error(response.data.toast);
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong!");
+    }
+  }
+
+  const submitClick = () => {
+    navigate("/profile");
+  };
+
   return (
     <Row>
       <Row>
@@ -22,12 +125,6 @@ function AdminRewards() {
         </Col>
       </Row>
       <Row>
-        {/* <div
-          style={{
-            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-            padding: "5%",
-          }}
-        > */}
         <h4
           style={{
             textAlign: "left",
@@ -52,25 +149,24 @@ function AdminRewards() {
               maxWidth: "10%",
               minWidth: "100px",
               boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-              // margin: "0 auto",
             }}
             type="number"
-            max={10}
+            value={rewardPoints}
             min={1}
-            // onChange={onBagsChange}
+            onChange={rewardPointsChange}
           />
-           <Button
-          style={{
-            maxWidth: "30%",
-            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
-            // margin: "0 auto",
-            marginLeft: "3%",
-          }}
-          variant="success"
-          // onClick={submitClick}
-        >
-          Home
-        </Button>
+          <Button
+            style={{
+              maxWidth: "30%",
+              boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
+              // margin: "0 auto",
+              marginLeft: "3%",
+            }}
+            variant="success"
+            onClick={updateRewardPoints}
+          >
+            Update
+          </Button>
         </div>
         {/* </div> */}
       </Row>
@@ -114,21 +210,37 @@ function AdminRewards() {
           >
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Slot</th>
+                <th>User</th>
+                <th>Email</th>
+                <th>Subject</th>
                 <th>Points</th>
               </tr>
             </thead>
             <tbody>
-              {/* {pickups.map((pickup, index) => {
+              {queries.map((query, index) => {
                 return (
                   <tr key={index}>
-                    <td>{pickup.date}</td>
-                    <td>{pickup.slot}</td>
-                    <td>{pickup.points}</td>
+                    <td>{query.name}</td>
+                    <td>{query.email}</td>
+                    <td>{query.querySubject}</td>
+                    <td>{query.points}</td>
+                    <td>
+                      <Button
+                        style={{
+                          // maxWidth: "30%",
+                          boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
+                          margin: "0 auto",
+                          marginTop: "3%",
+                        }}
+                        variant="success"
+                        onClick={() => openModal(query)}
+                      >
+                        View
+                      </Button>
+                    </td>
                   </tr>
                 );
-              })} */}
+              })}
             </tbody>
           </Table>
         </div>
@@ -142,13 +254,139 @@ function AdminRewards() {
             marginTop: "3%",
           }}
           variant="success"
-          // onClick={submitClick}
+          onClick={submitClick}
         >
           Home
         </Button>
       </Row>
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        centered
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title
+            style={{
+              textAlign: "center",
+              fontWeight: "bolder",
+              color: "rgba(17, 45, 92,0.85)",
+            }}
+          >
+            Complaint Details
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Container>
+            <Row>
+              <Col>
+                <h5
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "bolder",
+                    color: "rgba(17, 45, 92,0.85)",
+                    marginBottom: "2%",
+                  }}
+                >
+                  User: {openedQuery.name}
+                </h5>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <h5
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "bolder",
+                    color: "rgba(17, 45, 92,0.85)",
+                    marginBottom: "2%",
+                  }}
+                >
+                  Email: {openedQuery.email}
+                </h5>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <h5
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "bolder",
+                    color: "rgba(17, 45, 92,0.85)",
+                    marginBottom: "3%",
+                  }}
+                >
+                  Subject: {openedQuery.querySubject}
+                </h5>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <h6
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "bolder",
+                    color: "rgba(17, 45, 92,0.85)",
+                    marginBottom: "3%",
+                  }}
+                >
+                  {openedQuery.query}
+                </h6>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <h5
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "bolder",
+                    color: "rgba(17, 45, 92,0.85)",
+                    marginBottom: "3%",
+                  }}
+                >
+                  Add Reward Points
+                </h5>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Form.Control
+                    style={{
+                      maxWidth: "10%",
+                      minWidth: "100px",
+                      boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px",
+                      // margin: "0 auto",
+                    }}
+                    value={userReward}
+                    type="number"
+                    min={1}
+                    onChange={onUserRewardPointsChange}
+                  />
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+          <Button
+            variant="success"
+            onClick={onComplaintSave}
+          >
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Row>
   );
 }
-// /profile
+
 export default AdminRewards;

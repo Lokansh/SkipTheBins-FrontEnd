@@ -27,7 +27,7 @@ function UserRewards() {
   }, []);
 
   const submitClick = () => {
-    navigate("/user/pickups");
+    navigate("/rewardstore");
   };
 
   const rewardStore = () => {
