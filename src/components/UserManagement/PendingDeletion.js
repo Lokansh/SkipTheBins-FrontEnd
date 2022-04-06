@@ -10,16 +10,32 @@ import {
   declineVendorProfileDeletion,
 } from "../../store/actions/vendor";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const PendingDeletion = () => {
   const dispatch = useDispatch();
   const vendorToDeleteList = useSelector(
     (state) => state?.vendor?.vendorToDeleteList
   );
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
   useEffect(() => {
+    if (!user || user?.result?.role !== "admin") {
+      navigate("/login");
+    } else{
     dispatch(getVendorDeletionRequestList());
-  }, []);
+    }
+  }, [user, navigate, dispatch]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
+
+  // useEffect(() => {
+  //   dispatch(getVendorDeletionRequestList());
+  // }, []);
 
   const deleteVendorProfileClicked = (id) => {
     dispatch(deleteVendorProfile(id));

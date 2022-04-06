@@ -6,8 +6,25 @@ import "bootstrap/dist/css/bootstrap.css";
 
 import PendingCreation from "./PendingCreation";
 import PendingDeletion from "./PendingDeletion";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Requests = () => {
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
+  useEffect(() => {
+    if (!user || user?.result?.role !== "admin") {
+      toast.error("Please login as admin to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
+
   return (
     <div>
       <Tabs
