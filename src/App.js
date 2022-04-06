@@ -23,6 +23,8 @@ import SubmitQueryForm from "./components/contactUs/SubmitQueryForm";
 import AdminDisplayQueries from "./components/contactUs/AdminDisplayQueries";
 import AdminModifyVendors from "./components/contactUs/AdminModifyVendors";
 import RewardStore from "./components/rewardStore/RewardStore";
+import AdminViewPurchVouchers from "./components/rewardStore/AdminViewPurchVouchers";
+import AdminModifyVouchers from "./components/rewardStore/AdminModifyVouchers";
 
 import Login from "./components/UserManagement/Login";
 import Settings from "./components/UserManagement/Settings";
@@ -84,6 +86,14 @@ function App() {
                 element={<AdminModifyVendors />}
               ></Route>
               <Route path="/rewardstore" element={<RewardStore />}></Route>
+              <Route
+                path="/rewardstore/viewvouchers"
+                element={<AdminViewPurchVouchers />}
+              ></Route>
+              <Route
+                path="/rewardstore/modifyvouchers"
+                element={<AdminModifyVouchers />}
+              ></Route>
               <Route path="/user/pickups">
                 <Route
                   path="/user/pickups/schedule"
@@ -148,14 +158,8 @@ function App() {
                 exact
                 element={<RewardListingAdmin />}
               />
-              <Route
-                path="/user/rewards"
-                element={<UserRewards />}
-              />
-              <Route
-                path="/admin/rewards"
-                element={<AdminRewards />}
-              />
+              <Route path="/user/rewards" element={<UserRewards />} />
+              <Route path="/admin/rewards" element={<AdminRewards />} />
             </Routes>
           </div>
           <Footer />
