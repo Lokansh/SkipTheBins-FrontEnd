@@ -35,6 +35,7 @@ const Settings = () => {
 
   useEffect(() => {
     if (!user) {
+      toast.error("Please login to continue");
       navigate("/login");
     }
   });

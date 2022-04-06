@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import defaultProfileImage from "../../assets/default.png";
 import { Row, Col, Container } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const VendorProfile = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
@@ -12,6 +13,7 @@ const VendorProfile = () => {
 
   useEffect(() => {
     if (!user) {
+      toast.error("Please login to continue");
       navigate("/login");
     }
   });
