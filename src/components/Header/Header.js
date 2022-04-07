@@ -99,6 +99,21 @@ function Header() {
                     </Nav>
                 </Navbar.Collapse> */}
         <Navbar.Collapse id="colapse-nav" className="justify-content-end">
+          {user?.result?.role === "normaluser" && (
+            <Nav.Link>
+              <span className="notificationIcon" onClick={notificationClick}>
+                <FontAwesomeIcon icon={faBell} />
+                {notificationCount > 0 && (
+                  <span className="notification-badge">
+                    {notificationCount}
+                  </span>
+                )}
+              </span>
+              {showNotification && (
+                <ViewNotification newNotifications={notifications} />
+              )}
+            </Nav.Link>
+          )}
           <Nav>
             {(user?.result?.role === "admin" ||
               user?.result?.role === "vendor") && (
@@ -164,21 +179,6 @@ function Header() {
                   Logout
                 </NavDropdown.Item>
               </NavDropdown>
-            )}
-            {user?.result?.role === "normaluser" && (
-              <Nav.Link>
-                <span className="notificationIcon" onClick={notificationClick}>
-                  <FontAwesomeIcon icon={faBell} />
-                  {notificationCount > 0 && (
-                    <span className="notification-badge">
-                      {notificationCount}
-                    </span>
-                  )}
-                </span>
-                {showNotification && (
-                  <ViewNotification newNotifications={notifications} />
-                )}
-              </Nav.Link>
             )}
           </Nav>
         </Navbar.Collapse>

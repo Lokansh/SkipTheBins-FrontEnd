@@ -6,9 +6,9 @@ import { useEffect } from "react";
 function ViewNotification(props) {
   const dateDifference = (_) => {
     let day = Math.ceil((new Date() - new Date(_)) / (1000 * 60 * 60 * 24));
-    if (day == 0) return "Today";
-    else if (0 < day <= 1) return `${day} day ago`;
-    else if (1 < day <= 3) return `${day} days ago`;
+    if (day <= 1) return "Today";
+    else if (1 < day <= 2) return `${day} day ago`;
+    else if (2 < day <= 3) return `${day} days ago`;
     else return `Expired`;
   };
   //   useEffect(useEffect(() => {}, [props]));
