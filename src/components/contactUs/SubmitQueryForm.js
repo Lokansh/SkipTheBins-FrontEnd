@@ -134,7 +134,6 @@ function SubmitQueryForm() {
         if (res.data.success) {
           setSubmitSuccess(true);
         } else {
-          //Prashit notiffication
           toast.error("Query not submitted");
         }
       })

@@ -1,12 +1,10 @@
 import React, { useEffect, useState, Fragment } from "react";
-import axios from "axios";
 import "./RewardStore.css";
 import { Table, Form, Button } from "react-bootstrap";
 import AdminModifyVoucherReadOnly from "./AdminModifyVoucherReadOnly";
 import AdminModifyVoucherEditable from "./AdminModifyVoucherEditable";
 import { toast } from "react-toastify";
 import API from "../../api";
-import { WEB_API_URL } from "../../constants";
 
 import { useNavigate } from "react-router-dom";
 
@@ -24,14 +22,23 @@ function AdminModifyVouchers() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
   useEffect(() => {
-    getAllVouchersApiCall();
-  }, []);
+    if (!user || user?.result?.role !== "admin") {
+      toast.error("Please login as admin to continue");
+
+      navigate("/login");
+    } else {
+      getAllVouchersApiCall();
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  }, [localStorage.getItem("profile")]);
 
   const getAllVouchersApiCall = () => {
-    axios
-      .get(WEB_API_URL + "/voucher") /////////////
+    API.get("/voucher")
       .then((res) => {
-        setVouchers(res.data.voucherData); /////////////
+        setVouchers(res.data.voucherData);
       })
       .catch((error) => {
         toast.error("Internal Server Error");
@@ -131,8 +138,7 @@ function AdminModifyVouchers() {
   };
 
   const submitVoucherApiCall = (newVoucher) => {
-    axios
-      .post(WEB_API_URL + "/voucher/add", newVoucher)
+    API.post("/voucher/add", newVoucher)
       .then((res) => {
         if (res.data.success) {
           toast.success("Vendor Added");
@@ -167,8 +173,7 @@ function AdminModifyVouchers() {
   };
 
   const editVoucherApiCall = (editedVoucher) => {
-    axios
-      .post(WEB_API_URL + "/voucher/update", editedVoucher) ///////
+    API.post("/voucher/update", editedVoucher)
       .then((res) => {
         if (res.data.success) {
           toast.success("Voucher Edited");
@@ -205,8 +210,7 @@ function AdminModifyVouchers() {
     const deleteId = {
       _id: voucherId,
     };
-    axios
-      .post(WEB_API_URL + "/voucher/delete", deleteId) ////////////////
+    API.post("/voucher/delete", deleteId)
       .then((res) => {
         if (res.data.success) {
           toast.success("Voucher Deleted");

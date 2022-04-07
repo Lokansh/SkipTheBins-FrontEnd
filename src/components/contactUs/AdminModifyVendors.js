@@ -1,6 +1,5 @@
 // Author : Lokansh Gupta
 import React, { useEffect, useState, Fragment } from "react";
-import axios from "axios";
 import "./ContactUs.css";
 import { Table, Form, Button } from "react-bootstrap";
 import AdminModifyVendorReadOnly from "./AdminModifyVendorReadOnly";
@@ -29,14 +28,12 @@ function AdminModifyVendors() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
   useEffect(() => {
-    getAllVendorsApiCall();
-  }, []);
-
-  useEffect(() => {
     if (!user || user?.result?.role !== "admin") {
-      toast.error("Please login to continue");
+      toast.error("Please login as admin to continue");
 
       navigate("/login");
+    } else {
+      getAllVendorsApiCall();
     }
   }, [user, navigate]);
 

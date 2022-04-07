@@ -1,6 +1,5 @@
 // Author : Lokansh Gupta
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import "./ContactUs.css";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -13,14 +12,12 @@ function AdminDisplayQueries() {
   const [contactUsQueries, setContactUsQueries] = useState([]);
 
   useEffect(() => {
-    getAllQueriesApiCall();
-  }, []);
-
-  useEffect(() => {
     if (!user || user?.result?.role !== "admin") {
-      toast.error("Please login to continue");
+      toast.error("Please login as admin to continue");
 
       navigate("/login");
+    } else {
+      getAllQueriesApiCall();
     }
   }, [user, navigate]);
 
