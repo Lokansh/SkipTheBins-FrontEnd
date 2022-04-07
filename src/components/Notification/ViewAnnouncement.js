@@ -92,7 +92,7 @@ function ViewAnnouncement(props) {
         />
 
         <ListGroup>
-          {announcements.map((_, index) => {
+          {announcements?.map((_, index) => {
             return (
               <ListGroup.Item key={index}>
                 <div className="announcement-style">
