@@ -21,6 +21,7 @@ const EventListingAdmin = () => {
 
     const [eventData, setEventData] = useState([]);
 
+    // fetching all events details and displaying
     const getEventData = async () => {
         API.get('/admin/get-all-events')
             .then(function (response) {
@@ -31,6 +32,7 @@ const EventListingAdmin = () => {
             });
     };
 
+    // add event by an admin api call
     const addEvent = (event) => {
         API.post("/admin/add-event", event)
             .then((res) => {
@@ -47,6 +49,7 @@ const EventListingAdmin = () => {
             });
     };
 
+    // delete event by an admin api call
     const deleteEvent = (eventId) => {
         API.delete("/admin/delete-event/" + eventId)
             .then((res) => {
@@ -81,7 +84,7 @@ const EventListingAdmin = () => {
 
     useEffect(() => {
         if (!user || user?.result?.role !== "admin") {
-            toast.error("Please login to continue");
+            toast.error("Please login as an admin to continue");
             navigate("/login");
         }
     }, [user, navigate]);
@@ -119,7 +122,7 @@ const EventListingAdmin = () => {
                                 classes="table"
                                 caption={<CaptionElement/>}
                                 pagination={paginationFactory()}
-                                noDataIndication="No Data Available"
+                                noDataIndication="No Event Available"
                                 striped
                                 hover
                                 condensed

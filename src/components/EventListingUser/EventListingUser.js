@@ -50,7 +50,7 @@ const EventListingUser = () => {
                                 classes="table"
                                 caption={<CaptionElement/>}
                                 pagination={paginationFactory()}
-                                noDataIndication="No Data Available"
+                                noDataIndication="No Event Available"
                                 striped
                                 hover
                                 condensed
