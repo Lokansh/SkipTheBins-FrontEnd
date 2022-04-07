@@ -18,6 +18,7 @@ const UserListingAdmin = () => {
 
     const [userData, setUserData] = useState([]);
 
+    // fetching all users data and displaying by filtering them with userRole as normal user
     const getUserData = async () => {
         API.get('/admin/get-all-users')
             .then(function (response) {
@@ -47,7 +48,7 @@ const UserListingAdmin = () => {
 
     useEffect(() => {
         if (!user || user?.result?.role !== "admin") {
-            toast.error("Please login to continue");
+            toast.error("Please login as an admin to continue");
             navigate("/login");
         }
     }, [user, navigate]);
@@ -74,7 +75,7 @@ const UserListingAdmin = () => {
                             classes="table"
                             caption={<CaptionElement/>}
                             pagination={paginationFactory()}
-                            noDataIndication="No Data Available"
+                            noDataIndication="No User Available"
                             striped
                             hover
                             condensed

@@ -16,6 +16,8 @@ const RewardListingAdmin = () => {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
     const [rewardData, setRewardData] = useState([]);
+
+    // fetching all rewards data and displaying
     const getRewardData = async () => {
         API.get('/admin/get-all-rewards')
             .then(function (response) {
@@ -37,7 +39,7 @@ const RewardListingAdmin = () => {
 
     useEffect(() => {
         if (!user || user?.result?.role !== "admin") {
-            toast.error("Please login to continue");
+            toast.error("Please login as an admin to continue");
             navigate("/login");
         }
     }, [user, navigate]);
@@ -64,7 +66,7 @@ const RewardListingAdmin = () => {
                             classes="table"
                             caption={<CaptionElement/>}
                             pagination={paginationFactory()}
-                            noDataIndication="No Data Available"
+                            noDataIndication="No Reward Available"
                             striped
                             hover
                             condensed
