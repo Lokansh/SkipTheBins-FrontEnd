@@ -17,6 +17,8 @@ const VendorListingAdmin = () => {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
     const [vendorData, setVendorData] = useState([]);
+
+    // fetching all users data and displaying by filtering them with userrole as vendor
     const getVendorData = async () => {
         API.get('/admin/get-all-users')
             .then(function (response) {
@@ -41,7 +43,7 @@ const VendorListingAdmin = () => {
 
     useEffect(() => {
         if (!user || user?.result?.role !== "admin") {
-            toast.error("Please login to continue");
+            toast.error("Please login as an admin to continue");
             navigate("/login");
         }
     }, [user, navigate]);
@@ -68,7 +70,7 @@ const VendorListingAdmin = () => {
                             classes="table"
                             caption={<CaptionElement/>}
                             pagination={paginationFactory()}
-                            noDataIndication="No Data Available"
+                            noDataIndication="No Vendor Available"
                             striped
                             hover
                             condensed

@@ -77,6 +77,9 @@ function Header() {
               <Nav.Link href="/user/rewards">Rewards</Nav.Link>
             )}
             {user?.result?.role === "admin" && (
+              <Nav.Link href="/rewardstore/viewvouchers">Reward Store</Nav.Link>
+            )}
+            {user?.result?.role === "admin" && (
               <Nav.Link href="/admin/rewards">Rewards</Nav.Link>
             )}
             {user?.result?.role === "admin" && (
