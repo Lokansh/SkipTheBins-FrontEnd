@@ -30,6 +30,8 @@ export default function SchedulePickup() {
     if (!user || user?.result?.role !== "vendor") {
       toast.error("Please login to continue");
       navigate("/login");
+    } else {
+      getArea();
     }
   }, [user, navigate]);
 
@@ -107,9 +109,9 @@ export default function SchedulePickup() {
     setSlotProgress(slotProgress);
   }, [date, time, area, slots]);
 
-  useEffect(() => {
-    getArea();
-  }, []);
+  // useEffect(() => {
+  //   getArea();
+  // }, []);
 
   const getArea = async () => {
     try {
@@ -140,7 +142,7 @@ export default function SchedulePickup() {
         const response = await API.post("/vendor/create", body);
 
         if (response.status === 200 && response.data.success === true) {
-          toast.success(response.data.toast);
+          toast.success(response.data.message);
           navigate("/vendor/pickups/confirm", {
             state: {
               date,
@@ -148,7 +150,7 @@ export default function SchedulePickup() {
             },
           });
         } else {
-          toast.error(response.data.toast);
+          toast.error(response.data.message);
         }
       } catch (e) {
         console.log(e);

@@ -20,7 +20,7 @@ export default function ViewPickup() {
     if (!user || user?.result?.role !== "normaluser") {
       toast.error("Please login to continue");
       navigate("/login");
-    } 
+    }
   }, [user, navigate]);
 
   const dateChange = (event) => {
@@ -69,10 +69,9 @@ export default function ViewPickup() {
       } else {
         setShowDetails(false);
         setPickups([]);
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong!");
     }
   };
