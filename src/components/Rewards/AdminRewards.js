@@ -34,7 +34,7 @@ function AdminRewards() {
   }, [user, navigate]);
 
   useEffect(() => {
-    setRewardPoints(user?.result?.points);
+    getQueries();
   }, [user]);
 
   const getQueries = async () => {
