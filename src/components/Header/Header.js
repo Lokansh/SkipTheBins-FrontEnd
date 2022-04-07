@@ -82,6 +82,7 @@ function Header() {
             {user?.result?.role === "admin" && (
               <>
                 <Nav.Link href="/contactus/viewqueries">Contact Us</Nav.Link>
+                <Nav.Link href="/event-dashboard">Events</Nav.Link>
                 <NavDropdown align={{ lg: "end" }} title="Analytics">
                   <NavDropdown.Item href="/user-dashboard">
                     User Analytics
