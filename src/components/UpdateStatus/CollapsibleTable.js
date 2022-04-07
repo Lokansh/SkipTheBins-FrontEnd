@@ -13,19 +13,25 @@ const CollapsibleTable = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
+  //If user is not logged in then redirect him to login page.
   useEffect(() => {
     if (!user || user?.result?.role !== "vendor") {
-      toast.error("Please login to continue");
+      toast.error("Please login as vendor to continue");
       navigate("/login");
+    } else{
+      getSchedules();
     }
   }, [user, navigate]);
 
+  //Get details of currently logged in user from the local storage.
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [localStorage.getItem("profile")]);
 
   const [scheduleData, setScheduleData] = useState([]);
   const [message, setMessage] = useState("");
+
+  //Fetch past pickup batch from of the currently logged in user by making API call.
   const getSchedules = async () => {
     try {
       const response = await API.get("/vendor/schedules", {
@@ -48,9 +54,9 @@ const CollapsibleTable = () => {
     }
   };
 
-  useEffect(() => {
-    getSchedules();
-  }, []);
+  // useEffect(() => {
+  //   getSchedules();
+  // }, []);
 
   const updateStatus = () => {
     getSchedules();
