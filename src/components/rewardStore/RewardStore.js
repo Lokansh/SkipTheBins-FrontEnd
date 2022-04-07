@@ -1,12 +1,11 @@
 // Author : Lokansh Gupta
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import "./RewardStore.css";
 import { Card, Button } from "react-bootstrap";
-import { WEB_API_URL } from "../../constants";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import moment from "moment";
+import API from "../../api";
 
 function RewardStore() {
   const navigate = useNavigate();
@@ -15,15 +14,27 @@ function RewardStore() {
   const [rewardPoints, setRewardPoints] = useState();
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [redeemButtomDisabled, setRedeemButtomDisabled] = useState(false);
+  const [referenceNumber, setReferenceNumber] = useState("");
+
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
   useEffect(() => {
-    getAllVoucherDetailsApiCall();
-    getRewardPointsApiCall();
-  }, []);
+    if (!user || user?.result?.role !== "normaluser") {
+      toast.error("Please login to continue");
+
+      navigate("/login");
+    } else {
+      getAllVoucherDetailsApiCall();
+      getRewardPointsApiCall();
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  }, [localStorage.getItem("profile")]);
 
   const getAllVoucherDetailsApiCall = () => {
-    axios
-      .get(WEB_API_URL + "/voucher/allDetails")
+    API.get("/voucher/allDetails")
       .then((res) => {
         setvoucherData(res.data.voucherData);
       })
@@ -33,12 +44,11 @@ function RewardStore() {
   };
 
   const getRewardPointsApiCall = () => {
-    axios
-      .get(WEB_API_URL + "/reward/getPoints", {
-        params: {
-          customerId: "1234", ////////UPDATEEEEEEE
-        },
-      })
+    API.get("/reward/getPoints", {
+      params: {
+        customerId: user.result._id,
+      },
+    })
       .then((res) => {
         if (res.data.rewardData.length != 0) {
           setRewardPoints(res.data.rewardData[0].points);
@@ -54,10 +64,8 @@ function RewardStore() {
   };
 
   const handleRedeem = (voucher) => {
-    console.log("voucher---", voucher);
-
     if (rewardPoints - parseInt(voucher.points) < 0) {
-      toast.error("You don't have sufficient points to redeem this voucher.");
+      toast.error("You don't have sufficient points to redeem this voucher");
     } else {
       var leftRewardPoints = rewardPoints - parseInt(voucher.points);
       setRewardPoints(leftRewardPoints);
@@ -67,15 +75,12 @@ function RewardStore() {
   };
 
   const updateRewardPointsApiCall = (updatedRewardPoints) => {
-    console.log("Inside api call---" + updatedRewardPoints);
-    axios
-      .post(WEB_API_URL + "/reward/updatePoints", {
-        _id: "624d2a2e3af23056bed6fb88", ////////UPDATEEEEEEEE
-        points: updatedRewardPoints,
-      })
+    API.post("/reward/updatePoints", {
+      customerId: user.result._id,
+      points: updatedRewardPoints,
+    })
       .then((res) => {
         if (res.data.success) {
-          console.log("Reward Points Edited");
           setSubmitSuccess(true);
         } else {
           toast.error("Reward Points not edited");
@@ -87,17 +92,20 @@ function RewardStore() {
   };
 
   const createVoucherPurchased = (voucher) => {
+    const refNo = Math.random().toString(36).substr(2, 9).slice(-9);
     var newVoucherObj = {
       companyName: voucher.companyName,
       value: voucher.value,
       points: voucher.points,
-      customerId: "1234", /////UPDAAATEEEEEEEEEE
+      customerId: user.result._id,
+      email: user.result.email,
       datePurchased: moment().format("LL"),
+      refNumber: refNo,
     };
-    axios
-      .post(WEB_API_URL + "/voucher/purchase", newVoucherObj)
+    API.post("/voucher/purchase", newVoucherObj)
       .then((res) => {
         if (res.data.success) {
+          setReferenceNumber(refNo);
           setSubmitSuccess(true);
         } else {
           toast.error("Voucher not purchased");
@@ -193,9 +201,9 @@ function RewardStore() {
               marginBottom: "1%",
             }}
           >
-            Your voucher redeem request has been successfully submitted and you
-            will receive voucher details via registered email within 1 working
-            day.
+            Your voucher redeem request has been successfully submitted with
+            reference number - {referenceNumber} and you will receive voucher
+            details via registered email within 1 working day.
           </h6>
           <div
             style={{ marginTop: "1%", justifyContent: "center" }}
