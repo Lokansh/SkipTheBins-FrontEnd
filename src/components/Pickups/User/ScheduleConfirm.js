@@ -59,11 +59,10 @@ export default function ScheduleConfirm() {
         const response = await API.post("/user/schedule", body);
 
         if (response.status === 200 && response.data.success === true) {
-          console.log("In toast success");
-          toast.success(response.data.toast);
+          toast.success(response.data.message);
           navigate("/user/pickups");
         } else {
-          toast.error(response.data.toast);
+          toast.error(response.data.message);
         }
       } catch (e) {
         console.log(e);

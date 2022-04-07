@@ -29,6 +29,9 @@ export default function EditSchedule() {
     if (!user || user?.result?.role !== "vendor") {
       toast.error("Please login to continue");
       navigate("/login");
+    } 
+    else {
+      getArea();
     }
   }, [user, navigate]);
 
@@ -100,7 +103,7 @@ export default function EditSchedule() {
           setSlots(existingSlots);
         } else {
           setSlots(slots);
-          toast.error(response.data.toast);
+          toast.error(response.data.message);
         }
       } catch (e) {
         console.log(e);
@@ -185,7 +188,6 @@ export default function EditSchedule() {
 
   useEffect(() => {
     getSchedules(moment().add(1, "day").format("LL"));
-    getArea();
   }, []);
 
   const getSchedules = async (getDate) => {
@@ -213,7 +215,7 @@ export default function EditSchedule() {
         setSlots(scheduleSlots);
       } else {
         setSlots([]);
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);

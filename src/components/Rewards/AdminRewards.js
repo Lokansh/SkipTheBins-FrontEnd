@@ -12,9 +12,7 @@ import {
 } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import API from "../../api";
-import {
-  editProfile,
-} from "../../store/actions/auth";
+import { editProfile } from "../../store/actions/auth";
 
 function AdminRewards() {
   const navigate = useNavigate();
@@ -25,16 +23,17 @@ function AdminRewards() {
   const [openedQuery, setOpenedQuery] = useState({});
   const [rewardPoints, setRewardPoints] = useState(0);
   const [userReward, setUserReward] = useState(0);
-  
+
   useEffect(() => {
     if (!user || user?.result?.role !== "admin") {
       toast.error("Please login to continue");
       navigate("/login");
+    } else {
+      setRewardPoints(user?.result?.points);
     }
   }, [user, navigate]);
-  
+
   useEffect(() => {
-    getQueries();
     setRewardPoints(user?.result?.points);
   }, [user]);
 
@@ -49,7 +48,7 @@ function AdminRewards() {
         setQueries(complaintQueries);
       } else {
         setQueries([]);
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);
@@ -58,8 +57,8 @@ function AdminRewards() {
   };
 
   const onUserRewardPointsChange = (event) => {
-    setUserReward(parseInt(event.target.value))
-  }
+    setUserReward(parseInt(event.target.value));
+  };
 
   const openModal = (query) => {
     setOpenedQuery(query);
@@ -69,40 +68,43 @@ function AdminRewards() {
 
   const rewardPointsChange = (event) => {
     setRewardPoints(parseInt(event.target.value));
-  }
+  };
 
   const updateRewardPoints = () => {
-    dispatch(editProfile(user?.result?._id, {points: rewardPoints}));
-  }
+    dispatch(editProfile(user?.result?._id, { points: rewardPoints }));
+  };
 
-  const onComplaintSave = async() => {
+  const onComplaintSave = async () => {
     const queryArr = queries;
-    const index = queryArr.findIndex(query => query.email === openedQuery.email);
+    const index = queryArr.findIndex(
+      (query) => query.email === openedQuery.email
+    );
     queryArr[index].points = userReward;
     setQueries(queryArr);
     setShowModal(false);
-    
-    //put api 
+
+    //put api
     try {
       const body = {
         email: openedQuery.email,
-        points: userReward
+        points: userReward,
       };
-      const response = await API.put(
-        "/reward/updateComplaintPoints",
-        body
-      );
+      const response = await API.put("/reward/updateComplaintPoints", body);
 
-      if (response.status === 200 && response.data.success === true && response.data.message === "Reward points updated") {
-        toast.success(response.data.toast);
+      if (
+        response.status === 200 &&
+        response.data.success === true &&
+        response.data.message === "Reward points updated"
+      ) {
+        toast.success(response.data.message);
       } else {
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong!");
     }
-  }
+  };
 
   const submitClick = () => {
     navigate("/profile");
@@ -377,10 +379,7 @@ function AdminRewards() {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
-          <Button
-            variant="success"
-            onClick={onComplaintSave}
-          >
+          <Button variant="success" onClick={onComplaintSave}>
             Save
           </Button>
         </Modal.Footer>

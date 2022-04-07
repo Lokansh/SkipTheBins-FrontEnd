@@ -8,7 +8,6 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Form,
-  Alert,
   Row,
   Col,
 } from "react-bootstrap";
@@ -31,7 +30,6 @@ export default function SchedulePickup() {
   const [bags, setBags] = useState(0);
   const [weight, setWeight] = useState(0);
   const [showFields, setShowFields] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
   const [areaData, setAreaData] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [batchNo, setBatchNo] = useState();
@@ -40,6 +38,8 @@ export default function SchedulePickup() {
     if (!user || user?.result?.role !== "normaluser") {
       toast.error("Please login to continue");
       navigate("/login");
+    } else {
+      getArea();
     }
   }, [user, navigate]);
 
@@ -100,19 +100,9 @@ export default function SchedulePickup() {
     setProgress(progress);
   }, [showFields, time, wasteTypes.length, bags, weight]);
 
-  useEffect(() => {
-    const timeId = setTimeout(() => {
-      setShowAlert(false);
-    }, 1500);
-
-    return () => {
-      clearTimeout(timeId);
-    };
-  }, [showAlert]);
-
-  useEffect(() => {
-    getArea();
-  }, []);
+  // useEffect(() => {
+  //   getArea();
+  // }, []);
 
   const getSlots = async (getDate, getArea) => {
     try {
@@ -168,28 +158,6 @@ export default function SchedulePickup() {
 
   return (
     <div>
-      {showAlert && (
-        <Col
-          className="d-flex"
-          style={{
-            position: "fixed",
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Alert
-            style={{ boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px" }}
-            variant="danger"
-            onClose={() => setShowAlert(false)}
-            dismissible
-          >
-            <Alert.Heading style={{ textAlign: "center" }}>
-              Please fill all the details!
-            </Alert.Heading>
-          </Alert>
-        </Col>
-      )}
       <div>
         <h3
           style={{
@@ -460,7 +428,7 @@ export default function SchedulePickup() {
                       textAlign: "center",
                     }}
                   >
-                    Approximate Weight
+                    Approximate Weight (kg)
                   </h5>
                   <Row className="text-center">
                     <Form.Control

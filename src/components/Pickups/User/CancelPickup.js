@@ -53,11 +53,11 @@ export default function CancelPickup() {
       );
 
       if (response.status === 200 && response.data.success === true) {
-        toast.success(response.data.toast);
+        toast.success(response.data.message);
         navigate("/user/pickups");
       } else {
         setPickups([]);
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);
@@ -89,7 +89,7 @@ export default function CancelPickup() {
       } else {
         setShowDetails(false);
         setPickups([]);
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);

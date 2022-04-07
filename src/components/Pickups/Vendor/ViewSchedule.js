@@ -19,7 +19,7 @@ export default function ViewSchedule() {
     if (!user || user?.result?.role !== "vendor") {
       toast.error("Please login to continue");
       navigate("/login");
-    }
+    } 
   }, [user,navigate]);
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function ViewSchedule() {
       } else {
         setShowDetails(false);
         setSlots([]);
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);

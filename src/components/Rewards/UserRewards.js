@@ -14,6 +14,9 @@ function UserRewards() {
     if (!user || user?.result?.role !== "normaluser") {
       toast.error("Please login to continue");
       navigate("/login");
+    } else {
+      getPickups();
+      getTotalPoints();
     }
   }, [user, navigate]);
 
@@ -21,17 +24,17 @@ function UserRewards() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [localStorage.getItem("profile")]);
 
-  useEffect(() => {
-    getPickups();
-    getTotalPoints();
-  }, []);
+  // useEffect(() => {
+  //   getPickups();
+  //   getTotalPoints();
+  // }, []);
 
   const submitClick = () => {
-    navigate("/rewardstore");
+    navigate("/user/pickups");
   };
 
   const rewardStore = () => {
-    navigate("/user/pickups");
+    navigate("/rewardstore");
   };
 
   const getPickups = async () => {
@@ -46,7 +49,7 @@ function UserRewards() {
         setPickups(response.data.pickups);
       } else {
         setPickups([]);
-        toast.error(response.data.toast);
+        // toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);
@@ -66,7 +69,7 @@ function UserRewards() {
         setPoints(response.data.rewardData[0].points);
       } else {
         setPoints(0);
-        toast.error(response.data.toast);
+        // toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);
@@ -149,7 +152,7 @@ function UserRewards() {
           </Row>
         </Col>
         <Col sm={1}></Col>
-        <Col sm={6}>
+        {pickups.length > 0 && <Col sm={6}>
           <h4
             style={{
               textAlign: "center",
@@ -188,7 +191,7 @@ function UserRewards() {
               </tbody>
             </Table>
           </div>
-        </Col>
+        </Col>}
       </Row>
       <Row style={{ marginTop: "1%" }} className="text-center">
         <Button
