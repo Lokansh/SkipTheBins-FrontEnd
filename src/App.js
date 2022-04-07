@@ -44,6 +44,8 @@ import AdminRewards from "./components/Rewards/AdminRewards";
 
 import PickupHistory from "./components/PickupHistory/PickupHistory";
 import PastPickups from "./components/PastPickups/PastPickups";
+import EventListingAdmin from "./components/EventListingAdmin/EventListingAdmin";
+import EventListingUser from "./components/EventListingUser/EventListingUser";
 // import AdminHeader from "./components/AdminHeader/AdminHeader";
 
 function App() {
@@ -160,6 +162,8 @@ function App() {
               />
               <Route path="/user/rewards" element={<UserRewards />} />
               <Route path="/admin/rewards" element={<AdminRewards />} />
+              <Route path="/event-dashboard" element={<EventListingAdmin />} />
+              <Route path="/events" element={<EventListingUser />} />
             </Routes>
           </div>
           <Footer />
