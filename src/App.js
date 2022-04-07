@@ -46,6 +46,7 @@ import PickupHistory from "./components/PickupHistory/PickupHistory";
 import PastPickups from "./components/PastPickups/PastPickups";
 import EventListingAdmin from "./components/EventListingAdmin/EventListingAdmin";
 import EventListingUser from "./components/EventListingUser/EventListingUser";
+import ViewAnnouncement from "./components/Notification/ViewAnnouncement";
 // import AdminHeader from "./components/AdminHeader/AdminHeader";
 
 function App() {
@@ -71,6 +72,11 @@ function App() {
                 path="/faq-admin"
                 exact
                 element={<Faq editMode={true} role="admin" />}
+              ></Route>
+              <Route
+                path="/announcements"
+                exact
+                element={<ViewAnnouncement />}
               ></Route>
               <Route path="/contactus">
                 <Route index element={<ContactUs />}></Route>

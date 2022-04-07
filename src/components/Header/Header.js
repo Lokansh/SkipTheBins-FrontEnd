@@ -1,18 +1,28 @@
 // @author : Aabhaas Jain, Vasu Gamdha (Group 14)
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import skipTheBins from "../../assets/skipTheBins.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 import "./Header.css";
+import ViewNotification from "../Notification/ViewNotifications";
+import API from "../../api";
+import { toast } from "react-toastify";
+import Profile from "../UserManagement/Profile";
+import { NestCamWiredStandTwoTone } from "@mui/icons-material";
+
 function Header() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
   const [showMenu, setShowMenu] = useState(true);
-
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [notifications, setNotifications] = useState([]);
   useEffect(() => {
     // console.log(location?.pathname)
     if (
@@ -32,9 +42,41 @@ function Header() {
     setUser(null);
   };
 
+  const notificationClick = () => {
+    let show = showNotification;
+    setShowNotification(!show);
+  };
+  const initialMount = useRef(true);
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("profile")));
+    if (user?.result?.role == "normaluser") {
+      if (initialMount.current) {
+      }
+      getNotifications();
+      initialMount.current = false;
+    }
   }, [localStorage.getItem("profile")]);
+
+  const getNotifications = () => {
+    let id = user?.result?._id;
+    API.get("/notification/" + id)
+      .then((res) => {
+        let today = new Date();
+        let validNotification = res.data.data.filter((_) => {
+          return (
+            Math.ceil(
+              (today - new Date(_.timeStamp)) / (1000 * 60 * 60 * 24)
+            ) <= 3
+          );
+        });
+        setNotifications(validNotification);
+        setNotificationCount(validNotification.length);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Some error occured");
+      });
+  };
 
   return (
     <Navbar
@@ -58,6 +100,25 @@ function Header() {
                 </Navbar.Collapse> */}
         <Navbar.Collapse id="colapse-nav" className="justify-content-end">
           <Nav>
+            {user?.result?.role === "normaluser" && (
+              <Nav.Link>
+                <span className="notificationIcon" onClick={notificationClick}>
+                  <FontAwesomeIcon icon={faBell} />
+                  {notificationCount > 0 && (
+                    <span className="notification-badge">
+                      {notificationCount}
+                    </span>
+                  )}
+                </span>
+                {showNotification && (
+                  <ViewNotification newNotifications={notifications} />
+                )}
+              </Nav.Link>
+            )}
+            {(user?.result?.role === "admin" ||
+              user?.result?.role === "vendor") && (
+              <Nav.Link href="/announcements">Announcements</Nav.Link>
+            )}
             {user?.result?.role === "admin" && (
               <Nav.Link href="/faq-admin">Edit FAQ</Nav.Link>
             )}
