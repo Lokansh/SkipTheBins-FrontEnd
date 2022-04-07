@@ -40,10 +40,12 @@ function AdminViewPurchVouchers() {
     return (
       <tr key={index}>
         <td>{index + 1}</td>
+        <td>{query.refNumber}</td>
         <td>{query.companyName}</td>
         <td>{query.value}</td>
         <td>{query.points}</td>
         <td>{query.customerId}</td>
+        <td>{query.email}</td>
         <td>{query.datePurchased}</td>
       </tr>
     );
@@ -88,10 +90,12 @@ function AdminViewPurchVouchers() {
         <thead>
           <tr>
             <th>S.No</th>
+            <th>Reference No.</th>
             <th>Company Name</th>
             <th>Value</th>
             <th>Points</th>
             <th>Customer Id</th>
+            <th>Email</th>
             <th>Purchase Date</th>
           </tr>
         </thead>

@@ -39,6 +39,7 @@ function AdminDisplayQueries() {
     return (
       <tr key={index}>
         <td>{index + 1}</td>
+        <td>{query.refNumber}</td>
         <td>{query.name}</td>
         <td>{query.email}</td>
         <td>{query.mobile}</td>
@@ -87,6 +88,7 @@ function AdminDisplayQueries() {
         <thead>
           <tr>
             <th>S.No</th>
+            <th>Reference No.</th>
             <th>Name</th>
             <th>Email</th>
             <th>Mobile</th>

@@ -14,6 +14,7 @@ function RewardStore() {
   const [rewardPoints, setRewardPoints] = useState();
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [redeemButtomDisabled, setRedeemButtomDisabled] = useState(false);
+  const [referenceNumber, setReferenceNumber] = useState("");
 
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
@@ -91,16 +92,20 @@ function RewardStore() {
   };
 
   const createVoucherPurchased = (voucher) => {
+    const refNo = Math.random().toString(36).substr(2, 9).slice(-9);
     var newVoucherObj = {
       companyName: voucher.companyName,
       value: voucher.value,
       points: voucher.points,
       customerId: user.result._id,
+      email: user.result.email,
       datePurchased: moment().format("LL"),
+      refNumber: refNo,
     };
     API.post("/voucher/purchase", newVoucherObj)
       .then((res) => {
         if (res.data.success) {
+          setReferenceNumber(refNo);
           setSubmitSuccess(true);
         } else {
           toast.error("Voucher not purchased");
@@ -196,9 +201,9 @@ function RewardStore() {
               marginBottom: "1%",
             }}
           >
-            Your voucher redeem request has been successfully submitted and you
-            will receive voucher details via registered email within 1 working
-            day.
+            Your voucher redeem request has been successfully submitted with
+            reference number - {referenceNumber} and you will receive voucher
+            details via registered email within 1 working day.
           </h6>
           <div
             style={{ marginTop: "1%", justifyContent: "center" }}

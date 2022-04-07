@@ -21,6 +21,7 @@ function SubmitQueryForm() {
   const [querySubject, setQuerySubject] = useState("");
   const [query, setQuery] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [referenceNumber, setReferenceNumber] = useState("");
 
   const [nameErrorMsg, setNameErrorMsg] = useState("");
   const [emailErrorMsg, setEmailErrorMsg] = useState("");
@@ -121,17 +122,20 @@ function SubmitQueryForm() {
   };
 
   const submitQueryApiCall = () => {
+    const refNo = Math.random().toString(36).substr(2, 9).slice(-9);
     var newQueryObj = {
       name: name,
       email: email,
       mobile: mobile,
       querySubject: querySubject,
       query: query,
+      refNumber: refNo,
     };
     axios
       .post(WEB_API_URL + "/query/add", newQueryObj)
       .then((res) => {
         if (res.data.success) {
+          setReferenceNumber(refNo);
           setSubmitSuccess(true);
         } else {
           toast.error("Query not submitted");
@@ -266,8 +270,8 @@ function SubmitQueryForm() {
               marginBottom: "1%",
             }}
           >
-            Your query has been successfully submitted. We will get back to you
-            within 2-3 working days.
+            Your query has been successfully submitted with reference number -{" "}
+            {referenceNumber}. We will get back to you within 2-3 working days.
           </h6>
           <div
             style={{ marginTop: "1%", justifyContent: "center" }}
