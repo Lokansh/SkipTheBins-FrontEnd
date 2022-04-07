@@ -12,6 +12,7 @@ const Tracker = (props) => {
   const [status, setStatus] = useState("");
   const URL = "/user/pickups/status";
 
+  //Make API call to fetch status of Pickup on which user clicked.
   const getStatus = async () => {
     try {
       const response = await API.get(URL, {

@@ -13,13 +13,17 @@ const CollapsibleTable = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
+  //If user is not logged in then redirect him to login page.
   useEffect(() => {
     if (!user || user?.result?.role !== "vendor") {
-      toast.error("Please login to continue");
+      toast.error("Please login as vendor to continue");
       navigate("/login");
+    } else {
+      getPickups();
     }
   }, [user, navigate]);
 
+  //Get details of currently logged in user from the local storage.
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [localStorage.getItem("profile")]);
@@ -27,6 +31,7 @@ const CollapsibleTable = () => {
   const [pickupData, setPickupData] = useState([]);
   const [message, setMessage] = useState("");
 
+  //Fetch past pickups from of the currently logged in user by making API call.
   const getPickups = async () => {
     console.log(user?.result?.firstName + user?.result?.lastName);
     try {
@@ -51,9 +56,9 @@ const CollapsibleTable = () => {
     }
   };
 
-  useEffect(() => {
-    getPickups();
-  }, []);
+  // useEffect(() => {
+  //   getPickups();
+  // }, []);
 
   return (
     <div>

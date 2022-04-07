@@ -21,7 +21,6 @@ const Row = (props) => {
         <TableCell align="left">{row.area}</TableCell>
         <TableCell align="left">{row.slot}</TableCell>
         <TableCell align="left">{row.batchNo}</TableCell>
-        <TableCell align="left">{row.wasteQty} KG</TableCell>
         <TableCell>
           <Button
             className="trackButton"
