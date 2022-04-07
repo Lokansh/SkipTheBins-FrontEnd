@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 
-function AddModal(props) {
+function PostAnnouncementModal(props) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [titleToggled, setTitleToggled] = useState(false);
@@ -39,7 +39,7 @@ function AddModal(props) {
   return (
     <Modal show={props.show} onHide={props.close} onEnter={initialize}>
       <Modal.Header closeButton>
-        <Modal.Title>Add FAQ</Modal.Title>
+        <Modal.Title>Post Announcement</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -92,4 +92,4 @@ function AddModal(props) {
   );
 }
 
-export default AddModal;
+export default PostAnnouncementModal;
