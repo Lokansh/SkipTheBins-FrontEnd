@@ -7,6 +7,7 @@ import track from "../../../assets/images/track.png";
 import edit from "../../../assets/images/edit.png";
 import cancel from "../../../assets/images/cancel.png";
 import history from "../../../assets/images/history.png";
+import pastpickup from "../../../assets/images/pastpickup.png";
 import { useNavigate } from "react-router-dom";
 import { Row } from "react-bootstrap";
 import { toast } from "react-toastify";
@@ -82,7 +83,7 @@ export default function PickupHomeUser() {
           <DispCard
             title="Pickup History"
             desc="You want to see your pickup history, go here !"
-            img={history}
+            img={pastpickup}
             btnClick={() => navigate("/user/pickups/history")}
           />
         </div>

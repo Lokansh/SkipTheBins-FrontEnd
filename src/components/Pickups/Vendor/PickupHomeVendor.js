@@ -8,6 +8,7 @@ import cancel from "../../../assets/images/cancel.png";
 import { useNavigate } from "react-router-dom";
 import { Row } from "react-bootstrap";
 import track from "../../../assets/images/track.png";
+import pastpickup from "../../../assets/images/pastpickup.png";
 import { toast } from "react-toastify";
 
 export default function PickupHomeVendor() {
@@ -82,7 +83,7 @@ export default function PickupHomeVendor() {
           <DispCard
             title="Past Pickups"
             desc="You want to see history of pickups registered under your organization, go here !"
-            img={track}
+            img={pastpickup}
             btnClick={() => navigate("/vendor/pickups/past-pickups")}
           />
         </div>
