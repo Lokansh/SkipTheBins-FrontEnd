@@ -17,7 +17,7 @@ const Row = (props) => {
         <TableCell align="left">{row.slot}</TableCell>
         <TableCell align="left">{row.batchNo}</TableCell>
         <TableCell align="left">{row.wasteQty} KG</TableCell>
-        <TableCell align="left">{row.wasteQty * 2} Points</TableCell>
+        <TableCell align="left">{row.points} Points</TableCell>
         <TableCell align="left">{row.vendor}</TableCell>
         <TableCell align="left">{row.boxQty} </TableCell>
         <TableCell align="left">{row.address}</TableCell>

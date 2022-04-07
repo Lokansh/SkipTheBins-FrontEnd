@@ -1,11 +1,9 @@
 // Author : Lokansh Gupta
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import "./RewardStore.css";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { WEB_API_URL } from "../../constants";
 import API from "../../api";
 
 function AdminViewPurchVouchers() {
@@ -14,12 +12,21 @@ function AdminViewPurchVouchers() {
   const [purchasedVouchers, setpurchasedVouchers] = useState([]);
 
   useEffect(() => {
-    getAllPurchasedVouchersApiCall();
-  }, []);
+    if (!user || user?.result?.role !== "admin") {
+      toast.error("Please login as admin to continue");
+
+      navigate("/login");
+    } else {
+      getAllPurchasedVouchersApiCall();
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  }, [localStorage.getItem("profile")]);
 
   const getAllPurchasedVouchersApiCall = () => {
-    axios
-      .get(WEB_API_URL + "/voucher/getPurchaseVouchers")
+    API.get("/voucher/getPurchaseVouchers")
       .then((res) => {
         console.log(JSON.stringify(res));
         setpurchasedVouchers(res.data.voucherData);
@@ -33,10 +40,12 @@ function AdminViewPurchVouchers() {
     return (
       <tr key={index}>
         <td>{index + 1}</td>
+        <td>{query.refNumber}</td>
         <td>{query.companyName}</td>
         <td>{query.value}</td>
         <td>{query.points}</td>
         <td>{query.customerId}</td>
+        <td>{query.email}</td>
         <td>{query.datePurchased}</td>
       </tr>
     );
@@ -81,10 +90,12 @@ function AdminViewPurchVouchers() {
         <thead>
           <tr>
             <th>S.No</th>
+            <th>Reference No.</th>
             <th>Company Name</th>
             <th>Value</th>
             <th>Points</th>
             <th>Customer Id</th>
+            <th>Email</th>
             <th>Purchase Date</th>
           </tr>
         </thead>

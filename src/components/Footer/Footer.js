@@ -5,7 +5,7 @@ function Footer() {
     return (     
 <>
 <Navbar className="shadow-lg p-2 mb-3 bg-white" collapseOnSelect expand="md" bg="light" variant='light' sticky="bottom" id="footer">
-            <div className='container-fluid'>
+            <div className='container-fluid' id='navbar'>
                 {/* <Navbar.Brand><img src={skipTheBins} alt="Skip The Bins" className="logo-size" /></Navbar.Brand> */}
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 {/* <Navbar.Collapse id="colapse-nav" className="justify-content-start">

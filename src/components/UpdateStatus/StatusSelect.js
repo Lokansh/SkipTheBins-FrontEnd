@@ -25,6 +25,7 @@ const StatusSelect = (props) => {
     setOpen(false);
   };
 
+  //Update the pickup status.
   const updateStatus = (event) => {
     event.preventDefault();
     const data = {
