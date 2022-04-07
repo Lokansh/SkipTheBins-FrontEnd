@@ -20,7 +20,7 @@ function Footer() {
                         <Nav.Link href="/contactus">Contact Us</Nav.Link>
                         <Nav.Link href="/faq">FAQ</Nav.Link>
                         <Nav.Link href="">Careers</Nav.Link>
-                        <Nav.Link href="">Events</Nav.Link>
+                        <Nav.Link href="/events">Events</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </div>
