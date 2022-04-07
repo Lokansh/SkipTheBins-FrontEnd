@@ -53,7 +53,7 @@ function App() {
     <div>
       <Router>
         <div>
-          <ToastContainer />
+          <ToastContainer position="top-center"/>
           <Header />
           <div className="m-4 body-container">
             <Routes>
