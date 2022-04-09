@@ -13,10 +13,12 @@ export default function ScheduleConfirm() {
   const { state } = useLocation();
   const { date, slots } = state;
 
+  //home button click event
   const submitClick = () => {
     navigate("/vendor/pickups");
   };
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "vendor") {
       toast.error("Please login to continue");

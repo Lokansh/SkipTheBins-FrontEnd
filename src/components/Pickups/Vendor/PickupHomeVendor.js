@@ -15,6 +15,7 @@ export default function PickupHomeVendor() {
   const navigate = useNavigate();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "vendor") {
       toast.error("Please login to continue");

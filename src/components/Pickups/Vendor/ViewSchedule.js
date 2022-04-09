@@ -15,6 +15,7 @@ export default function ViewSchedule() {
   const [slots, setSlots] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "vendor") {
       toast.error("Please login to continue");
@@ -26,15 +27,18 @@ export default function ViewSchedule() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   },[localStorage.getItem("profile")]);
 
+  //date change event
   const dateChange = (event) => {
     setDate(event.format("LL"));
     getSchedules(event.format("LL"));
   };
 
+  //home button click event
   const submitClick = () => {
     navigate("/vendor/pickups");
   };
 
+  //show pickup details
   useEffect(() => {
     if (date !== "") {
       setShowDetails(true);
@@ -45,6 +49,7 @@ export default function ViewSchedule() {
     getSchedules(moment().format("LL"));
   }, []);
 
+  //get schedules api call
   const getSchedules = async (getDate) => {
     try {
       const response = await API.get("/vendor/schedules", {

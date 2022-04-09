@@ -30,6 +30,7 @@ export default function EditPickup() {
   const [showDetails, setShowDetails] = useState(false);
   const [disableUpdate, setDisableUpdate] = useState(false);
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "normaluser") {
       toast.error("Please login to continue");
@@ -41,11 +42,12 @@ export default function EditPickup() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   },[localStorage.getItem("profile")]);
 
+  //date change event
   const dateChange = (event) => {
-    // setDate(event.format("LL"));
     getPickups(event.format("LL"));
   };
 
+  //time select event
   const onTimeSelect = (event) => {
     setTime(event.target.value);
     const slot = event.target.value.split("=")[0].trim();
@@ -60,14 +62,17 @@ export default function EditPickup() {
     setShowDetails(true);
   };
 
+  //waste type change event
   const wasteTypeChange = (event) => {
     setWasteTypes(event);
   };
 
+  //no of bags change event
   const onBagsChange = (event) => {
     setBags(parseInt(event.target.value));
   };
 
+  //weight change event
   const onWeightChange = (event) => {
     setWeight(parseInt(event.target.value));
   };
@@ -76,6 +81,7 @@ export default function EditPickup() {
     getPickups(moment().add(1, "day").format("LL"));
   }, []);
 
+  //update disable enable event
   useEffect(() => {
     if (bags > 0 && weight > 0 && wasteTypes.length > 0) {
       setDisableUpdate(false);
@@ -84,6 +90,7 @@ export default function EditPickup() {
     }
   }, [bags, weight, wasteTypes]);
 
+  //get pickups api call
   const getPickups = async (getDate) => {
     try {
       const response = await API.get("/user/pickups", {
@@ -105,6 +112,7 @@ export default function EditPickup() {
     }
   };
 
+  //update pickup button event and api call
   const submitClick = async () => {
     try {
       const body = {

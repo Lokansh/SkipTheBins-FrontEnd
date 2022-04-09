@@ -16,6 +16,7 @@ export default function ScheduleConfirm() {
   const [address, setAddress] = useState("");
   const [radioDisable, setRadioDisable] = useState(false);
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "normaluser") {
       toast.error("Please login to continue");
@@ -27,10 +28,12 @@ export default function ScheduleConfirm() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   },[localStorage.getItem("profile")]);
 
+  //address change event
   const onAddressChange = (event) => {
     setAddress(event.target.defaultValue);
   };
 
+  //new address add event
   const onNewAddress = (event) => {
     if (event.target.value === "") {
       setRadioDisable(false);
@@ -40,6 +43,7 @@ export default function ScheduleConfirm() {
     }
   };
 
+  //create schedule button event and api call
   const submitClick = async () => {
     if (address !== "") {
       const timeVendorArr = time.split("=");

@@ -16,6 +16,7 @@ export default function ViewPickup() {
   const [pickups, setPickups] = useState([]);
   const [selectedPickup, setSelectedPickup] = useState({});
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "normaluser") {
       toast.error("Please login to continue");
@@ -23,10 +24,12 @@ export default function ViewPickup() {
     }
   }, [user, navigate]);
 
+  //date change event
   const dateChange = (event) => {
     getPickups(event.format("LL"));
   };
 
+  //time select event
   const onTimeSelect = (event) => {
     setTime(event.target.value);
     const slot = event.target.value.split("=")[0].trim();
@@ -37,10 +40,12 @@ export default function ViewPickup() {
     setSelectedPickup(selectedPickup[0]);
   };
 
+  //home button click event
   const submitClick = () => {
     navigate("/user/pickups");
   };
 
+  //show details
   useEffect(() => {
     if (time !== "" && selectedPickup !== {}) {
       setShowDetails(true);
@@ -53,8 +58,9 @@ export default function ViewPickup() {
 
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("profile")));
-  },[localStorage.getItem("profile")]);
+  }, [localStorage.getItem("profile")]);
 
+  //get pickups api call
   const getPickups = async (getDate) => {
     try {
       const response = await API.get("/user/pickups", {

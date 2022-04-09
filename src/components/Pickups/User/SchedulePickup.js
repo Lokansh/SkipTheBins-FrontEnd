@@ -34,6 +34,7 @@ export default function SchedulePickup() {
   const [schedules, setSchedules] = useState([]);
   const [batchNo, setBatchNo] = useState();
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "normaluser") {
       toast.error("Please login to continue");
@@ -47,17 +48,20 @@ export default function SchedulePickup() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   },[localStorage.getItem("profile")]);
 
+  //date change event
   const dateChange = (event) => {
     setDate(event.format("LL"));
     getSlots(event.format("LL"), area);
   };
 
+  //area select event
   const onAreaSelect = (event) => {
     setArea(event.target.innerText);
     setShowFields(true);
     getSlots(date, event.target.innerText);
   };
 
+  //time select event
   const onTimeSelect = (event) => {
     setTime(event.target.value);
     const slot = event.target.value.split("=")[0].trim();
@@ -68,18 +72,22 @@ export default function SchedulePickup() {
     setBatchNo(selectedSlot[0].batchNo);
   };
 
+  //waste type change event
   const wasteTypeChange = (event) => {
     setWasteTypes(event);
   };
 
+  //no of bags change event
   const onBagsChange = (event) => {
     setBags(parseInt(event.target.value));
   };
 
+  //weight change event
   const onWeightChange = (event) => {
     setWeight(parseInt(event.target.value));
   };
 
+  //update progress
   useEffect(() => {
     let progress = 0;
     if (showFields) {
@@ -100,10 +108,7 @@ export default function SchedulePickup() {
     setProgress(progress);
   }, [showFields, time, wasteTypes.length, bags, weight]);
 
-  // useEffect(() => {
-  //   getArea();
-  // }, []);
-
+  //get slots api call
   const getSlots = async (getDate, getArea) => {
     try {
       const response = await API.get("/vendor/schedules", {
@@ -123,6 +128,7 @@ export default function SchedulePickup() {
     }
   };
 
+  //get area api call
   const getArea = async () => {
     try {
       const response = await API.get("/area");
@@ -138,6 +144,7 @@ export default function SchedulePickup() {
     }
   };
 
+  //create schedule button click event
   const submitClick = () => {
     if (progress === 100) {
       navigate("/user/pickups/confirm", {

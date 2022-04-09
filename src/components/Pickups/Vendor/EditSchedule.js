@@ -25,6 +25,7 @@ export default function EditSchedule() {
   const [buttonText, setButtonText] = useState("Add");
   const [editableSchedule, setEditableSchedule] = useState({});
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "vendor") {
       toast.error("Please login to continue");
@@ -39,15 +40,18 @@ export default function EditSchedule() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   },[localStorage.getItem("profile")]);
 
+  //date change event
   const dateChange = (event) => {
     setDate(event.format("LL"));
     getSchedules(event.format("LL"));
   };
 
+  //area select event
   const onAreaSelect = (event) => {
     setArea(event.target.innerText);
   };
 
+  //time select event
   const onTimeSelect = (event) => {
     setPickerTime(event);
     if (event === null) {
@@ -65,6 +69,7 @@ export default function EditSchedule() {
     }
   };
 
+  //slot submit event and api call
   const slotSubmit = async () => {
     if (buttonText === "Add") {
       const body = {
@@ -110,14 +115,13 @@ export default function EditSchedule() {
         toast.error("Something went wrong!");
       }
     }
-    // const newSlot = [{ time, area }];
-    // setSlots((currSlots) => currSlots.concat(newSlot));
     setTime([]);
     setPickerTime();
     setArea("Select Area");
     setButtonText("Add");
   };
 
+  //update progress
   useEffect(() => {
     let slotProgress = 0;
     if (time.length > 0) {
@@ -141,11 +145,13 @@ export default function EditSchedule() {
     }
   }, [time, area, slots]);
 
+  //submit schedule event
   const submitClick = () => {
     toast.success("Schedule is updated successfully!");
     navigate("/vendor/pickups");
   };
 
+  //get area api call
   const getArea = async () => {
     try {
       const response = await API.get("/area");
@@ -161,6 +167,7 @@ export default function EditSchedule() {
     }
   };
 
+  //slot delete event
   const slotDeleteClick = async (id) => {
     try {
       await API.delete("/vendor/delete/" + id);
@@ -171,6 +178,7 @@ export default function EditSchedule() {
     setSlots(newSlots);
   };
 
+  //slot edit event
   const slotEditClick = (id) => {
     const selectedSlot = slots.filter((slot) => slot.id === id);
     setEditableSchedule(selectedSlot[0]);
@@ -190,6 +198,7 @@ export default function EditSchedule() {
     getSchedules(moment().add(1, "day").format("LL"));
   }, []);
 
+  //get schedule api call
   const getSchedules = async (getDate) => {
     try {
       const response = await API.get("/vendor/schedules", {
