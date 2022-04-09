@@ -16,6 +16,7 @@ export default function DeleteSchedule() {
   const [slots, setSlots] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "vendor") {
       toast.error("Please login to continue");
@@ -27,15 +28,18 @@ export default function DeleteSchedule() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   },[localStorage.getItem("profile")]);
 
+  //date change event
   const dateChange = (event) => {
     setDate(event.format("LL"));
     getSchedules(event.format("LL"));
   };
 
+  //home button click event
   const submitClick = () => {
     navigate("/vendor/pickups");
   };
 
+  //delete schedule event and api call
   const deleteSchedule = async () => {
     var successCount = 0;
     for (var i = 0; i < slots.length; i++) {
@@ -56,6 +60,7 @@ export default function DeleteSchedule() {
     navigate("/vendor/pickups");
   };
 
+  //show details event
   useEffect(() => {
     if (date !== "") {
       setShowDetails(true);
@@ -66,6 +71,7 @@ export default function DeleteSchedule() {
     getSchedules(moment().add(1, "d").format("LL"));
   }, []);
 
+  //get schedule api call
   const getSchedules = async (getDate) => {
     try {
       const response = await API.get("/vendor/schedules", {

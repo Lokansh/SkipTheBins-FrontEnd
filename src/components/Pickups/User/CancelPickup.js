@@ -17,6 +17,7 @@ export default function CancelPickup() {
   const [pickups, setPickups] = useState([]);
   const [selectedPickup, setSelectedPickup] = useState({});
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "normaluser") {
       toast.error("Please login to continue");
@@ -28,10 +29,12 @@ export default function CancelPickup() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   },[localStorage.getItem("profile")]);
 
+  //date change event
   const dateChange = (event) => {
     getPickups(event.format("LL"));
   };
 
+  //time select event
   const onTimeSelect = (event) => {
     setTime(event.target.value);
     const slot = event.target.value.split("=")[0].trim();
@@ -42,10 +45,12 @@ export default function CancelPickup() {
     setSelectedPickup(selectedPickup[0]);
   };
 
+  //home button click event
   const submitClick = () => {
     navigate("/user/pickups");
   };
 
+  //cancel button click event and api call
   const cancelPickup = async () => {
     try {
       const response = await API.delete(
@@ -65,6 +70,7 @@ export default function CancelPickup() {
     }
   };
 
+  //show details
   useEffect(() => {
     if (time !== "" && selectedPickup !== {}) {
       setShowDetails(true);
@@ -75,6 +81,7 @@ export default function CancelPickup() {
     getPickups(moment().add(1, "day").format("LL"));
   }, []);
 
+  //get pickups api call
   const getPickups = async (getDate) => {
     try {
       const response = await API.get("/user/pickups", {

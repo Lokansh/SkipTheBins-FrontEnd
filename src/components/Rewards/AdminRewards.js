@@ -24,6 +24,7 @@ function AdminRewards() {
   const [rewardPoints, setRewardPoints] = useState(0);
   const [userReward, setUserReward] = useState(0);
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "admin") {
       toast.error("Please login to continue");
@@ -37,6 +38,7 @@ function AdminRewards() {
     getQueries();
   }, [user]);
 
+  //get user queries
   const getQueries = async () => {
     try {
       const response = await API.get("/queries", {});
@@ -56,24 +58,29 @@ function AdminRewards() {
     }
   };
 
+  //reward point change event
   const onUserRewardPointsChange = (event) => {
     setUserReward(parseInt(event.target.value));
   };
 
+  //open modal event
   const openModal = (query) => {
     setOpenedQuery(query);
     setUserReward(query.points);
     setShowModal(true);
   };
 
+  //total reward points change event
   const rewardPointsChange = (event) => {
     setRewardPoints(parseInt(event.target.value));
   };
 
+  //update reward points api call
   const updateRewardPoints = () => {
     dispatch(editProfile(user?.result?._id, { points: rewardPoints }));
   };
 
+  //complaint save event
   const onComplaintSave = async () => {
     const queryArr = queries;
     const index = queryArr.findIndex(
@@ -83,7 +90,7 @@ function AdminRewards() {
     setQueries(queryArr);
     setShowModal(false);
 
-    //put api
+    
     try {
       const body = {
         email: openedQuery.email,
@@ -106,6 +113,7 @@ function AdminRewards() {
     }
   };
 
+  //home button click event
   const submitClick = () => {
     navigate("/profile");
   };

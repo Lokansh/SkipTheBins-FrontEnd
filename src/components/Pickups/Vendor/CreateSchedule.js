@@ -26,6 +26,7 @@ export default function SchedulePickup() {
   const [areaData, setAreaData] = useState([]);
   const [pickerTime, setPickerTime] = useState();
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "vendor") {
       toast.error("Please login to continue");
@@ -37,8 +38,9 @@ export default function SchedulePickup() {
 
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("profile")));
-  },[localStorage.getItem("profile")]);
+  }, [localStorage.getItem("profile")]);
 
+  //date change event
   const dateChange = (event) => {
     if (event === null) {
       setDate([]);
@@ -49,10 +51,12 @@ export default function SchedulePickup() {
     }
   };
 
+  //area select event
   const onAreaSelect = (event) => {
     setArea(event.target.innerText);
   };
 
+  //time select event
   const onTimeSelect = (event) => {
     setPickerTime(event);
     if (event === null) {
@@ -70,6 +74,7 @@ export default function SchedulePickup() {
     }
   };
 
+  //slot submit event and api call
   const slotSubmit = () => {
     const newSlot = [{ time, area }];
     setSlots((currSlots) => currSlots.concat(newSlot));
@@ -78,6 +83,7 @@ export default function SchedulePickup() {
     setArea("Select Area");
   };
 
+  //update progress
   useEffect(() => {
     let progress = 0;
     let slotProgress = 0;
@@ -109,10 +115,7 @@ export default function SchedulePickup() {
     setSlotProgress(slotProgress);
   }, [date, time, area, slots]);
 
-  // useEffect(() => {
-  //   getArea();
-  // }, []);
-
+  //get area api call
   const getArea = async () => {
     try {
       const response = await API.get("/area");
@@ -128,8 +131,8 @@ export default function SchedulePickup() {
     }
   };
 
+  //create schedule event and api call
   const submitClick = async () => {
-    console.log(user?.result?.firstName + " " + user?.result?.lastName);
     if (progress === 100) {
       const body = {
         fromDate: date[0],

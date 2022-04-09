@@ -37,7 +37,7 @@ const CollapsibleTable = () => {
     try {
       const response = await API.get("/user/pickups", {
         params: {
-          vendor: user?.result?.firstName + user?.result?.lastName,
+          vendor: user?.result?.firstName + " " + user?.result?.lastName,
         },
       });
       if (response.status === 200 && response.data.success === true) {

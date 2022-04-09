@@ -15,6 +15,8 @@ import { toast } from "react-toastify";
 export default function PickupHomeUser() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   const navigate = useNavigate();
+  
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "normaluser") {
       toast.error("Please login to continue");

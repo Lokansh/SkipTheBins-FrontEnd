@@ -10,6 +10,7 @@ function UserRewards() {
   const [points, setPoints] = useState();
   const [pickups, setPickups] = useState([]);
 
+  //check user session
   useEffect(() => {
     if (!user || user?.result?.role !== "normaluser") {
       toast.error("Please login to continue");
@@ -24,19 +25,17 @@ function UserRewards() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [localStorage.getItem("profile")]);
 
-  // useEffect(() => {
-  //   getPickups();
-  //   getTotalPoints();
-  // }, []);
-
+  //home button click event
   const submitClick = () => {
     navigate("/user/pickups");
   };
 
+  //reward store button click event
   const rewardStore = () => {
     navigate("/rewardstore");
   };
 
+  // get pickups api call
   const getPickups = async () => {
     try {
       const response = await API.get("/user/pickups", {
@@ -49,7 +48,6 @@ function UserRewards() {
         setPickups(response.data.pickups);
       } else {
         setPickups([]);
-        // toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);
@@ -57,6 +55,7 @@ function UserRewards() {
     }
   };
 
+  // get total points api call
   const getTotalPoints = async () => {
     try {
       const response = await API.get("/reward/getPoints", {
@@ -69,14 +68,12 @@ function UserRewards() {
         setPoints(response.data.rewardData[0].points);
       } else {
         setPoints(0);
-        // toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong!");
     }
   };
-  // /reward/getPoints
 
   return (
     <Row>
