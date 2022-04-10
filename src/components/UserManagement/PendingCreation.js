@@ -24,17 +24,20 @@ const PendingCreation = () => {
 
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
   useEffect(() => {
     if (!user || user?.result?.role !== "admin") {
       navigate("/login");
-    } else{
-    dispatch(getUnapprovedVendorsList());
+    } else {
+      dispatch(getUnapprovedVendorsList());
     }
   }, [user, navigate, dispatch]);
 
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("profile")));
-  },[localStorage.getItem("profile")]);
+  }, [localStorage.getItem("profile")]);
 
   // useEffect(() => {
   //   dispatch(getUnapprovedVendorsList());

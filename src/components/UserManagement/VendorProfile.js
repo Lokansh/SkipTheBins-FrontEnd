@@ -13,6 +13,9 @@ const VendorProfile = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   const navigate = useNavigate();
 
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
   useEffect(() => {
     if (!user) {
       toast.error("Please login to continue");

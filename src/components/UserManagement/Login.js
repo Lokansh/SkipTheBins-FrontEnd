@@ -13,6 +13,10 @@ const initialState = { email: "", password: "" };
 
 const Login = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
   useEffect(() => {
     if (user) {
       if (user?.result?.role === "admin") {
