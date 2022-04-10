@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import {
   FETCH_UNAPPROVED_VENDORS,
@@ -10,6 +12,9 @@ import {
   DECLINE_VENDOR_CREATION,
 } from "../../config/actionTypes";
 
+/**
+ *  @description : This function handles the vendor account realted actions such as creation request, deletion request, etc.
+ */
 const vendorReducer = (
   vendors = { unapprovedVendorList: [], vendorToDeleteList: [] },
   action

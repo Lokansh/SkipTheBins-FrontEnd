@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { useEffect, useState } from "react";
 import Requests from "./Requests";
@@ -17,11 +19,7 @@ const Profile = () => {
       navigate("/requests");
     } 
   }, []);
-  // const state = useSelector((state) => {console.log(state); return state?.auth?.authdata;});
-  /**
-   *
-   * const user = useSelector((state) => {console.log(state)})
-   */
+  
   if (user?.result?.role === "vendor") {
     return <VendorProfile />;
   } else {

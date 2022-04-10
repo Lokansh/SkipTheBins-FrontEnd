@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import {
   SIGNUP,
@@ -8,6 +10,9 @@ import {
   PASSWORD_CHANGE,
 } from "../../config/actionTypes";
 
+/**
+ *  @description: This fuction handles the user profile related actions such as Login, Signup, Edit Profile, Password Change.
+ */
 const authReducer = (state = { authData: null }, action) => {
   switch (action.type) {
     case LOGIN: {

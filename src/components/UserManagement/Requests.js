@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Tabs, Tab } from "react-bootstrap";

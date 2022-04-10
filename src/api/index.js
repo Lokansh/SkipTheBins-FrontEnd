@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import axios from "axios";
 
@@ -6,6 +8,9 @@ import * as Constants from "../constants";
 
 const API = axios.create({ baseURL: Constants.WEB_API_URL });
 
+/**
+ * @description: Interceptor to pass the bearer token in the header
+ */
 API.interceptors.request.use((req) => {
   var token = localStorage.getItem("token");
   if (token) {
