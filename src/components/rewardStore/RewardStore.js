@@ -33,6 +33,7 @@ function RewardStore() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [localStorage.getItem("profile")]);
 
+  //Method to get all voucher details api call
   const getAllVoucherDetailsApiCall = () => {
     API.get("/voucher/allDetails")
       .then((res) => {
@@ -43,6 +44,7 @@ function RewardStore() {
       });
   };
 
+  //Method to get user specific reward points details api call
   const getRewardPointsApiCall = () => {
     API.get("/reward/getPoints", {
       params: {
@@ -63,6 +65,7 @@ function RewardStore() {
       });
   };
 
+  //Method to handle redeem voucher button click
   const handleRedeem = (voucher) => {
     if (rewardPoints - parseInt(voucher.points) < 0) {
       toast.error("You don't have sufficient points to redeem this voucher");
@@ -74,6 +77,7 @@ function RewardStore() {
     }
   };
 
+  //Method to update reward points on voucher purchase api call
   const updateRewardPointsApiCall = (updatedRewardPoints) => {
     API.post("/reward/updatePoints", {
       customerId: user.result._id,
@@ -91,6 +95,7 @@ function RewardStore() {
       });
   };
 
+  //Method to create a new voucher purchased record
   const createVoucherPurchased = (voucher) => {
     const refNo = Math.random().toString(36).substr(2, 9).slice(-9);
     var newVoucherObj = {
@@ -116,6 +121,7 @@ function RewardStore() {
       });
   };
 
+  //Method to go back to home page click
   const handleGoBack = (e) => {
     navigate("/");
   };

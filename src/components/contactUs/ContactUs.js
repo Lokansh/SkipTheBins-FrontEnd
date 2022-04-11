@@ -6,9 +6,12 @@ import DisplayVendors from "./DisplayVendors";
 
 function ContactUs() {
   const navigate = useNavigate();
+
+  //Method to handle submit query button click
   const handleSubmitQuery = (e) => {
     navigate("submitquery");
   };
+
   return (
     <div>
       <h1

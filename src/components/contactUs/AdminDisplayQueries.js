@@ -25,6 +25,7 @@ function AdminDisplayQueries() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [localStorage.getItem("profile")]);
 
+  //Method to handle get all queries api call
   const getAllQueriesApiCall = () => {
     API.get("/queries")
       .then((res) => {
@@ -35,6 +36,7 @@ function AdminDisplayQueries() {
       });
   };
 
+  //Method to display row data
   const renderRowData = (query, index) => {
     return (
       <tr key={index}>
@@ -48,9 +50,12 @@ function AdminDisplayQueries() {
       </tr>
     );
   };
+
+  //Method to handle mpdify vendors button click
   const handleModifyVendors = (e) => {
     navigate("/contactus/modifyvendors");
   };
+
   return (
     <div className="contactContainer">
       <h1

@@ -25,6 +25,7 @@ function AdminViewPurchVouchers() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [localStorage.getItem("profile")]);
 
+  //Method to get voucher details api call
   const getAllPurchasedVouchersApiCall = () => {
     API.get("/voucher/getPurchaseVouchers")
       .then((res) => {
@@ -36,6 +37,7 @@ function AdminViewPurchVouchers() {
       });
   };
 
+  //Method to show row data
   const renderRowData = (query, index) => {
     return (
       <tr key={index}>
@@ -50,9 +52,12 @@ function AdminViewPurchVouchers() {
       </tr>
     );
   };
+
+  //Method to handle modify vocuher button click
   const handleModifyVouchers = (e) => {
     navigate("/rewardstore/modifyvouchers");
   };
+
   return (
     <div className="rewardContainer">
       <h1

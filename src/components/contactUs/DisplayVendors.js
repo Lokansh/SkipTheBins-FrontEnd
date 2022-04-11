@@ -13,6 +13,7 @@ function DisplayVendors() {
     getAllVendorsApiCall();
   }, []);
 
+  //Method to handle get all vendors api call
   const getAllVendorsApiCall = () => {
     axios
       .get(WEB_API_URL + "/vendor")
@@ -24,6 +25,7 @@ function DisplayVendors() {
       });
   };
 
+  //Method to hanle vendor card
   const vendorCard = (card, index) => {
     return (
       <Card
