@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
@@ -11,6 +13,10 @@ const initialState = { email: "", password: "" };
 
 const Login = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
   useEffect(() => {
     if (user) {
       if (user?.result?.role === "admin") {

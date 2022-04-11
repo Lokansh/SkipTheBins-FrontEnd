@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Tabs, Tab } from "react-bootstrap";
@@ -14,6 +16,9 @@ const Requests = () => {
 
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
   useEffect(() => {
     if (!user || user?.result?.role !== "admin") {
       toast.error("Please login as admin to continue");
@@ -23,7 +28,7 @@ const Requests = () => {
 
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("profile")));
-  },[localStorage.getItem("profile")]);
+  }, [localStorage.getItem("profile")]);
 
   return (
     <div>

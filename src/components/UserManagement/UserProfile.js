@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +14,9 @@ const UserProfile = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   const navigate = useNavigate();
 
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
   useEffect(() => {
     if (!user) {
       toast.error("Please login to continue");

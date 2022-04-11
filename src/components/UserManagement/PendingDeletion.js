@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
@@ -21,17 +23,20 @@ const PendingDeletion = () => {
 
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
   useEffect(() => {
     if (!user || user?.result?.role !== "admin") {
       navigate("/login");
-    } else{
-    dispatch(getVendorDeletionRequestList());
+    } else {
+      dispatch(getVendorDeletionRequestList());
     }
   }, [user, navigate, dispatch]);
 
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("profile")));
-  },[localStorage.getItem("profile")]);
+  }, [localStorage.getItem("profile")]);
 
   // useEffect(() => {
   //   dispatch(getVendorDeletionRequestList());

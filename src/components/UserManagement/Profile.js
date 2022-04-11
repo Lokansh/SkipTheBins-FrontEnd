@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { useEffect, useState } from "react";
 import Requests from "./Requests";
@@ -12,16 +14,15 @@ const Profile = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   const navigate = useNavigate();
 
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
   useEffect(() => {
     if (user?.result?.role === "admin") {
       navigate("/requests");
-    } 
+    }
   }, []);
-  // const state = useSelector((state) => {console.log(state); return state?.auth?.authdata;});
-  /**
-   *
-   * const user = useSelector((state) => {console.log(state)})
-   */
+
   if (user?.result?.role === "vendor") {
     return <VendorProfile />;
   } else {
