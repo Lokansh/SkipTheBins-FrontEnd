@@ -1,3 +1,5 @@
+// Author : Prashit Patel - B00896717
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -90,7 +92,6 @@ function AdminRewards() {
     setQueries(queryArr);
     setShowModal(false);
 
-    
     try {
       const body = {
         email: openedQuery.email,

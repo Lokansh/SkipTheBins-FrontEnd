@@ -36,6 +36,7 @@ function AdminModifyVouchers() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [localStorage.getItem("profile")]);
 
+  //To get all voucher details
   const getAllVouchersApiCall = () => {
     API.get("/voucher")
       .then((res) => {
@@ -60,6 +61,7 @@ function AdminModifyVouchers() {
 
   const [editVoucherId, setEditVoucherId] = useState(null);
 
+  //To handle change on form through onchange
   const handleFormChange = (e) => {
     e.preventDefault();
     const fieldName = e.target.id;
@@ -104,6 +106,7 @@ function AdminModifyVouchers() {
     setAddFormData(newFormData);
   };
 
+  //To handle edit form click
   const handleEditFormChange = (e) => {
     e.preventDefault();
     const fieldName = e.target.id;
@@ -115,6 +118,7 @@ function AdminModifyVouchers() {
     setEditFormData(newFormData);
   };
 
+  //Method to handle form submit button action
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const newVoucher = {
@@ -138,6 +142,7 @@ function AdminModifyVouchers() {
     }
   };
 
+  //Method to handle submit voucher details api call
   const submitVoucherApiCall = (newVoucher) => {
     API.post("/voucher/add", newVoucher)
       .then((res) => {
@@ -160,6 +165,7 @@ function AdminModifyVouchers() {
       });
   };
 
+  //Method to handle edit form change
   const handleEditFormSubmit = (e) => {
     e.preventDefault();
 
@@ -173,6 +179,7 @@ function AdminModifyVouchers() {
     editVoucherApiCall(editedVoucher);
   };
 
+  //Method to do api call for edit voucher details
   const editVoucherApiCall = (editedVoucher) => {
     API.post("/voucher/update", editedVoucher)
       .then((res) => {
@@ -189,6 +196,7 @@ function AdminModifyVouchers() {
       });
   };
 
+  //Method to handle edit button click
   const handleEditClick = (e, voucher) => {
     e.preventDefault();
     setEditVoucherId(voucher._id);
@@ -203,10 +211,12 @@ function AdminModifyVouchers() {
     setEditFormData(formValues);
   };
 
+  //Method to handle edit button click
   const handleCancelClick = () => {
     setEditVoucherId(null);
   };
 
+  //Method to do delete voucher api call
   const deleteVoucherApiCall = (voucherId) => {
     const deleteId = {
       _id: voucherId,

@@ -1,3 +1,5 @@
+// Author : Prashit Patel - B00896717
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -149,46 +151,52 @@ function UserRewards() {
           </Row>
         </Col>
         <Col sm={1}></Col>
-        {pickups.length > 0 && <Col sm={6}>
-          <h4
-            style={{
-              textAlign: "center",
-              fontWeight: "bolder",
-              color: "rgba(17, 45, 92,0.85)",
-              marginBottom: "5%",
-            }}
-          >
-            Reward History
-          </h4>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Table
-              style={{ width: "100%", textAlign: "center", fontSize: "larger" }}
-              responsive
-              striped
-              bordered
-              hover
+        {pickups.length > 0 && (
+          <Col sm={6}>
+            <h4
+              style={{
+                textAlign: "center",
+                fontWeight: "bolder",
+                color: "rgba(17, 45, 92,0.85)",
+                marginBottom: "5%",
+              }}
             >
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Slot</th>
-                  <th>Points</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pickups.map((pickup, index) => {
-                  return (
-                    <tr key={index}>
-                      <td>{pickup.date}</td>
-                      <td>{pickup.slot}</td>
-                      <td>{pickup.points}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </div>
-        </Col>}
+              Reward History
+            </h4>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <Table
+                style={{
+                  width: "100%",
+                  textAlign: "center",
+                  fontSize: "larger",
+                }}
+                responsive
+                striped
+                bordered
+                hover
+              >
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Slot</th>
+                    <th>Points</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pickups.map((pickup, index) => {
+                    return (
+                      <tr key={index}>
+                        <td>{pickup.date}</td>
+                        <td>{pickup.slot}</td>
+                        <td>{pickup.points}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            </div>
+          </Col>
+        )}
       </Row>
       <Row style={{ marginTop: "1%" }} className="text-center">
         <Button

@@ -41,6 +41,7 @@ function AdminModifyVendors() {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [localStorage.getItem("profile")]);
 
+  //Method to handle get all vednors api call
   const getAllVendorsApiCall = () => {
     API.get("/vendor")
       .then((res) => {
@@ -67,6 +68,7 @@ function AdminModifyVendors() {
 
   const [editVendorId, setEditVendorId] = useState(null);
 
+  //Method to handle form change
   const handleFormChange = (e) => {
     e.preventDefault();
     const fieldName = e.target.id;
@@ -125,6 +127,7 @@ function AdminModifyVendors() {
     setAddFormData(newFormData);
   };
 
+  //Method to handle edit form button click
   const handleEditFormChange = (e) => {
     e.preventDefault();
     const fieldName = e.target.id;
@@ -136,6 +139,7 @@ function AdminModifyVendors() {
     setEditFormData(newFormData);
   };
 
+  //Method to handle form submit
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const newVendor = {
@@ -161,6 +165,7 @@ function AdminModifyVendors() {
     }
   };
 
+  //Method to handle submit vendor button click
   const submitVendorApiCall = (newVendor) => {
     API.post("/vendor/add", newVendor)
       .then((res) => {
@@ -184,6 +189,7 @@ function AdminModifyVendors() {
       });
   };
 
+  //Method to handle edit form button click
   const handleEditFormSubmit = (e) => {
     e.preventDefault();
 
@@ -198,6 +204,7 @@ function AdminModifyVendors() {
     editVendorApiCall(editedVendor);
   };
 
+  //Method to handle edit vendor api call
   const editVendorApiCall = (editedVendor) => {
     API.post("/vendor/update", editedVendor)
       .then((res) => {
@@ -214,6 +221,7 @@ function AdminModifyVendors() {
       });
   };
 
+  //Method to handle edit button click
   const handleEditClick = (e, vendor) => {
     e.preventDefault();
     setEditVendorId(vendor._id);
@@ -229,10 +237,12 @@ function AdminModifyVendors() {
     setEditFormData(formValues);
   };
 
+  //Method to handle cancel button click
   const handleCancelClick = () => {
     setEditVendorId(null);
   };
 
+  //Method to handle delete button click
   const deleteVendorApiCall = (vendorId) => {
     const deleteId = {
       _id: vendorId,

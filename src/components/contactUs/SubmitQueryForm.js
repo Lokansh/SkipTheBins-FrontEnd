@@ -35,6 +35,7 @@ function SubmitQueryForm() {
   const [isQuery, setIsQuery] = useState(false);
   const [isData, setIsData] = useState(false);
 
+  //Method to handle name change
   const handleName = (e) => {
     if (e.target.value && !nameRegex.test(e.target.value)) {
       setNameErrorMsg(
@@ -48,6 +49,8 @@ function SubmitQueryForm() {
       setName(e.target.value);
     }
   };
+
+  //Method to handle email change
   const handleEmail = (e) => {
     if (e.target.value && !emailRegex.test(e.target.value)) {
       setEmailErrorMsg(
@@ -61,6 +64,8 @@ function SubmitQueryForm() {
       setEmail(e.target.value);
     }
   };
+
+  //Method to handle mobile change
   const handleMobile = (e) => {
     if (e.target.value && !mobileRegex.test(e.target.value)) {
       setMobileErrorMsg(
@@ -74,6 +79,8 @@ function SubmitQueryForm() {
       setMobile(e.target.value);
     }
   };
+
+  //Method to handle query subject change
   const handleQuerySubject = (e) => {
     if (!e.target.value) {
       setQuerySubjectErrorMsg("Please provide your query subject");
@@ -85,6 +92,8 @@ function SubmitQueryForm() {
       setQuerySubject(e.target.value);
     }
   };
+
+  //Method to handle query change
   const handleQuery = (e) => {
     if (!e.target.value) {
       setQueryErrorMsg("Please provide your query");
@@ -96,6 +105,8 @@ function SubmitQueryForm() {
       setQuery(e.target.value);
     }
   };
+
+  //Method to handle submit button click
   const handleSubmit = (e) => {
     e.preventDefault();
     if (
@@ -121,6 +132,7 @@ function SubmitQueryForm() {
     }
   };
 
+  //Method to handle submit query api call
   const submitQueryApiCall = () => {
     const refNo = Math.random().toString(36).substr(2, 9).slice(-9);
     var newQueryObj = {
@@ -146,6 +158,7 @@ function SubmitQueryForm() {
       });
   };
 
+  //Method to handle go back to home page
   const handleGoBack = (e) => {
     navigate("/");
   };
