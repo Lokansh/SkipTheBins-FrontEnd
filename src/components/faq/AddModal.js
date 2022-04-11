@@ -24,6 +24,7 @@ function AddModal(props) {
 
   });
   const addData = () => {
+    // Adding FAQ
     setQuestionToggled(true);
     setAnswerToggled(true);
     validate();

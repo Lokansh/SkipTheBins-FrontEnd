@@ -14,6 +14,7 @@ function ViewRequestsModal(props) {
   const initialMount = useRef(true);
 
   const getData = () => {
+    // fetching the requests
     API.get("/faq/requests")
       .then((res) => {
         setCount(res.data.data.length);
@@ -25,6 +26,7 @@ function ViewRequestsModal(props) {
       });
   };
   const approve = (req) => {
+    // aprooving the requests
     API.post("/faq/approve-request", req)
       .then((_) => {
         getData();
@@ -36,6 +38,7 @@ function ViewRequestsModal(props) {
       });
   };
   const deny = (id) => {
+    //denying the requests
     API.delete("/faq/deny-request/" + id)
       .then((_) => {
         getData();
@@ -49,6 +52,7 @@ function ViewRequestsModal(props) {
   const navigate = useNavigate();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   useEffect(() => {
+    // checking authentication and authorization
     if (props.role == user?.result?.role || props.role == "user") {
       if (initialMount.current) {
         getData();

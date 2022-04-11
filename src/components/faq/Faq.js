@@ -29,6 +29,7 @@ function Faq(props) {
   const handleViewShow = () => setView(true);
   const initialMount = useRef(true);
   const getData = () => {
+    // get all faqs
     API.get("/faq")
       .then((res) => {
         setFaq(res.data.data);
@@ -38,13 +39,12 @@ function Faq(props) {
         toast.error("Some error occured");
       });
   };
-  //   useEffect(() => {
 
-  //   });
   const navigate = useNavigate();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
   useEffect(() => {
+    // checking authorization and authentication
     setUser(JSON.parse(localStorage.getItem("profile")));
     if (!(props.role == user?.result?.role || props.role == "user")) {
       toast.error("Please login to continue");
@@ -67,6 +67,7 @@ function Faq(props) {
   };
 
   const modifyData = (faq) => {
+    // Updationg the faqs
     let modifiedFaq = { question: faq.question, answer: faq.answer };
     if (props.role == "admin") {
       API.put("/faq/" + faq.id, modifiedFaq)
@@ -99,6 +100,7 @@ function Faq(props) {
   };
 
   const addData = (faq) => {
+    // adding the faqs
     if (props.role == "admin") {
       API.post("/faq", faq)
         .then((_) => {
@@ -127,6 +129,7 @@ function Faq(props) {
   };
 
   const deleteData = (faq) => {
+    // deleting the faqs
     if (props.role == "admin") {
       API.delete("/faq/" + faq._id)
         .then((_) => {
@@ -169,6 +172,7 @@ function Faq(props) {
             </Button>
           </div>
         )}
+        {/* Add Update and Delete Modals */}
         <UpdateModal
           show={updateModal}
           close={handleClose}

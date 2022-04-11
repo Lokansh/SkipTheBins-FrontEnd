@@ -27,10 +27,12 @@ function UpdateModal(props) {
 
   });
   const initialize = () => {
+    // initializing question and answers
     setQuestion(props.data.question);
     setAnswer(props.data.answer);
   }
   const update = () => {
+    // updating new question and answers
     if (questionValid && answerValid) {
       props.update({ question, answer,oldAnswer:props.data.answer,oldQuestion:props.data.question, id: props.data._id });
       props.close();
@@ -64,6 +66,7 @@ function UpdateModal(props) {
       </Modal.Body>
 
       <Modal.Footer>
+        {/* Conditional rendering on the bases of authorization */}
         {props.role == 'admin' && <Button variant="danger" onClick={(e) => { props.delete(props.data); props.close() }}>Delete</Button>}
         {props.role == 'vendor' && <Button variant="danger" onClick={(e) => { props.delete(props.data); props.close() }}>Request Deletion</Button>}
         {props.role == 'admin' && <Button variant="primary" onClick={update}>Update</Button>}

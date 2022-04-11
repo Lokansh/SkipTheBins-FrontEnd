@@ -24,7 +24,6 @@ function Header() {
   const [notificationCount, setNotificationCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
   useEffect(() => {
-    // console.log(location?.pathname)
     if (
       ["/", "/login", "/signup", "/faq", "/contactus"].indexOf(
         location?.pathname
@@ -51,9 +50,9 @@ function Header() {
     setUser(JSON.parse(localStorage.getItem("profile")));
     if (user?.result?.role == "normaluser") {
       if (initialMount.current) {
-      }
       getNotifications();
       initialMount.current = false;
+      }
     }
   }, [localStorage.getItem("profile")]);
 

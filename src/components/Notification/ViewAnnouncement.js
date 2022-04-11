@@ -31,6 +31,7 @@ function ViewAnnouncement(props) {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
   useEffect(() => {
+    // Checking whether the user is loggen in or not
     setUser(JSON.parse(localStorage.getItem("profile")));
     if (!(user?.result?.role == "admin" || user?.result?.role == "vendor")) {
       toast.error("Please login to continue");
@@ -44,11 +45,13 @@ function ViewAnnouncement(props) {
   }, [localStorage.getItem("profile")]);
 
   const postAnnouncement = (data) => {
+    // posting the announcement
     let notification = {
       ...data,
-      user: user.result.role,
+      "authorRole": user.result.role,
       type: "announcement",
-      author: user.result._id,
+      authorId: user.result._id,
+      user:"all"
     };
     API.post("/notification", notification)
       .then((_) => {
@@ -62,10 +65,11 @@ function ViewAnnouncement(props) {
   };
 
   const deleteNotification = (id) => {
+    // deleting the announcement
     API.delete("/notification/" + id)
       .then((_) => {
         getData();
-        toast.success("FAQ Deleted");
+        toast.success("Announcement Deleted");
       })
       .catch((err) => {
         console.log(err);
@@ -90,11 +94,11 @@ function ViewAnnouncement(props) {
           close={handleAddClose}
           add={postAnnouncement}
         />
-
+{/* list view of announcement */}
         <ListGroup>
           {announcements?.map((_, index) => {
             return (
-              <ListGroup.Item key={index}>
+              (user?.result?.role=="admin"||_.authorId==user?.result?._id)?<ListGroup.Item key={index}>
                 <div className="announcement-style">
                   <div>
                     <b>Title:</b> {_.title}
@@ -118,7 +122,7 @@ function ViewAnnouncement(props) {
                     Delete
                   </Button>
                 </div>
-              </ListGroup.Item>
+              </ListGroup.Item>:""
             );
           })}
         </ListGroup>

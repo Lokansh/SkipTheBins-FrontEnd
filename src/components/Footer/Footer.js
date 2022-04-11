@@ -14,13 +14,7 @@ function Footer() {
         id="footer"
       >
         <div className="container-fluid" id="navbar">
-          {/* <Navbar.Brand><img src={skipTheBins} alt="Skip The Bins" className="logo-size" /></Navbar.Brand> */}
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          {/* <Navbar.Collapse id="colapse-nav" className="justify-content-start">
-                    <Nav>
-                        
-                    </Nav>
-                </Navbar.Collapse> */}
           <Navbar.Collapse id="colapse-nav">
             <Nav>
               <Nav.Link href="/">About Us</Nav.Link>

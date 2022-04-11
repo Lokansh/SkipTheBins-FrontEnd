@@ -11,6 +11,7 @@ function PostAnnouncementModal(props) {
   const [contentValid, setContentValid] = useState(true);
   const initialMount = useRef(true);
   const validate = () => {
+  // validating inputs
     title.trim() != "" ? setTitleValid(true) : setTitleValid(false);
     content.trim() != "" ? setContentValid(true) : setContentValid(false);
   };
@@ -22,6 +23,7 @@ function PostAnnouncementModal(props) {
     }
   });
   const addData = () => {
+    // calling add function post validation
     setTitleToggled(true);
     setContentToggled(true);
     validate();
