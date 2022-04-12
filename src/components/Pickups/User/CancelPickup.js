@@ -5,21 +5,36 @@ import moment from "moment";
 import { Calendar, Popconfirm } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 
 export default function CancelPickup() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
   const [time, setTime] = useState("");
   const [showDetails, setShowDetails] = useState(false);
   const [pickups, setPickups] = useState([]);
   const [selectedPickup, setSelectedPickup] = useState({});
 
+  //check user session
+  useEffect(() => {
+    if (!user || user?.result?.role !== "normaluser") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
+
+  //date change event
   const dateChange = (event) => {
     getPickups(event.format("LL"));
   };
 
+  //time select event
   const onTimeSelect = (event) => {
     setTime(event.target.value);
     const slot = event.target.value.split("=")[0].trim();
@@ -28,25 +43,26 @@ export default function CancelPickup() {
       (pickup) => pickup.slot === slot && pickup.vendor === vendor
     );
     setSelectedPickup(selectedPickup[0]);
-    console.log(selectedPickup[0]);
   };
 
+  //home button click event
   const submitClick = () => {
-    navigate("/");
+    navigate("/user/pickups");
   };
 
+  //cancel button click event and api call
   const cancelPickup = async () => {
     try {
-      const response = await axios.delete(
-        WEB_API_URL+"/user/cancel/" + selectedPickup.pickupId
+      const response = await API.delete(
+        "/user/cancel/" + selectedPickup.pickupId
       );
 
       if (response.status === 200 && response.data.success === true) {
-        toast.success(response.data.toast);
-        navigate("/");
+        toast.success(response.data.message);
+        navigate("/user/pickups");
       } else {
         setPickups([]);
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);
@@ -54,6 +70,7 @@ export default function CancelPickup() {
     }
   };
 
+  //show details
   useEffect(() => {
     if (time !== "" && selectedPickup !== {}) {
       setShowDetails(true);
@@ -64,24 +81,22 @@ export default function CancelPickup() {
     getPickups(moment().add(1, "day").format("LL"));
   }, []);
 
+  //get pickups api call
   const getPickups = async (getDate) => {
     try {
-      const response = await axios.get(
-        WEB_API_URL+"/user/pickups",
-        {
-          params: {
-            userId: "5678",
-            date: getDate,
-          },
-        }
-      );
+      const response = await API.get("/user/pickups", {
+        params: {
+          userId: user?.result?._id,
+          date: getDate,
+        },
+      });
 
       if (response.status === 200 && response.data.success === true) {
         setPickups(response.data.pickups);
       } else {
         setShowDetails(false);
         setPickups([]);
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);

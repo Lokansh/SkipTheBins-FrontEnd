@@ -10,7 +10,6 @@ const headings = [
   "Pickup Area",
   "Pickup Slot",
   "Batch No.",
-  "Waste Quantity",
 ];
 const TableHeader = (props) => {
   return (

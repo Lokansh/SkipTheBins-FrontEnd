@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import "../UpdateStatus/updateStatus.css";
 import { useState } from "react";
 import Snackbar from "@mui/material/Snackbar";
-import { WEB_API_URL } from "../../constants";
+import API from "../../api";
 
 const StatusSelect = (props) => {
   const { row } = props;
@@ -25,23 +25,17 @@ const StatusSelect = (props) => {
     setOpen(false);
   };
 
+  //Update the pickup status.
   const updateStatus = (event) => {
     event.preventDefault();
     const data = {
       _id: row._id,
       status: status,
+      batchNo: row.batchNo
     };
-    fetch(WEB_API_URL + "/vendor/schedules/update", {
-      method: "PUT",
-      headers: {
-        Accept: "application/form-data",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
+    API.put("/vendor/schedules/update", data)
       .then((res) => {
-        if (res.success) {
+        if (res.data.success) {
           props.update();
           setSnackbarColor("green");
           setSnackbarMessage("Status Updated Successfully!");
@@ -51,6 +45,9 @@ const StatusSelect = (props) => {
           setSnackbarMessage("Failed To Update Status!");
           setOpen(true);
         }
+      })
+      .catch((err) => {
+        console.error(err);
       });
   };
   return (

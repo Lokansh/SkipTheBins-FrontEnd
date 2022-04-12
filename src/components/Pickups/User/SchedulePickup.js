@@ -8,7 +8,6 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Form,
-  Alert,
   Row,
   Col,
 } from "react-bootstrap";
@@ -16,12 +15,13 @@ import { Calendar } from "antd";
 import moment from "moment";
 import "./css/SchedulePickup.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 
 export default function SchedulePickup() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
   const [progress, setProgress] = useState(0);
   const [date, setDate] = useState(moment().add(1, "day").format("LL"));
   const [time, setTime] = useState("");
@@ -30,22 +30,38 @@ export default function SchedulePickup() {
   const [bags, setBags] = useState(0);
   const [weight, setWeight] = useState(0);
   const [showFields, setShowFields] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
   const [areaData, setAreaData] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [batchNo, setBatchNo] = useState();
 
+  //check user session
+  useEffect(() => {
+    if (!user || user?.result?.role !== "normaluser") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    } else {
+      getArea();
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
+
+  //date change event
   const dateChange = (event) => {
     setDate(event.format("LL"));
     getSlots(event.format("LL"), area);
   };
 
+  //area select event
   const onAreaSelect = (event) => {
     setArea(event.target.innerText);
     setShowFields(true);
     getSlots(date, event.target.innerText);
   };
 
+  //time select event
   const onTimeSelect = (event) => {
     setTime(event.target.value);
     const slot = event.target.value.split("=")[0].trim();
@@ -56,18 +72,22 @@ export default function SchedulePickup() {
     setBatchNo(selectedSlot[0].batchNo);
   };
 
+  //waste type change event
   const wasteTypeChange = (event) => {
     setWasteTypes(event);
   };
 
+  //no of bags change event
   const onBagsChange = (event) => {
     setBags(parseInt(event.target.value));
   };
 
+  //weight change event
   const onWeightChange = (event) => {
     setWeight(parseInt(event.target.value));
   };
 
+  //update progress
   useEffect(() => {
     let progress = 0;
     if (showFields) {
@@ -88,31 +108,15 @@ export default function SchedulePickup() {
     setProgress(progress);
   }, [showFields, time, wasteTypes.length, bags, weight]);
 
-  useEffect(() => {
-    const timeId = setTimeout(() => {
-      setShowAlert(false);
-    }, 1500);
-
-    return () => {
-      clearTimeout(timeId);
-    };
-  }, [showAlert]);
-
-  useEffect(() => {
-    getArea();
-  }, []);
-
+  //get slots api call
   const getSlots = async (getDate, getArea) => {
     try {
-      const response = await axios.get(
-        WEB_API_URL+"/vendor/schedules",
-        {
-          params: {
-            date: getDate,
-            area: getArea,
-          },
-        }
-      );
+      const response = await API.get("/vendor/schedules", {
+        params: {
+          date: getDate,
+          area: getArea,
+        },
+      });
       if (response.status === 200 && response.data.success === true) {
         setSchedules(response.data.schedules);
       } else {
@@ -124,9 +128,10 @@ export default function SchedulePickup() {
     }
   };
 
+  //get area api call
   const getArea = async () => {
     try {
-      const response = await axios.get(WEB_API_URL+"/area");
+      const response = await API.get("/area");
 
       if (response.status === 200 && response.data.success === true) {
         setAreaData(response.data.areas);
@@ -139,6 +144,7 @@ export default function SchedulePickup() {
     }
   };
 
+  //create schedule button click event
   const submitClick = () => {
     if (progress === 100) {
       navigate("/user/pickups/confirm", {
@@ -149,7 +155,7 @@ export default function SchedulePickup() {
           wasteTypes,
           bags,
           weight,
-          batchNo
+          batchNo,
         },
       });
     } else {
@@ -159,28 +165,6 @@ export default function SchedulePickup() {
 
   return (
     <div>
-      {showAlert && (
-        <Col
-          className="d-flex"
-          style={{
-            position: "fixed",
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Alert
-            style={{ boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 10px" }}
-            variant="danger"
-            onClose={() => setShowAlert(false)}
-            dismissible
-          >
-            <Alert.Heading style={{ textAlign: "center" }}>
-              Please fill all the details!
-            </Alert.Heading>
-          </Alert>
-        </Col>
-      )}
       <div>
         <h3
           style={{
@@ -451,7 +435,7 @@ export default function SchedulePickup() {
                       textAlign: "center",
                     }}
                   >
-                    Approximate Weight
+                    Approximate Weight (kg)
                   </h5>
                   <Row className="text-center">
                     <Form.Control
@@ -461,6 +445,7 @@ export default function SchedulePickup() {
                         margin: "0 auto",
                       }}
                       type="number"
+                      placeholder="kg"
                       max={10}
                       min={1}
                       onChange={onWeightChange}

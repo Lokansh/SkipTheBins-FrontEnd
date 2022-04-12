@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import {
   FETCH_UNAPPROVED_VENDORS,
@@ -12,6 +14,9 @@ import {
 import { toast } from "react-toastify";
 import * as api from "../../api";
 
+/**
+ * @description: Fetches the list of all the vendors who have requested for account creation.
+ */
 export const getUnapprovedVendorsList = () => async (dispatch) => {
   try {
     const { data } = await api.fetchUnapprovedVendorsList();
@@ -21,6 +26,10 @@ export const getUnapprovedVendorsList = () => async (dispatch) => {
   }
 };
 
+/**
+ * @description: Approves vendor's account creation request.
+ * Allows vendor to access their account.
+ */
 export const approveVendorProfile = (id) => async (dispatch) => {
   try {
     const { data } = await api.approveVendorProfile(id);
@@ -30,6 +39,9 @@ export const approveVendorProfile = (id) => async (dispatch) => {
   }
 };
 
+/**
+ * @description: Fetches the list of all the vendors who have requested for account deletion.
+ */
 export const getVendorDeletionRequestList = (id) => async (dispatch) => {
   try {
     const { data } = await api.fetchVendorDeletionList();
@@ -39,6 +51,9 @@ export const getVendorDeletionRequestList = (id) => async (dispatch) => {
   }
 };
 
+/**
+ * @description: Deletes the vendor account on admin approval of account deletion request.
+ */
 export const deleteVendorProfile = (id) => async (dispatch) => {
   try {
     await api.deleteProfile(id);
@@ -48,6 +63,10 @@ export const deleteVendorProfile = (id) => async (dispatch) => {
   }
 };
 
+/**
+ * @description: Creates a request to delete account of a vendor
+ * Admin's approval is required to delete the account.
+ */
 export const requestVendorDeletion = (id) => async (dispatch) => {
   try {
     const { data } = await api.requestVendorDeletion(id);
@@ -57,6 +76,10 @@ export const requestVendorDeletion = (id) => async (dispatch) => {
   }
 };
 
+/**
+ * @description: Declines vendor's account creation request.
+ * Vendor account will not be created.
+ */
 export const declineVendorProfileCreation = (id) => async (dispatch) => {
   try {
     await api.declineVendorProfileCreation(id);
@@ -66,6 +89,10 @@ export const declineVendorProfileCreation = (id) => async (dispatch) => {
   }
 };
 
+/**
+ * @description: Declines vendor's account deletion request.
+ * Vendor account will not be deleted.
+ */
 export const declineVendorProfileDeletion = (id) => async (dispatch) => {
   try {
     const { data } = await api.declineVendorProfileDeletion(id);

@@ -1,24 +1,33 @@
 // Author : Lokansh Gupta
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import "./ContactUs.css";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { WEB_API_URL } from "../../constants";
 import { toast } from "react-toastify";
+import API from "../../api";
 
 function AdminDisplayQueries() {
   const navigate = useNavigate();
-
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   const [contactUsQueries, setContactUsQueries] = useState([]);
 
   useEffect(() => {
-    getAllQueriesApiCall();
-  }, []);
+    if (!user || user?.result?.role !== "admin") {
+      toast.error("Please login as admin to continue");
 
+      navigate("/login");
+    } else {
+      getAllQueriesApiCall();
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  }, [localStorage.getItem("profile")]);
+
+  //Method to handle get all queries api call
   const getAllQueriesApiCall = () => {
-    axios
-      .get(WEB_API_URL + "/queries")
+    API.get("/queries")
       .then((res) => {
         setContactUsQueries(res.data.queryData);
       })
@@ -27,20 +36,26 @@ function AdminDisplayQueries() {
       });
   };
 
+  //Method to display row data
   const renderRowData = (query, index) => {
     return (
       <tr key={index}>
         <td>{index + 1}</td>
+        <td>{query.refNumber}</td>
         <td>{query.name}</td>
         <td>{query.email}</td>
         <td>{query.mobile}</td>
+        <td>{query.querySubject}</td>
         <td>{query.query}</td>
       </tr>
     );
   };
+
+  //Method to handle mpdify vendors button click
   const handleModifyVendors = (e) => {
     navigate("/contactus/modifyvendors");
   };
+
   return (
     <div className="contactContainer">
       <h1
@@ -78,9 +93,11 @@ function AdminDisplayQueries() {
         <thead>
           <tr>
             <th>S.No</th>
+            <th>Reference No.</th>
             <th>Name</th>
             <th>Email</th>
             <th>Mobile</th>
+            <th>Query Subject</th>
             <th>Query</th>
           </tr>
         </thead>
@@ -88,7 +105,7 @@ function AdminDisplayQueries() {
       </Table>
       <div
         style={{ marginTop: "1%", justifyContent: "center" }}
-        class="text-center d flex"
+        className="text-center d flex"
       >
         <Button variant="primary" onClick={handleModifyVendors}>
           Modify Vendor Details

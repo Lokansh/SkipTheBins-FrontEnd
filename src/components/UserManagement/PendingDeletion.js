@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
@@ -10,16 +12,35 @@ import {
   declineVendorProfileDeletion,
 } from "../../store/actions/vendor";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const PendingDeletion = () => {
   const dispatch = useDispatch();
   const vendorToDeleteList = useSelector(
     (state) => state?.vendor?.vendorToDeleteList
   );
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
+  useEffect(() => {
+    if (!user || user?.result?.role !== "admin") {
+      navigate("/login");
+    } else {
+      dispatch(getVendorDeletionRequestList());
+    }
+  }, [user, navigate, dispatch]);
 
   useEffect(() => {
-    dispatch(getVendorDeletionRequestList());
-  }, []);
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  }, [localStorage.getItem("profile")]);
+
+  // useEffect(() => {
+  //   dispatch(getVendorDeletionRequestList());
+  // }, []);
 
   const deleteVendorProfileClicked = (id) => {
     dispatch(deleteVendorProfile(id));
@@ -32,9 +53,13 @@ const PendingDeletion = () => {
   };
 
   return (
-    <div className="pendingDeletions">
-      <h2>Pending Vendor Profile Deletion Request</h2>
-      <div className="form-container">
+    <div className="mt-3 mb-4 pendingDeletions">
+      <h2 style={{ textAlign: "center" }}>
+        Pending vendor profile deletion requests{" "}
+      </h2>
+      <br />
+      <br />
+      <div className="table-container">
         {vendorToDeleteList && vendorToDeleteList.length ? (
           <Table responsive striped bordered hover>
             <thead>
@@ -42,6 +67,8 @@ const PendingDeletion = () => {
                 <th>#</th>
                 <th>Name</th>
                 <th>Organization Name</th>
+                <th>Organization Email</th>
+                <th>Reason</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -53,17 +80,19 @@ const PendingDeletion = () => {
                     {item.firstName} {item.lastName}
                   </td>
                   <td>{item.organizationName}</td>
+                  <td>{item.email}</td>
+                  <td>{item.reason}</td>
                   <td>
                     <Button
                       size="sm"
-                      variant="outline-success"
+                      variant="success"
                       onClick={() => deleteVendorProfileClicked(item._id)}
                     >
                       Accept
                     </Button>
                     <Button
                       size="sm"
-                      variant="outline-danger"
+                      variant="danger"
                       onClick={() =>
                         declineVendorProfileDeletionClicked(item._id)
                       }
@@ -76,7 +105,9 @@ const PendingDeletion = () => {
             </tbody>
           </Table>
         ) : (
-          <div>No pending vendor deletion requests.</div>
+          <div style={{ textAlign: "center" }} className="h4">
+            No pending requests.
+          </div>
         )}
       </div>
     </div>

@@ -1,23 +1,30 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
-import React, { useState } from "react";
-import AdminProfile from "./AdminProfile";
+import React, { useEffect, useState } from "react";
+import Requests from "./Requests";
 
 import { useSelector } from "react-redux";
 import UserProfile from "./UserProfile";
 import VendorProfile from "./VendorProfile";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
-  // const state = useSelector((state) => {console.log(state); return state?.auth?.authdata;});
+  const navigate = useNavigate();
+
   /**
-   *
-   * const user = useSelector((state) => {console.log(state)})
+   * @description : This checks if the user is authenticated or not
    */
+  useEffect(() => {
+    if (user?.result?.role === "admin") {
+      navigate("/requests");
+    }
+  }, []);
+
   if (user?.result?.role === "vendor") {
     return <VendorProfile />;
-  } else if (user?.result?.role === "admin") {
-    return <AdminProfile />;
   } else {
     return <UserProfile />;
   }

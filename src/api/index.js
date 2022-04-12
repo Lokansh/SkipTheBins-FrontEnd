@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import axios from "axios";
 
@@ -6,12 +8,14 @@ import * as Constants from "../constants";
 
 const API = axios.create({ baseURL: Constants.WEB_API_URL });
 
+/**
+ * @description: Interceptor to pass the bearer token in the header
+ */
 API.interceptors.request.use((req) => {
   var token = localStorage.getItem("token");
   if (token) {
     req.headers.authorization = `Bearer ${token}`;
   }
-
   return req;
 });
 
@@ -21,8 +25,7 @@ export const editProfile = (id, formData) =>
   API.patch(`/profile/${id}/editProfile`, formData);
 export const changePassword = (id, formData) =>
   API.patch(`/profile/${id}/changePassword`, formData);
-export const deleteProfile = (id) =>
-  API.delete(`/profile/${id}/deleteProfile`);
+export const deleteProfile = (id) => API.delete(`/profile/${id}/deleteProfile`);
 export const fetchUnapprovedVendorsList = () =>
   API.get("/adminActions/unapprovedList");
 export const approveVendorProfile = (id) =>
@@ -35,3 +38,5 @@ export const declineVendorProfileCreation = (id) =>
   API.delete(`/adminActions/${id}/declineVendorCreation`);
 export const declineVendorProfileDeletion = (id) =>
   API.patch(`/adminActions/${id}/declineVendorDeletion`);
+
+export default API;

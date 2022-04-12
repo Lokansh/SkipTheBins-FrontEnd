@@ -4,13 +4,14 @@ import { ProgressBar, Button, Dropdown, Row, Col } from "react-bootstrap";
 import { DatePicker, TimePicker, Progress } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 const { RangePicker } = DatePicker;
 
 export default function SchedulePickup() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
   const [progress, setProgress] = useState(0);
   const [date, setDate] = useState([
     moment().add(1, "day").format("LL"),
@@ -25,6 +26,21 @@ export default function SchedulePickup() {
   const [areaData, setAreaData] = useState([]);
   const [pickerTime, setPickerTime] = useState();
 
+  //check user session
+  useEffect(() => {
+    if (!user || user?.result?.role !== "vendor") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    } else {
+      getArea();
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  }, [localStorage.getItem("profile")]);
+
+  //date change event
   const dateChange = (event) => {
     if (event === null) {
       setDate([]);
@@ -35,10 +51,12 @@ export default function SchedulePickup() {
     }
   };
 
+  //area select event
   const onAreaSelect = (event) => {
     setArea(event.target.innerText);
   };
 
+  //time select event
   const onTimeSelect = (event) => {
     setPickerTime(event);
     if (event === null) {
@@ -56,6 +74,7 @@ export default function SchedulePickup() {
     }
   };
 
+  //slot submit event and api call
   const slotSubmit = () => {
     const newSlot = [{ time, area }];
     setSlots((currSlots) => currSlots.concat(newSlot));
@@ -64,6 +83,7 @@ export default function SchedulePickup() {
     setArea("Select Area");
   };
 
+  //update progress
   useEffect(() => {
     let progress = 0;
     let slotProgress = 0;
@@ -95,13 +115,10 @@ export default function SchedulePickup() {
     setSlotProgress(slotProgress);
   }, [date, time, area, slots]);
 
-  useEffect(() => {
-    getArea();
-  }, []);
-
+  //get area api call
   const getArea = async () => {
     try {
-      const response = await axios.get(WEB_API_URL+"/area");
+      const response = await API.get("/area");
 
       if (response.status === 200 && response.data.success === true) {
         setAreaData(response.data.areas);
@@ -114,23 +131,21 @@ export default function SchedulePickup() {
     }
   };
 
+  //create schedule event and api call
   const submitClick = async () => {
     if (progress === 100) {
       const body = {
         fromDate: date[0],
         toDate: date[1],
-        vendorId: "1267",
-        vendor: "Walmart",
+        vendorId: user?.result?._id,
+        vendor: user?.result?.firstName + " " + user?.result?.lastName,
         slots: slots,
       };
       try {
-        const response = await axios.post(
-          WEB_API_URL+"/vendor/create",
-          body
-        );
+        const response = await API.post("/vendor/create", body);
 
         if (response.status === 200 && response.data.success === true) {
-          toast.success(response.data.toast);
+          toast.success(response.data.message);
           navigate("/vendor/pickups/confirm", {
             state: {
               date,
@@ -138,7 +153,7 @@ export default function SchedulePickup() {
             },
           });
         } else {
-          toast.error(response.data.toast);
+          toast.error(response.data.message);
         }
       } catch (e) {
         console.log(e);

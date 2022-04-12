@@ -4,25 +4,41 @@ import { Button, Table, Row, Col } from "react-bootstrap";
 import moment from "moment";
 import { Calendar } from "antd";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 
 export default function ViewSchedule() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
   const [date, setDate] = useState(moment().format("LL"));
   const [slots, setSlots] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
 
+  //check user session
+  useEffect(() => {
+    if (!user || user?.result?.role !== "vendor") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    } 
+  }, [user,navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
+
+  //date change event
   const dateChange = (event) => {
     setDate(event.format("LL"));
     getSchedules(event.format("LL"));
   };
 
+  //home button click event
   const submitClick = () => {
-    navigate("/");
+    navigate("/vendor/pickups");
   };
 
+  //show pickup details
   useEffect(() => {
     if (date !== "") {
       setShowDetails(true);
@@ -30,39 +46,36 @@ export default function ViewSchedule() {
   }, [date]);
 
   useEffect(() => {
-   getSchedules(moment().format("LL"));
-  },[]);
+    getSchedules(moment().format("LL"));
+  }, []);
 
+  //get schedules api call
   const getSchedules = async (getDate) => {
     try {
-      const response = await axios.get(
-        WEB_API_URL+"/vendor/schedules",
-        {
-          params: {
-            date: getDate,
-            vendorId: '1267'
-          },
-        }
-      );
+      const response = await API.get("/vendor/schedules", {
+        params: {
+          date: getDate,
+          vendorId: user?.result?._id,
+        },
+      });
       if (response.status === 200 && response.data.success === true) {
         const schedules = response.data.schedules;
-        let scheduleSlots=[];
+        let scheduleSlots = [];
 
-        for(var i=0; i<schedules.length; i++) {
-          console.log(schedules[i]);
+        for (var i = 0; i < schedules.length; i++) {
           scheduleSlots.push({
             area: schedules[i].area,
             time: [
               schedules[i].slot.split("-")[0].trim(),
-              schedules[i].slot.split("-")[1].trim()
-            ]
-          })
+              schedules[i].slot.split("-")[1].trim(),
+            ],
+          });
         }
         setSlots(scheduleSlots);
       } else {
         setShowDetails(false);
         setSlots([]);
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);
@@ -152,11 +165,7 @@ export default function ViewSchedule() {
                 {slots.map((slot, index) => {
                   return (
                     <tr key={index}>
-                      <td>
-                        {slot.time[0] +
-                          " to " +
-                          slot.time[1]}
-                      </td>
+                      <td>{slot.time[0] + " to " + slot.time[1]}</td>
                       <td>{slot.area}</td>
                     </tr>
                   );
@@ -166,7 +175,10 @@ export default function ViewSchedule() {
           </div>
         </Col>
       )}
-      <Row style={{ marginTop: "1%", justifyContent: "center" }} className="text-center d flex">
+      <Row
+        style={{ marginTop: "1%", justifyContent: "center" }}
+        className="text-center d flex"
+      >
         <Button
           style={{
             maxWidth: "20%",

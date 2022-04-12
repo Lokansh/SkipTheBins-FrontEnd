@@ -4,19 +4,32 @@ import Stepper from "@mui/material/Stepper";
 import StepLabel from "@mui/material/StepLabel";
 import Step from "@mui/material/Step";
 import { useEffect, useState } from "react";
-import { WEB_API_URL } from "../../constants";
+import API from "../../api";
+import { toast } from "react-toastify";
 
 const Tracker = (props) => {
   const { row } = props;
   const [status, setStatus] = useState("");
-  const URL = "/user/pickups/status?batchNo=" + row.batchNo;
+  const URL = "/user/pickups/status";
 
-  const getStatus = () => {
-    fetch(WEB_API_URL + URL)
-      .then((response) => response.json())
-      .then((res) => {
-        setStatus(res.status);
+  //Make API call to fetch status of Pickup on which user clicked.
+  const getStatus = async () => {
+    try {
+      const response = await API.get(URL, {
+        params: {
+          batchNo: row.batchNo,
+        },
       });
+
+      if (response.status === 200 && response.data.success === true) {
+        setStatus(response.data.status);
+      } else {
+        toast.error(response.data.toast);
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong!");
+    }
   };
 
   useEffect(() => {

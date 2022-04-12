@@ -5,12 +5,12 @@ import { TimePicker, Progress, Calendar } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
-import axios from "axios";
-import { WEB_API_URL } from "../../../constants";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import API from "../../../api";
 
 export default function EditSchedule() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
   const [date, setDate] = useState(moment().add(1, "day").format("LL"));
   const [slots, setSlots] = useState([]);
@@ -25,15 +25,33 @@ export default function EditSchedule() {
   const [buttonText, setButtonText] = useState("Add");
   const [editableSchedule, setEditableSchedule] = useState({});
 
+  //check user session
+  useEffect(() => {
+    if (!user || user?.result?.role !== "vendor") {
+      toast.error("Please login to continue");
+      navigate("/login");
+    } 
+    else {
+      getArea();
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  },[localStorage.getItem("profile")]);
+
+  //date change event
   const dateChange = (event) => {
     setDate(event.format("LL"));
     getSchedules(event.format("LL"));
   };
 
+  //area select event
   const onAreaSelect = (event) => {
     setArea(event.target.innerText);
   };
 
+  //time select event
   const onTimeSelect = (event) => {
     setPickerTime(event);
     if (event === null) {
@@ -51,16 +69,20 @@ export default function EditSchedule() {
     }
   };
 
+  //slot submit event and api call
   const slotSubmit = async () => {
     if (buttonText === "Add") {
       const body = {
-        date:date,
-        vendorId: "1267",
-        vendor: "Walmart",
+        date: date,
+        vendorId: user?.result?._id,
+        vendor: user?.result?.firstName + " " + user?.result?.lastName,
         area: area,
         slot: time,
       };
-      const response = await axios.post(WEB_API_URL+"/vendor/schedules/add", body);
+      const response = await API.post(
+        "/vendor/schedules/add",
+        body
+      );
 
       if (response.status === 200 && response.data.success === true) {
         getSchedules(date);
@@ -71,8 +93,8 @@ export default function EditSchedule() {
           area: area,
           slot: [time[0], time[1]],
         };
-        const response = await axios.put(
-          WEB_API_URL+"/vendor/update/" + editableSchedule.id,
+        const response = await API.put(
+          "/vendor/update/" + editableSchedule.id,
           body
         );
 
@@ -81,26 +103,25 @@ export default function EditSchedule() {
           existingSlots.push({
             area: area,
             time: [time[0], time[1]],
-            id: editableSchedule.id
+            id: editableSchedule.id,
           });
           setSlots(existingSlots);
         } else {
           setSlots(slots);
-          toast.error(response.data.toast);
+          toast.error(response.data.message);
         }
       } catch (e) {
         console.log(e);
         toast.error("Something went wrong!");
       }
     }
-    // const newSlot = [{ time, area }];
-    // setSlots((currSlots) => currSlots.concat(newSlot));
     setTime([]);
     setPickerTime();
     setArea("Select Area");
     setButtonText("Add");
   };
 
+  //update progress
   useEffect(() => {
     let slotProgress = 0;
     if (time.length > 0) {
@@ -124,14 +145,16 @@ export default function EditSchedule() {
     }
   }, [time, area, slots]);
 
+  //submit schedule event
   const submitClick = () => {
     toast.success("Schedule is updated successfully!");
-    navigate("/");
+    navigate("/vendor/pickups");
   };
 
+  //get area api call
   const getArea = async () => {
     try {
-      const response = await axios.get(WEB_API_URL+"/area");
+      const response = await API.get("/area");
 
       if (response.status === 200 && response.data.success === true) {
         setAreaData(response.data.areas);
@@ -144,9 +167,10 @@ export default function EditSchedule() {
     }
   };
 
+  //slot delete event
   const slotDeleteClick = async (id) => {
     try {
-      await axios.delete(WEB_API_URL+"/vendor/delete/" + id);
+      await API.delete("/vendor/delete/" + id);
     } catch (e) {
       console.log(e);
     }
@@ -154,6 +178,7 @@ export default function EditSchedule() {
     setSlots(newSlots);
   };
 
+  //slot edit event
   const slotEditClick = (id) => {
     const selectedSlot = slots.filter((slot) => slot.id === id);
     setEditableSchedule(selectedSlot[0]);
@@ -171,20 +196,17 @@ export default function EditSchedule() {
 
   useEffect(() => {
     getSchedules(moment().add(1, "day").format("LL"));
-    getArea();
   }, []);
 
+  //get schedule api call
   const getSchedules = async (getDate) => {
     try {
-      const response = await axios.get(
-        WEB_API_URL+"/vendor/schedules",
-        {
-          params: {
-            date: getDate,
-            vendorId: "1267",
-          },
-        }
-      );
+      const response = await API.get("/vendor/schedules", {
+        params: {
+          date: getDate,
+          vendorId: user?.result?._id,
+        },
+      });
       if (response.status === 200 && response.data.success === true) {
         const schedules = response.data.schedules;
         let scheduleSlots = [];
@@ -196,13 +218,13 @@ export default function EditSchedule() {
               schedules[i].slot.split("-")[0].trim(),
               schedules[i].slot.split("-")[1].trim(),
             ],
-            id: schedules[i].scheduleId
+            id: schedules[i].scheduleId,
           });
         }
         setSlots(scheduleSlots);
       } else {
         setSlots([]);
-        toast.error(response.data.toast);
+        toast.error(response.data.message);
       }
     } catch (e) {
       console.log(e);

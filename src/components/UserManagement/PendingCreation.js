@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
@@ -10,6 +12,7 @@ import {
 } from "../../store/actions/vendor";
 import { toast } from "react-toastify";
 import "./UserProfile.css";
+import { useNavigate } from "react-router-dom";
 
 const PendingCreation = () => {
   const dispatch = useDispatch();
@@ -17,10 +20,28 @@ const PendingCreation = () => {
   const unapprovedVendorList = useSelector(
     (state) => state?.vendor?.unapprovedVendorList
   );
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
+  useEffect(() => {
+    if (!user || user?.result?.role !== "admin") {
+      navigate("/login");
+    } else {
+      dispatch(getUnapprovedVendorsList());
+    }
+  }, [user, navigate, dispatch]);
 
   useEffect(() => {
-    dispatch(getUnapprovedVendorsList());
-  }, [dispatch]);
+    setUser(JSON.parse(localStorage.getItem("profile")));
+  }, [localStorage.getItem("profile")]);
+
+  // useEffect(() => {
+  //   dispatch(getUnapprovedVendorsList());
+  // }, [dispatch]);
 
   const approveVendorProfileClicked = (id) => {
     dispatch(approveVendorProfile(id));
@@ -33,9 +54,13 @@ const PendingCreation = () => {
   };
 
   return (
-    <div className="pendingApprovals">
-      <h2>Pending Vendor Profile Approval Request</h2>
-      <div className="form-container">
+    <div className="mt-3 mb-4 pendingApprovals">
+      <h2 style={{ textAlign: "center" }}>
+        Pending vendor profile creation requests
+      </h2>
+      <br />
+      <br />
+      <div className="table-container">
         {unapprovedVendorList && unapprovedVendorList.length ? (
           <Table responsive striped bordered hover>
             <thead>
@@ -43,6 +68,8 @@ const PendingCreation = () => {
                 <th>#</th>
                 <th>Name</th>
                 <th>Organization Name</th>
+                <th>Organization Email</th>
+                <th>Reason</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -54,6 +81,8 @@ const PendingCreation = () => {
                     {item.firstName} {item.lastName}
                   </td>
                   <td>{item.organizationName}</td>
+                  <td>{item.email}</td>
+                  <td>{item.reason}</td>
                   <td>
                     <Button
                       size="sm"
@@ -77,7 +106,9 @@ const PendingCreation = () => {
             </tbody>
           </Table>
         ) : (
-          <div>No pending vendor approval requests.</div>
+          <div style={{ textAlign: "center" }} className="h4">
+            No pending requests.
+          </div>
         )}
       </div>
     </div>

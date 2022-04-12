@@ -22,6 +22,9 @@ import ContactUs from "./components/contactUs/ContactUs";
 import SubmitQueryForm from "./components/contactUs/SubmitQueryForm";
 import AdminDisplayQueries from "./components/contactUs/AdminDisplayQueries";
 import AdminModifyVendors from "./components/contactUs/AdminModifyVendors";
+import RewardStore from "./components/rewardStore/RewardStore";
+import AdminViewPurchVouchers from "./components/rewardStore/AdminViewPurchVouchers";
+import AdminModifyVouchers from "./components/rewardStore/AdminModifyVouchers";
 
 import Login from "./components/UserManagement/Login";
 import Settings from "./components/UserManagement/Settings";
@@ -35,16 +38,23 @@ import TrackStatus from "./components/TrackStatus/TrackStatus";
 import UpdateStatus from "./components/UpdateStatus/UpdateStatus";
 import { ToastContainer } from "react-toastify";
 import Home from "./components/Home";
+import Requests from "./components/UserManagement/Requests";
+import UserRewards from "./components/Rewards/UserRewards";
+import AdminRewards from "./components/Rewards/AdminRewards";
 
+import PickupHistory from "./components/PickupHistory/PickupHistory";
+import PastPickups from "./components/PastPickups/PastPickups";
+import EventListingAdmin from "./components/EventListingAdmin/EventListingAdmin";
+import EventListingUser from "./components/EventListingUser/EventListingUser";
+import ViewAnnouncement from "./components/Notification/ViewAnnouncement";
 // import AdminHeader from "./components/AdminHeader/AdminHeader";
 
 function App() {
   return (
     <div>
-      {/*<AdminHeader/>*/}
       <Router>
         <div>
-          <ToastContainer />
+          <ToastContainer position="top-center"/>
           <Header />
           <div className="m-4 body-container">
             <Routes>
@@ -63,8 +73,12 @@ function App() {
                 exact
                 element={<Faq editMode={true} role="admin" />}
               ></Route>
+              <Route
+                path="/announcements"
+                exact
+                element={<ViewAnnouncement />}
+              ></Route>
               <Route path="/contactus">
-                {/* <Route path="/submitquery" element={<SubmitQueryForm />}></Route> */}
                 <Route index element={<ContactUs />}></Route>
               </Route>
               <Route
@@ -79,6 +93,15 @@ function App() {
                 path="/contactus/modifyvendors"
                 element={<AdminModifyVendors />}
               ></Route>
+              <Route path="/rewardstore" element={<RewardStore />}></Route>
+              <Route
+                path="/rewardstore/viewvouchers"
+                element={<AdminViewPurchVouchers />}
+              ></Route>
+              <Route
+                path="/rewardstore/modifyvouchers"
+                element={<AdminModifyVouchers />}
+              ></Route>
               <Route path="/user/pickups">
                 <Route
                   path="/user/pickups/schedule"
@@ -92,6 +115,10 @@ function App() {
                 <Route path="/user/pickups/edit" element={<EditPickup />} />
                 <Route path="/user/pickups/cancel" element={<CancelPickup />} />
                 <Route path="/user/pickups/track" element={<TrackStatus />} />
+                <Route
+                  path="/user/pickups/history"
+                  element={<PickupHistory />}
+                />
                 <Route index element={<PickupHomeUser />} />
               </Route>
               <Route path="/vendor/pickups">
@@ -113,11 +140,16 @@ function App() {
                   path="/vendor/pickups/update"
                   element={<UpdateStatus />}
                 />
+                <Route
+                  path="/vendor/pickups/past-pickups"
+                  element={<PastPickups />}
+                />
                 <Route index element={<PickupHomeVendor />} />
               </Route>
               <Route path="/signup" element={<Signup />}></Route>
               <Route path="/login" element={<Login />}></Route>
               <Route path="/settings" element={<Settings />}></Route>
+              <Route path="/requests" element={<Requests />}></Route>
               <Route path="/profile" element={<Profile />}></Route>
               <Route
                 path="/user-dashboard"
@@ -134,6 +166,10 @@ function App() {
                 exact
                 element={<RewardListingAdmin />}
               />
+              <Route path="/user/rewards" element={<UserRewards />} />
+              <Route path="/admin/rewards" element={<AdminRewards />} />
+              <Route path="/event-dashboard" element={<EventListingAdmin />} />
+              <Route path="/events" element={<EventListingUser />} />
             </Routes>
           </div>
           <Footer />

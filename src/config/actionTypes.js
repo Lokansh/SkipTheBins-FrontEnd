@@ -1,4 +1,10 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
+
+/**
+ *  @description: It constains list of all the action types for dispatches.
+ */
 
 export const SIGNUP = "SIGNUP";
 export const LOGIN = "LOGIN";

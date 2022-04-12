@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
@@ -6,14 +8,22 @@ import { Form, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../store/actions/auth";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 const initialState = { email: "", password: "" };
 
 const Login = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
   useEffect(() => {
-    if (!user) {
-      navigate("/profile");
+    if (user) {
+      if (user?.result?.role === "admin") {
+        navigate("/requests");
+      } else {
+        navigate("/profile");
+      }
     }
   }, []);
   const [formData, setFormData] = useState(initialState);
@@ -62,7 +72,7 @@ const Login = () => {
         </Button>
         <Form.Group>
           <Form.Text>
-            <a style={{ cursor: "pointer" }} href="/signup">
+            <a style={{ cursor: "pointer" }} className="h6" href="/signup">
               New user?
             </a>
           </Form.Text>

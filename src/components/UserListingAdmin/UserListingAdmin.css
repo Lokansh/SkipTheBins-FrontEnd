@@ -10,8 +10,12 @@ table caption
     text-align: center;
     caption-side: top;
 }
-
 th {
+    overflow: auto;
     font-size: 20px;
     color: #495057;
+}
+
+td {
+    overflow: auto;
 }

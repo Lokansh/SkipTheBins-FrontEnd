@@ -1,4 +1,6 @@
-// @author : Vasu Gamdha (Group 14)
+/**
+ *   @author : Vasu Gamdha (B00902737)
+ */
 
 import React, { useEffect, useState } from "react";
 import {
@@ -33,8 +35,12 @@ const Settings = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  /**
+   * @description : This checks if the user is authenticated or not
+   */
   useEffect(() => {
     if (!user) {
+      toast.error("Please login to continue");
       navigate("/login");
     }
   });
@@ -84,7 +90,7 @@ const Settings = () => {
       if (formData.newPassword.length > 7) {
         dispatch(changePassword(user?.result?._id, formData));
         setChangePasswordShow(false);
-      } else{
+      } else {
         toast.error("Password must have atleast 8 characters");
       }
     } else {
@@ -223,7 +229,7 @@ const Settings = () => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>set new Password</Modal.Title>
+          <Modal.Title>Set New Password</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Container>
@@ -289,47 +295,59 @@ const Settings = () => {
         </Card>
       </a>
 
-      <Modal
-        show={deleteAccountShow}
-        onHide={() => setDeleteAccountShow(false)}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm deletion</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div>
-            Enter Password to confirm:{" "}
-            <input
-              type="password"
-              name="passwordToDelete"
-              onChange={handleChange}
-            />
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => setDeleteAccountShow(false)}
+      {user?.result?.role !== "admin" && (
+        <>
+          <Modal
+            show={deleteAccountShow}
+            onHide={() => setDeleteAccountShow(false)}
+            centered
           >
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={deleteClicked}>
-            Confirm
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <a
-        style={{ cursor: "pointer" }}
-        onClick={() => setDeleteAccountShow(true)}
-      >
-        <Card className="mr-5 mb-2 mt-2">
-          <Card.Body>
-            <Card.Title>Delete Profile</Card.Title>
-            <Card.Text>Users can completely delete their profile.</Card.Text>
-          </Card.Body>
-        </Card>
-      </a>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirm deletion</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Container>
+                <Row>
+                  <Col sm={5}>
+                    <Form.Text>Enter Password to confirm:</Form.Text>
+                  </Col>
+                  <Col className="mb-2">
+                    <FormControl
+                      type="password"
+                      name="passwordToDelete"
+                      onChange={handleChange}
+                    />
+                  </Col>
+                </Row>
+              </Container>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setDeleteAccountShow(false)}
+              >
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={deleteClicked}>
+                Confirm
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          <a
+            style={{ cursor: "pointer" }}
+            onClick={() => setDeleteAccountShow(true)}
+          >
+            <Card className="mr-5 mb-2 mt-2">
+              <Card.Body>
+                <Card.Title>Delete Profile</Card.Title>
+                <Card.Text>
+                  Users can completely delete their profile.
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </a>
+        </>
+      )}
     </div>
   );
 };
